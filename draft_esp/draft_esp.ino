@@ -68,7 +68,7 @@ int hidden=0;    //optional parameter, if set to true will hide SSID.
 int channel=1;        //optional parameter to set Wi-Fi channel, from 1 to 13. Default channel = 1.
 int max_connection=4; //optional parameter to set max simultaneous connected stations, from 0 to 8. Defaults to 4.
                       //Once the max number has been reached, any other station that wants to connect will be forced to wait until an already connected station disconnects.
-String IPvalue= "12.1.1.1";
+String IPvalue="12.0.0.1";
 String ssidvalue;
 String passwordvalue;
 
@@ -81,65 +81,6 @@ IPAddress local_IP(192,168,4,1);
 IPAddress gateway(192,168,4,9);
 IPAddress subnet(255,255,255,0);
 
-
-// HTML web page to collect SSID and Password from user
-const char index_html[] PROGMEM = R"rawliteral(
-<!DOCTYPE HTML><html>
-<style>
-html, body {
-  height: 100%;
-  background: linear-gradient(to bottom right, #ccffff 0%, #ffccff 100%);
-}
-
-h2   {
-
-  font-family: cabin;
-  padding: 10px;
-  text-align: center;
-  }
-p    {
-font-family: big caslon;
-padding: 10px;
-text-align: center;
-}
-form
-{
-  text-align: center;
-  font-family: big caslon;
-}
-input[type=submit] {
-  text-align: center;
-  border: none;
-  color: black;
-  padding: 16px 32px;
-  text-decoration: none;
-  margin: 4px 2px;
-  font-family: big caslon;
-  border-radius: 4px;
-  cursor: pointer;
-}
-input[type=text] {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 2px 2px;
-  box-sizing: border-box;
-  border-radius: 4px;
-}
-</style>
-<head>
-  <title>MeCFES: Configurazione wifi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head><body>
-  <h2> MeCFES: Configurazione WiFi</h2>
-  <p>Questa pagina e' dedicata alla configurazione della rete WiFi alla quale connettere il dispositivo MeCFES</p>
-  <form action="/get">
-    SSID rete Wifi: <input type="text" name="SSID">
-    Password: <input type="text" name="Password">
-    <br>
-    <input type="submit" value="Invia">
-  </form><br>
-</body>
-</html>)rawliteral";
 
 //HTML page to show IP and successful connection message to user
 const char Onconnection_html[] PROGMEM = R"rawliteral(
@@ -175,12 +116,28 @@ font-family: big caslon;
 padding: 10px;
 text-align: center;
 }
-.cred{
-  background-color: white;
-  font-family: big caslon;
-  padding: 10px;
+form
+{
   text-align: center;
-  border-radius: 10px;
+  font-family: big caslon;
+}
+input[type=submit] {
+  text-align: center;
+  border: none;
+  color: black;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  font-family: big caslon;
+  border-radius: 4px;
+  cursor: pointer;
+}
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 2px 2px;
+  box-sizing: border-box;
+  border-radius: 4px;
 }
 </style>
 <head>
@@ -191,7 +148,7 @@ text-align: center;
   <p>La connessione alla rete wifi e' stata completata con successo. Ecco i dati relativi a SSID ed indirizzo IP della rete. </p>
   <br>
   <p><u>Non dimenticarti di annotarli, saranno necessari per la lettura dei dati dal dispositivo MeCFES.</u></p>
- //<div class="cred">
+ <br>
  <br>
  <h3>SSID WiFi:</h3>
  <br>
@@ -200,7 +157,6 @@ text-align: center;
  <h3>IP:</h3>
  <br>
  <h1><span id="IP">%IP%</span></h1>
- //</div>
 </body>
 </html>)rawliteral";
 
@@ -274,7 +230,7 @@ void InitSoftAP() {
   Serial.println(WiFi.softAPIP());
    // Send web page with input fields to client
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/html", index_html);
+    request->send(SPIFFS, "/index.html", "text/html");
   });
 
   // Send a GET request to <ESP_IP>/get?input1=<inputMessage>
@@ -291,7 +247,7 @@ void InitSoftAP() {
       passwordvalue = "No message sent";
     }
     // Send web page with input fields to client
-    request->send_P(200, "text/html", Onconnection_html, processor);
+    request->send(SPIFFS, "/onConnection.html", "text/html");
 
   });
   server.onNotFound(notFound);
