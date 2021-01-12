@@ -1,1 +1,1 @@
-Temporary for webapp testing before merging to main branch
+Temporary for WebApp testing before merging to main branch
