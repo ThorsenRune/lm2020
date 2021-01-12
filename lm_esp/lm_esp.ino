@@ -35,8 +35,6 @@ int nTimerInMs[3]={0};							// Milliseconds 1= T0 start of cycle 2=actual ms, 3
 bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
 #if  ( DEBUG_ON!=1)
   AsyncWebServer server(80);
-//  IPAddress staticIP(192, 168, 1, 51); // parameters below are for your static IP address, if used
-
   IPAddress staticIP(MyStaticIP[0],MyStaticIP[1],MyStaticIP[2],MyStaticIP[3]); // parameters below are for your static IP address, if used
   IPAddress gateway(192, 168, 1, 1);
   IPAddress subnet(255, 255, 0, 0);
