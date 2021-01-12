@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<!--		Websocket can be served from anywhere  -->
+   <head>
+		<title>Proto WS uRehApp LM</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="./js/main.js">	/*Main programe and entry*/		</script>
+		<script src="./js/websocket.js"></script>
+		<script src="./js/testing.js"></script>
+
+		<script src="./js/utils.js"></script>
+		<script src="./js/display.js"></script>		<script src="./js/utils.js">	/*	math etc*/</script>
+		<script src="./js/interface.js" 	>	/*	GUI related*/	</script>
+		<script src="./js/protocol.js" 	>/* variables */</script>		<script src="./js/slider.js"></script>
+		<script src="./js/signal.js"></script>
+		<script src="./js/watches.js"></script>
+		<script src="./js/index.js"></script>
+		<script src="./js/debug.js">/* debugging only*/</script>
+		<link rel="stylesheet" href="/css/dark.css">
+		<link rel="stylesheet" href="webviewstyle.css" class='clsStyle'>
+		<link rel="stylesheet" href="./css/slider.css">
+		<link rel="stylesheet" href="./css/style.css">
+		<link rel="stylesheet" href="./css/popup.css">
+   </head>
+   <body>
+
+	<div>
+		<label id='idStatus' >Unconnected</label>
+		<input type="text" id="idVarName1"  placeholder="VarName"  onclick='this.focus();this.select()'>
+		<input type="button" class='cRight' value="Reset" onClick="Main_Init();" />
+		<input type="button" class='cRight' value="Edit" onClick="popup.mSettings();" />
+		<button onclick='Main_Loop()'>Step Processing</button>
+	</div>
+	<details open > <!-- During development for testing purpose -->
+		<summary> Testing & Development </summary>
+
+		<input id='idInput' type="text" style="width: 25%;" value="101">
+		<button onclick='writeButton()'>Send</button>
+		<button onclick='serial.send(konst.kHandshake)';>Handshake</button>
+		<button onclick='prot.state(prot.kCommInit)';>Init Protocol</button>
+		<button onclick='testGetData()'>Get data</button>
+		<button onclick='testSetData()'>Set data</button>
+		<br>
+		Received data <span id="idData">.....</span><br>
+		<textarea id="idDebugText" title="idText"  style="height: 150px;width: 100%;" ></textarea>
+	</details>
+	<div id='idPopUp' 	class='cOverlay' hidden>  <!--Popup window for messages -->
+		<div id='idSettings'>
+			<?PHP include 'varsettings.html' ?>
+		</div>
+		<textarea id="idText" title="idText"  >	</textarea>
+		<button id="idTextClose" >OK </button>
+		<button id="idSettingsCancel" >CANCEL </button>
+	</div>
+	<details  <!-- Sliders -->
+		<summary> Slider controls </summary>
+		<?PHP include 'sliders_vert.html' ?>
+	</details>
+	<hr>
+	<!-- todo: refactor to a separate view or pane ?-->
+	<details  > <!-- Signal panel -->
+		<summary> Signals  </summary>
+		<?PHP include 'signal.html' ?>
+	</details>
+
+	<div class="clsBottom">
+	</div>
+	</body>
+</html>

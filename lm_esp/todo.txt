@@ -1,0 +1,37 @@
+/*
+
+
+Refactoring:
+mFIFO_push(oTX,   ->    mSendToClient(       |    bytetosend
+
+
+
+FLOW INO
+ARDUINO-loop->
+    *->mCommunication
+          *-->mDispatchRX
+                *---->Expose2Protocol  (initializes the protocol)
+
+    *-->mSendToClient : send buffer data to client
+
+
+
+
+
+publishvar.c      is where variables are inserted for publication
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
