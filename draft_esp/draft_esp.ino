@@ -308,10 +308,45 @@ void setup() {
   Serial.println("An Error has occurred while mounting SPIFFS");
   return;
   }
- InitSoftAP();
-
+  //Todo1: change InitSoftAP to return credentials
+ InitSoftAP(&AP_SSID, &AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
+ mGetStaticIP(&AP_SSID, &AP_PASS, int &MyStaticIP[4]);// Get static IP for the network
+ mStartWebSocket(staticIP); //Setup the static IP obtained
 }
 
+//const int MyStaticIP[4]={192, 168, 1, 51};
+void mStartWebSocket( int MyStaticIP[4]){
+  WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
+  WiFi.begin(AP_SSID, AP_PASS);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi..");
+  }
+  Serial.println(WiFi.localIP());
+  //todo: copy code from lm_esp.ino line 38
+  AsyncWebServer server(80);
+  IPAddress staticIP(MyStaticIP[0],MyStaticIP[1],MyStaticIP[2],MyStaticIP[3]); // parameters below are for your static IP address, if used
+  IPAddress gateway(192, 168, 1, 1);
+  IPAddress subnet(255, 255, 0, 0);
+
+  AsyncWebSocket ws("/ws");
+  AsyncWebSocketClient * globalClient = NULL;
+  void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+  		//AwsEventType describes what event has happened, like receive data or disconnetc
+  	// data is the payload
+    if(type == WS_EVT_CONNECT){
+      Serial.println("Websocket client connection received");
+      globalClient = client;
+    } else if(type == WS_EVT_DISCONNECT){
+      Serial.println("Websocket client connection finished");
+      globalClient = NULL;
+    } else if(type == WS_EVT_DATA){  //Data was received from client
+  	   mReceive(data,len);
+    }
+  }
+
+
+}
 
 void loop() {
   String Credential1 = readFile(SPIFFS, "/SSID.txt");
