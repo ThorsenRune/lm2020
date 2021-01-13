@@ -162,13 +162,11 @@ bool InitSoftAP() {
     }
     else {
       mDebugMsg("No message sent");
-      //???ssidvalue = "No message sent";
-      //???passwordvalue = "No message sent";
     }
-    // Send web page with input fields to client
+    // Send web page with input fields to client (Here only for debugging purposes, moved to mUserFeedbackViaSoftAP)
     request->send(SPIFFS, "/onConnection.html", "text/html");
    server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(200, "text/plain", ssidvalue.c_str());
+    request->send(200, "text/plain", AP_SSID.c_str());
     });
    server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/plain", IPvalue.c_str());
@@ -192,11 +190,32 @@ bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,int MyStaticIP[4]) {
   //Flowchart:   * reconnect to client via Soft AP
     //* send IP to client. Now user will know the IP, create a link to click
     mDebugHalt("Implement mUserFeedbackViaSoftAP");
+    //Start SoftAP mode again
+     WiFi.softAP(ssid_softap);
+     delay(100);
+    //Setting Wifi specifications
+    Serial.print("Setting soft-AP configuration ... ");
+    Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
+    //Verify MeCFES IP Address (only for debuggin purposes for the moment)
+    Serial.print("Soft-AP available on IP address = ");
+    Serial.println(WiFi.softAPIP());
+     //Page dedicated to data shown for user
+     server.on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    // Send web page with SSID and IP fields to client
+    request->send(SPIFFS, "/onConnection.html", "text/html");
+    server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", AP_SSID.c_str());
+    });
+    server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", MyStaticIP.c_str());
+    });
+  });
+
     //TODO0
     /*send the AP_SSID, AP_PASS,MyStaticIP to the connection from {InitSoftAP}
-      this time show the MyStaticIP, tell the user to switch NETWORK
+      this time show the MyStaticIP, tell the user to switch NETWORK            ----> Data correctly shown!!, it misses a link to start the Server in AP Mode (server.on("/startap", HTTP_GET, [](AsyncWebServerRequest *request) ---> launch AP mode setup and ws)
       ask user to:
-      1.  copy MyStaticIP
+      1.  copy MyStaticIP -----> DONE!
       2.  click link to serversite
       3.  paste the MyStaticIP for the websocket MainSetup (todo: insert this in websocket program)
     */
