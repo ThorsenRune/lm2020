@@ -100,10 +100,10 @@ String readFile(fs::FS &fs, const char * path){
             return String();
   }
   Serial.println("- read from file:");
-  String fileContent;By
+  String fileContent;
   while(file.available()){
-  fileContent+=String((char)file.read());
-}
+    fileContent+=String((char)file.read());
+  }
   Serial.println(fileContent);
   return fileContent;
 }
