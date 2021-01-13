@@ -60,6 +60,8 @@ Simple Wifiserver
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
   void mDebugMsg(char msg[]);
+  void mDebugHalt(char msg[]);
+  void mDebugInt(char msg[],int data);
 
 AsyncWebServer server(80);
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
@@ -175,10 +177,13 @@ bool InitSoftAP() {
   });
   server.onNotFound(notFound);
   server.begin();
-  mDebugMsg("Waiting for user to insert credentials")
-  for (i=0;i<100;i++){  //Wait for async call to complete
-    delay(1000):
-    if (isSet_AP_SSID) return;
+  mDebugMsg("Waiting for user to insert credentials");
+  for (int i=0;i<100;i++){  //Wait for async call to complete
+    delay(1000);
+    if (isSet_AP_SSID) 
+    {
+      return true;
+    }
 
   }
   delay(300000);
