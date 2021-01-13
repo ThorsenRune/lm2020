@@ -285,7 +285,7 @@ bool mGetCredentials(char* AP_SSID,char* AP_PASS,char*MyStaticIP ) ){   //Get cr
   //RT210112: Moved code into method
   AP_SSID=readFile(SPIFFS, "/SSID.txt");
   Serial.print("Your ssid: ");
-  Serial.println(Credential1);
+  Serial.println(AP_SSID);
   AP_PASS=readFile(SPIFFS, "/Password.txt");
   Serial.print("Your password: ");
   Serial.println(AP_PASS);
@@ -320,17 +320,7 @@ void setup() {
 } //Now we proceed to {loop}
 void loop() {
   if (!bWebSocketConnection) return;  //Only loop if on internetwifi
-  /*  Obsolete by mGetCredentials
-  String Credential1 = readFile(SPIFFS, "/SSID.txt");
-  Serial.print("Your ssid: ");
-  Serial.println(Credential1);
-   String Credential2 = readFile(SPIFFS, "/Password.txt");
-  Serial.print("Your password: ");
-  Serial.println(Credential2);
-   String Credential3 = readFile(SPIFFS, "/IP.txt");
-  Serial.print("Your IP: ");
-  Serial.println(Credential3);
-  */
+
 
 }
 
