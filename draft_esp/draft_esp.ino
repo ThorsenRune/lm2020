@@ -69,13 +69,8 @@ int MyStaticIP[4]={192, 168, 1, 51};  //The static IP address when using interne
 bool bWebSocketConnection =false;     //true when {mWIFIConnect == true}
 // Configure SoftAP (direct wifi ESP-client) characteristics
 const char* ssid_softap = "MeCFES_Config";
-//- not used delete
-//- const char* password = "12345678";
 
-int hidden=0;    //optional parameter, if set to true will hide SSID.
-int channel=1;        //optional parameter to set Wi-Fi channel, from 1 to 13. Default channel = 1.
-int max_connection=4; //optional parameter to set max simultaneous connected stations, from 0 to 8. Defaults to 4.
-                      //Once the max number has been reached, any other station that wants to connect will be forced to wait until an already connected station disconnects.
+
 String IPvalue="12.0.0.1";
 String ssidvalue;
 //- obsolete:String passwordvalue;
@@ -90,103 +85,11 @@ IPAddress gateway(192,168,4,9);
 IPAddress subnet(255,255,255,0);
 
 
-//HTML page to show IP and successful connection message to user
-const char Onconnection_html[] PROGMEM = R"rawliteral(
-<!DOCTYPE HTML><html>
-<style>
-html, body {
-  height: 100%;
-  background: linear-gradient(to bottom right, #ccffff 0%, #ffccff 100%);
-}
-
-h2  {
-
-  font-family: cabin;
-  padding: 10px;
-  text-align: center;
-  }
-
-h1  {
-
-  font-family: cabin;
-  padding: 10px;
-  text-align: center;
-  }
-
-h3  {
-
-  font-family: cabin;
-  padding: 10px;
-  text-align: center;
-  }
-p    {
-font-family: big caslon;
-padding: 10px;
-text-align: center;
-}
-form
-{
-  text-align: center;
-  font-family: big caslon;
-}
-input[type=submit] {
-  text-align: center;
-  border: none;
-  color: black;
-  padding: 16px 32px;
-  text-decoration: none;
-  margin: 4px 2px;
-  font-family: big caslon;
-  border-radius: 4px;
-  cursor: pointer;
-}
-input[type=text], input[type=password] {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 2px 2px;
-  box-sizing: border-box;
-  border-radius: 4px;
-}
-</style>
-<head>
-  <title>MeCFES: Connessione completata!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head><body>
-  <h2> MeCFES: Connessione completata!</h2>
-  <p>La connessione alla rete wifi e' stata completata con successo. Ecco i dati relativi a SSID ed indirizzo IP della rete. </p>
-  <br>
-  <p><u>Non dimenticarti di annotarli, saranno necessari per la lettura dei dati dal dispositivo MeCFES.</u></p>
- <br>
- <br>
- <h3>SSID WiFi:</h3>
- <br>
- <h1><span id="SSID">%SSID%</span></h1>
- <br>
- <h3>IP:</h3>
- <br>
- <h1><span id="IP">%IP%</span></h1>
-</body>
-</html>)rawliteral";
-
-
-
-// Function to replace placeholders with SSID and IP values
-String processor(const String& var){
-  if(var == "SSID"){
-    return String(AP_SSID);
-  }
-  else if (var == "IP")
-  {
-    return String(staticIP);
-  }
-  return String();
-}
-
-
 //Page not found
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Pagina non trovata");
 }
+
 
 //Read credentials from files (SSID.txt,Password.txt and IP.txt)
 String readFile(fs::FS &fs, const char * path){
@@ -205,8 +108,9 @@ String readFile(fs::FS &fs, const char * path){
   return fileContent;
 }
 
-//Write credentials from files (SSID.txt,Password.txt and IP.txt)
 
+
+//Write credentials from files (SSID.txt,Password.txt and IP.txt)
 void writeFile(fs::FS &fs, const char * path, const char * message){
 Serial.printf("Writing file: %s\r\n", path);
 File file = fs.open(path, "w");
@@ -219,11 +123,7 @@ Serial.println("- file written");
 } else {
 Serial.println("- write failed");
 }
-
 }
-
-
-
 
 //Todo5: refactor/rename {InitSoftAP} to {mGetSetupViaSoftAP}
 bool InitSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
@@ -265,7 +165,12 @@ bool InitSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
     }
     // Send web page with input fields to client
     request->send(SPIFFS, "/onConnection.html", "text/html");
-
+   server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", ssidvalue.c_str());
+    });
+   server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", IPvalue.c_str());
+    });
   });
   server.onNotFound(notFound);
   server.begin();
@@ -274,6 +179,8 @@ bool InitSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
   mDebugHalt("Failed to get credentials, abort");
   return false;
 }
+
+
 bool mUserFeedbackViaSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
   //Flowchart:   * reconnect to client via Soft AP
     //* send IP to client. Now user will know the IP, create a link to click
@@ -341,9 +248,6 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
   return false; //Tell caller that we are waiting for a client to connect
 }
 
-
-
-
 //const int MyStaticIP[4]={192, 168, 1, 51};
 void mStartWebSocket( int MyStaticIP[4]){
   WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
@@ -374,9 +278,8 @@ void mStartWebSocket( int MyStaticIP[4]){
   	   mReceive(data,len);
     }
   }
-
-
 }
+
 
 bool mGetCredentials(char* AP_SSID,char* AP_PASS,char*MyStaticIP ) ){   //Get credentials from spiff
   //RT210112: Moved code into method
@@ -391,6 +294,8 @@ bool mGetCredentials(char* AP_SSID,char* AP_PASS,char*MyStaticIP ) ){   //Get cr
   Serial.println(MyStaticIP);
   return true;
 }
+
+
 bool mSetCredentials(char* AP_SSID,char* AP_PASS,char*MyStaticIP ) ){   //Get credentials from spiff
   //RT210112: Moved code into method
   writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
@@ -410,7 +315,6 @@ void setup() {
   bWebSocketConnection=false;
   while (!bWebSocketConnection){
     bWebSocketConnection=mWIFIConnect();
-
   };      //Blocking until connection is made
 //- (moved) InitSoftAP(AP_SSID, AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
 } //Now we proceed to {loop}

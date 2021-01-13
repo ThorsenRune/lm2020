@@ -6,21 +6,21 @@ html, body {
 }
 
 h2  {
-  
+
   font-family: cabin;
   padding: 10px;
   text-align: center;
   }
-  
+
 h1  {
-  
+
   font-family: cabin;
   padding: 10px;
   text-align: center;
   }
-  
+
 h3  {
-  
+
   font-family: cabin;
   padding: 10px;
   text-align: center;
@@ -63,13 +63,42 @@ input[type=text] {
   <br>
   <p><u>Non dimenticarti di annotarli, saranno necessari per la lettura dei dati dal dispositivo MeCFES.</u></p>
  <br>
- <br>
- <h3>SSID WiFi:</h3>
- <br>
- <h1><span id="SSID">%SSID%</span></h1>
+  <h3>SSID WiFi:</h3>
+  <h1><span id="SSID">%SSID%</span></h1>
  <br>
  <h3>IP:</h3>
- <br>
  <h1><span id="IP">%IP%</span></h1>
+<script>
+
+setInterval(function() {
+  // Call a function repetatively with 2 Second interval
+  getDataIP();
+  getDataSSID();
+}, 2000); //2000mSeconds update rate
+
+function getDataIP() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("IP").innerHTML =
+      this.responseText;
+    }
+  };
+  xhttp.open("GET", "ip", true);
+  xhttp.send();
+}
+
+function getDataSSID() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("SSID").innerHTML =
+      this.responseText;
+    }
+  };
+  xhttp.open("GET", "ssid", true);
+  xhttp.send();
+}
+</script>
 </body>
 </html>
