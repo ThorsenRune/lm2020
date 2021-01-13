@@ -75,6 +75,7 @@ const char* ssid_softap = "MeCFES_Config";
 
 String IPvalue="12.0.0.1";
 String ssidvalue;
+bool startAPP=false;
 //- obsolete:String passwordvalue;
 
 const char* PARAM_INPUT_1 = "SSID";
@@ -209,6 +210,13 @@ bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,int MyStaticIP[4]) {
     server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/plain", MyStaticIP.c_str());
     });
+    server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+   //Connect to AP mode
+   //Launch AP mode
+   //Send MeCFES bridgeapp
+   request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+   startAPP=true;
+ });
   });
 
     //TODO0
@@ -216,8 +224,8 @@ bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,int MyStaticIP[4]) {
       this time show the MyStaticIP, tell the user to switch NETWORK            ----> Data correctly shown!!, it misses a link to start the Server in AP Mode (server.on("/startap", HTTP_GET, [](AsyncWebServerRequest *request) ---> launch AP mode setup and ws)
       ask user to:
       1.  copy MyStaticIP -----> DONE!
-      2.  click link to serversite
-      3.  paste the MyStaticIP for the websocket MainSetup (todo: insert this in websocket program)
+      2.  click link to serversite -----> DONE!
+      3.  paste the MyStaticIP for the websocket MainSetup (todo: insert this in websocket program) -----> DONE!
     */
 }
 

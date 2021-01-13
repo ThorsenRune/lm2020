@@ -6,21 +6,21 @@ html, body {
 }
 
 h2  {
-
+  
   font-family: cabin;
   padding: 10px;
   text-align: center;
   }
-
+  
 h1  {
-
+  
   font-family: cabin;
   padding: 10px;
   text-align: center;
   }
-
+  
 h3  {
-
+  
   font-family: cabin;
   padding: 10px;
   text-align: center;
@@ -69,15 +69,13 @@ input[type=text] input[type=password]{
   <title>MeCFES: Connessione completata!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   </head><body>
-  <h2> MeCFES: Connessione completata!</h2>
-  <p>La connessione alla rete wifi e' stata completata con successo. Ecco i dati relativi a SSID ed indirizzo IP della rete. </p>
-  <p><u>Non dimenticarti di annotarli, saranno necessari per la lettura dei dati dal dispositivo MeCFES.</u></p>
+  <h2> Come avviare l'applicazione</h2>
+  <p>1- Connettiti alla rete <b><span id="SSID">%SSID%</span></b> con il tuo dispositivo.</p>
+<br>
+  <p>2- Visita il <a href="https://thorsen.it/public/demo/egloveweb/webbluetooth.html#home">sito</a> dedicato a MeCFES.</p>
+<br>  
+<p>3- Inserisci l'indirizzo IP: <b><span id="IP">%IP%</span></b></p>
  <br>
-  <h3>SSID WiFi:</h3>
-  <h1><span id="SSID">%SSID%</span></h1>
- <h3>IP:</h3>
- <h1><span id="IP">%IP%</span></h1>
- <p><a href="/startapp"><button class="button">AVVIA APP</button></a></p>
 <script>
 
 setInterval(function() {
