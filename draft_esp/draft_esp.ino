@@ -1,11 +1,14 @@
 /*
- *
+Flowchart of mWIFIConnect()
+mWIFIConnect will return true if connection is established and the program can
+proceed to main
+
 (0) credentials&IP=Read flash (SPIFF)
 *
 *
-(1) Connect to network  (!!!!! Let the user know which network the device is connected)
+(1) Connect to network
 
-|-fail—> Setup SoftAP (2)
+|-fail—> Setup SoftAP (2) {InitSoftAP}
 
 |-success-->Wait for client
 
@@ -18,7 +21,7 @@
 *
 *
 *
-(2) Setup SoftAP
+(2) Setup SoftAP {InitSoftAP}
 
   |--> Connect to client via Soft AP
 
@@ -59,18 +62,23 @@ Simple Wifiserver
 
 
 AsyncWebServer server(80);
-
-// Configure SoftAP characteristics
+//  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
+char* AP_SSID  ;  // your internet wifi  SSID
+char* AP_PASS ;   // your internet wifi  password
+int MyStaticIP[4]={192, 168, 1, 51};  //The static IP address when using internet wifi router
+bool bWebSocketConnection =false;     //true when {mWIFIConnect == true}
+// Configure SoftAP (direct wifi ESP-client) characteristics
 const char* ssid_softap = "MeCFES_Config";
+//- not used delete
+//- const char* password = "12345678";
 
-const char* password = "12345678";
 int hidden=0;    //optional parameter, if set to true will hide SSID.
 int channel=1;        //optional parameter to set Wi-Fi channel, from 1 to 13. Default channel = 1.
 int max_connection=4; //optional parameter to set max simultaneous connected stations, from 0 to 8. Defaults to 4.
                       //Once the max number has been reached, any other station that wants to connect will be forced to wait until an already connected station disconnects.
 String IPvalue="12.0.0.1";
 String ssidvalue;
-String passwordvalue;
+//- obsolete:String passwordvalue;
 
 const char* PARAM_INPUT_1 = "SSID";
 const char* PARAM_INPUT_2 = "Password";
@@ -165,11 +173,11 @@ input[type=text], input[type=password] {
 // Function to replace placeholders with SSID and IP values
 String processor(const String& var){
   if(var == "SSID"){
-    return String(ssidvalue);
+    return String(AP_SSID);
   }
   else if (var == "IP")
   {
-    return String(IPvalue);
+    return String(staticIP);
   }
   return String();
 }
@@ -189,7 +197,7 @@ String readFile(fs::FS &fs, const char * path){
             return String();
   }
   Serial.println("- read from file:");
-  String fileContent;
+  String fileContent;By
   while(file.available()){
   fileContent+=String((char)file.read());
 }
@@ -217,8 +225,11 @@ Serial.println("- write failed");
 
 
 
-
-void InitSoftAP() {
+//Todo5: refactor/rename {InitSoftAP} to {mGetSetupViaSoftAP}
+bool InitSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
+  //Params are byref (will return new values)
+  //Return the parameter values
+  //return true/false when parameters are obtained
   //WiFi.softAP(ssid, password, channel, hidden, max_connection); // Remove the password parameter, if you want the AP (Access Point) to be open
   WiFi.softAP(ssid_softap);
   delay(100);
@@ -237,14 +248,20 @@ void InitSoftAP() {
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
     // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
     if (request->hasParam(PARAM_INPUT_1)) {
-      ssidvalue = request->getParam(PARAM_INPUT_1)->value();
-      passwordvalue = request->getParam(PARAM_INPUT_2)->value();
+      AP_SSID = request->getParam(PARAM_INPUT_1)->value();
+      AP_PASS = request->getParam(PARAM_INPUT_2)->value();
+
+      /*  Obsolete by mSetCredentials
       writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
       writeFile(SPIFFS, "/Password.txt", passwordvalue.c_str());
+      */
+      return true; //Signal to caller to proceed with...
+                  //                mSetCredentials(AP_SSID,AP_PASS,0);
     }
     else {
-      ssidvalue = "No message sent";
-      passwordvalue = "No message sent";
+      mDebugMsg("No message sent");
+      //???ssidvalue = "No message sent";
+      //???passwordvalue = "No message sent";
     }
     // Send web page with input fields to client
     request->send(SPIFFS, "/onConnection.html", "text/html");
@@ -252,23 +269,80 @@ void InitSoftAP() {
   });
   server.onNotFound(notFound);
   server.begin();
-
+  mDebugMsg("Waiting for user to insert credentials")
+  delay(300000);
+  mDebugHalt("Failed to get credentials, abort");
+  return false;
+}
+bool mUserFeedbackViaSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
+  //Flowchart:   * reconnect to client via Soft AP
+    //* send IP to client. Now user will know the IP, create a link to click
+    mDebugHalt("Implement mUserFeedbackViaSoftAP");
+    //TODO0
+    /*send the AP_SSID, AP_PASS,MyStaticIP to the connection from {InitSoftAP}
+      this time show the MyStaticIP, tell the user to switch NETWORK
+      ask user to:
+      1.  copy MyStaticIP
+      2.  click link to serversite
+      3.  paste the MyStaticIP for the websocket MainSetup (todo: insert this in websocket program)
+    */
 }
 
-
-
-
-void setup() {
- Serial.begin(115200);
- if(!SPIFFS.begin(true)){
-  Serial.println("An Error has occurred while mounting SPIFFS");
-  return;
+bool mGetMyStaticIP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
+  //Flowchart: connect to network and get the IP
+  //TODO0 DEBUG
+  // Set WiFi to station mode and disconnect from an AP if it was previously connected
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  WiFi.begin(AP_SSID, AP_PASS);
+  mDebugMsg("Connecting to WIFI to get IP");
+  for (int i=0;i<20;i++){ //Loop until timeout
+    delay(500);
+    Serial.print(".");
+    if (WiFi.status() == WL_CONNECTED) { //Wifi connection good
+      // get the IP
+      MyStaticIP=WiFi.localIP();
+      Serial.println("IP address obtained: ");
+      Serial.println(WiFi.localIP());
+      return true;
+    }
   }
-  //Todo1: change InitSoftAP to return credentials
- InitSoftAP(&AP_SSID, &AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
- mGetStaticIP(&AP_SSID, &AP_PASS, int &MyStaticIP[4]);// Get static IP for the network
- mStartWebSocket(staticIP); //Setup the static IP obtained
+  //We have a timeout
+    mDebugHalt("Cant get MyStaticIP in mGetMyStaticIP");
+    return false;
+  }
 }
+
+bool mWIFIConnect(){//RT210112 Refactoring code by FC
+  //Get credentials from SPIFFS (Flowchart 0)
+  bool ret=mGetCredentials(AP_SSID,AP_PASS,MyStaticIP);
+  //If  credentals  try to connect (Flowchart 1)
+  if (ret){
+    mDebugMsg("Setting up the websocket, connect to MyStaticIP");
+    bool ret=mStartWebSocket(AP_SSID, AP_PASS,MyStaticIP); //Setup the static IP obtained
+    if (ret) return true; //Tell caller to proceed
+  } else {  //Fail in websocket connection, get credentials via SoftAP
+            //(Flowchart 2)
+    bool ret=InitSoftAP(AP_SSID, AP_PASS,MyStaticIP);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
+      //The InitSoftAP will return the parameters
+      //connect to network and get the IP
+    if (ret) ret=mGetMyStaticIP(AP_SSID, AP_PASS,MyStaticIP)
+    if (ret){ //We got our credentials, save and restart
+        //Setup the SoftAP from before, refresh client with full credentials
+        mUserFeedbackViaSoftAP(AP_SSID, AP_PASS,MyStaticIP);
+        mSetCredentials(AP_SSID, AP_PASS,MyStaticIP);
+        return mWIFIConnect();
+    } else {  //Fail in getting credentials
+        mDebugMsg("Fail in getting credentials, retry")
+        return false;
+    }
+
+  }
+  return false; //Tell caller that we are waiting for a client to connect
+}
+
+
+
 
 //const int MyStaticIP[4]={192, 168, 1, 51};
 void mStartWebSocket( int MyStaticIP[4]){
@@ -304,7 +378,45 @@ void mStartWebSocket( int MyStaticIP[4]){
 
 }
 
+bool mGetCredentials(char* AP_SSID,char* AP_PASS,char*MyStaticIP ) ){   //Get credentials from spiff
+  //RT210112: Moved code into method
+  AP_SSID=readFile(SPIFFS, "/SSID.txt");
+  Serial.print("Your ssid: ");
+  Serial.println(Credential1);
+  AP_PASS=readFile(SPIFFS, "/Password.txt");
+  Serial.print("Your password: ");
+  Serial.println(AP_PASS);
+  MyStaticIP = readFile(SPIFFS, "/IP.txt");
+  Serial.print("Your IP: ");
+  Serial.println(MyStaticIP);
+  return true;
+}
+bool mSetCredentials(char* AP_SSID,char* AP_PASS,char*MyStaticIP ) ){   //Get credentials from spiff
+  //RT210112: Moved code into method
+  writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
+  writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str())
+  if (MyStaticIP!=void){
+    writeFile(SPIFFS, "/IP.txt", MyStaticIP.c_str())
+  }
+  return true;
+}
+
+void setup() {
+ Serial.begin(115200);
+ if(!SPIFFS.begin(true)){
+  Serial.println("An Error has occurred while mounting SPIFFS");
+  return;
+  }
+  bWebSocketConnection=false;
+  while (!bWebSocketConnection){
+    bWebSocketConnection=mWIFIConnect();
+
+  };      //Blocking until connection is made
+//- (moved) InitSoftAP(AP_SSID, AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
+} //Now we proceed to {loop}
 void loop() {
+  if (!bWebSocketConnection) return;  //Only loop if on internetwifi
+  /*  Obsolete by mGetCredentials
   String Credential1 = readFile(SPIFFS, "/SSID.txt");
   Serial.print("Your ssid: ");
   Serial.println(Credential1);
@@ -314,5 +426,25 @@ void loop() {
    String Credential3 = readFile(SPIFFS, "/IP.txt");
   Serial.print("Your IP: ");
   Serial.println(Credential3);
+  */
 
+}
+
+//  Debugging  message and continue
+  void mDebugMsg(char msg[]){
+      Serial.print("Debugger says: \t ");
+      Serial.printf("%s\n",msg );
+      delay(100);
+  }
+  void mDebugInt(char msg[],int data){
+    Serial.printf("%s  \t:\t %i\t %c\n",msg,data,(char)data);
+    delay(100);
+  }
+//  Stop and do endless loop
+void mDebugHalt(char msg[]){
+  while (1){
+    Serial.print("\nHALT Command (stopped with endless loop) ");
+    Serial.printf("\n%s",msg );
+    delay(300000);
+  }
 }
