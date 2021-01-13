@@ -59,12 +59,14 @@ Simple Wifiserver
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
-
+  void mDebugMsg(char msg[]);
 
 AsyncWebServer server(80);
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
-char* AP_SSID  ;  // your internet wifi  SSID
-char* AP_PASS ;   // your internet wifi  password
+//Todo: should really be a data object/structure
+String AP_SSID  ;  // your internet wifi  SSID
+bool isSet_AP_SSID=false;   //rt210113 true when AP_SSID is set a
+String AP_PASS ;   // your internet wifi  password
 int MyStaticIP[4]={192, 168, 1, 51};  //The static IP address when using internet wifi router
 bool bWebSocketConnection =false;     //true when {mWIFIConnect == true}
 // Configure SoftAP (direct wifi ESP-client) characteristics
@@ -126,7 +128,7 @@ Serial.println("- write failed");
 }
 
 //Todo5: refactor/rename {InitSoftAP} to {mGetSetupViaSoftAP}
-bool InitSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
+bool InitSoftAP() {
   //Params are byref (will return new values)
   //Return the parameter values
   //return true/false when parameters are obtained
@@ -150,7 +152,7 @@ bool InitSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
     if (request->hasParam(PARAM_INPUT_1)) {
       AP_SSID = request->getParam(PARAM_INPUT_1)->value();
       AP_PASS = request->getParam(PARAM_INPUT_2)->value();
-
+      isSet_AP_SSID=true; //Proceed in flowchart
       /*  Obsolete by mSetCredentials
       writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
       writeFile(SPIFFS, "/Password.txt", passwordvalue.c_str());
@@ -175,13 +177,18 @@ bool InitSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
   server.onNotFound(notFound);
   server.begin();
   mDebugMsg("Waiting for user to insert credentials")
+  for (i=0;i<100;i++){  //Wait for async call to complete
+    delay(1000):
+    if (isSet_AP_SSID) return;
+
+  }
   delay(300000);
   mDebugHalt("Failed to get credentials, abort");
   return false;
 }
 
 
-bool mUserFeedbackViaSoftAP(char* AP_SSID,char* AP_PASS,int MyStaticIP[4]) {
+bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,int MyStaticIP[4]) {
   //Flowchart:   * reconnect to client via Soft AP
     //* send IP to client. Now user will know the IP, create a link to click
     mDebugHalt("Implement mUserFeedbackViaSoftAP");
@@ -230,7 +237,7 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
     if (ret) return true; //Tell caller to proceed
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
-    bool ret=InitSoftAP(AP_SSID, AP_PASS,MyStaticIP);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
+    bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
     if (ret) ret=mGetMyStaticIP(AP_SSID, AP_PASS,MyStaticIP)
