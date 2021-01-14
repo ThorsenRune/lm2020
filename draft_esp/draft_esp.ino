@@ -262,21 +262,7 @@ bool mGetMyStaticIP(){//Global params:{
   WiFi.disconnect();
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   mDebugMsg("Connecting to WIFI to get IP");
-  for (int i=0;i<20;i++){ //Loop until timeout
-    delay(500);
-    Serial.print(".");
-    if (WiFi.status() == WL_CONNECTED) { //Wifi connection good
-      // get the IP
-      MyStaticIP=WiFi.localIP();
-      sMyStaticIP=WiFi.localIP().toString();
-      Serial.println("IP address obtained: ");
-      Serial.println(WiFi.localIP());
-      return true;
-    }
-  }
-  //We have a timeout
-    mDebugHalt("Cant get MyStaticIP in mGetMyStaticIP");
-    return false;
+  return mWaitUntilTrueOrTimeout(startAPP);
   }
 
 
@@ -349,7 +335,8 @@ bool mGetCredentials(){//Global params:   //Get credentials from spiff
   AP_PASS=readFile(SPIFFS, "/Password.txt");
   Serial.print("Your password: ");
   Serial.println(AP_PASS);
-  MyStaticIP = readFile(SPIFFS, "/IP.txt");
+  sMyStaticIP = readFile(SPIFFS, "/IP.txt");
+  MyStaticIP=Str2IPAddress(sMyStaticIP);
   Serial.print("Your IP: ");
   Serial.println(MyStaticIP);
   return true;
