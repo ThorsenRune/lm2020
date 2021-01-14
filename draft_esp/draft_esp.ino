@@ -246,13 +246,13 @@ bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) 
    */
 }
 
-bool mGetMyStaticIP(char* AP_SSID,char* AP_PASS,IPAddress MyStaticIP) {
+bool mGetMyStaticIP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
   //Flowchart: connect to network and get the IP
   //TODO0 DEBUG
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
-  WiFi.begin(AP_SSID, AP_PASS);
+  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   mDebugMsg("Connecting to WIFI to get IP");
   for (int i=0;i<20;i++){ //Loop until timeout
     delay(500);
@@ -301,9 +301,9 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
 }
 
 //const int MyStaticIP[4]={192, 168, 1, 51};
-void mStartWebSocket( char* AP_SSID, char* AP_PASS, IPAddress MyStaticIP){
+void mStartWebSocket( String AP_SSID, String AP_PASS, IPAddress MyStaticIP){
   WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
-  WiFi.begin(AP_SSID, AP_PASS);
+  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi..");
@@ -348,7 +348,7 @@ bool mGetCredentials(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   /
 }
 
 
-bool mSetCredentials(char* AP_SSID,char* AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
+bool mSetCredentials(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
   //RT210112: Moved code into method
   writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
   writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str())
