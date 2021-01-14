@@ -279,14 +279,14 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
     bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
-    if (ret) ret=mGetMyStaticIP(AP_SSID, AP_PASS,MyStaticIP)
+    if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
     if (ret){ //We got our credentials, save and restart
         //Setup the SoftAP from before, refresh client with full credentials
-        mUserFeedbackViaSoftAP(AP_SSID, AP_PASS,MyStaticIP);
-        mSetCredentials(AP_SSID, AP_PASS,MyStaticIP);
+        mUserFeedbackViaSoftAP(); //Arguments AP_SSID, AP_PASS,MyStaticIP as globals
+        mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
         return mWIFIConnect();
     } else {  //Fail in getting credentials
-        mDebugMsg("Fail in getting credentials, retry")
+        mDebugMsg("Fail in getting credentials, retry");
         return false;
     }
 
@@ -298,7 +298,7 @@ bool isWSConnected(){   //Wrapper to return the connection state
   }
 //const int MyStaticIP[4]={192, 168, 1, 51};
 bool mStartWebSocket(){//Global params:
-  WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
+  WiFi.config(MyStaticIP, gateway, subnet);  // if using static IP, enter parameters at the top
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
