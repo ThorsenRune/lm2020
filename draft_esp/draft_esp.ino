@@ -4,54 +4,27 @@ mWIFIConnect will return true if connection is established and the program can
 proceed to main
 
 (0) credentials&IP=Read flash (SPIFF)
-*
-*
+      |
+      v
 (1) Connect to network
-
-|-fail—> Setup SoftAP (2) {InitSoftAP}
-
-|-success-->Wait for client
-
+        |-fail—> Setup SoftAP (2) {InitSoftAP}
+        |-success-->Wait for client
+        V
     on connect
+        |--> LM Program
+        |--(timeout) —> Jump to (2)
+        =
 
-    |--> LM Program
-
-    |--(timeout) —> Jump to (2)
-*
-*
-*
-*
 (2) Setup SoftAP {InitSoftAP}
-
-  |--> Connect to client via Soft AP
-
-    * Get credentials from client. User writes SSID & Password
-
-    * connect to network and get the IP
-
-    * reconnect to client via Soft AP
-
-    * send IP to client. Now user will know the IP, create a link to click
-
-    * save credentials&IP to FLASH (SPIFF)
-
-  |<------
-
+      |--> Connect to client via Soft AP
+              | Get credentials from client. User writes SSID & Password
+              | connect to network and get the IP
+              | reconnect to client via Soft AP
+              | send IP to client. Now user will know the IP, create a link to click
+              | save credentials&IP to FLASH (SPIFF)
+      *------*
+      |
   Jump to (1)
-
-
-
-To do so use fragments from the ARDUINO - FILE- Examples - Wifi & Spiffs
-
-Spiffs_test - read/write from flash
-
-WiFiAccessPoint - SoftAP part (gia sperimentato)
-
-Simple Wifiserver
- *
- *
- *
- *
  */
 
 #include <Arduino.h>
