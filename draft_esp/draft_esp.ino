@@ -45,11 +45,10 @@ proceed to main
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
-//Forward declarations,,,, sigh
+
 void mDebugMsg(char msg[]);
 void mDebugHalt(char msg[]);
 void mDebugInt(char msg[],int data);
-bool mStartWebSocket();
 
 AsyncWebServer server(80);
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
@@ -78,9 +77,6 @@ IPAddress local_IP(192,168,4,1);
 IPAddress gateway(192,168,4,9);
 IPAddress subnet(255,255,255,0);
 
-//SoftAP variables
-AsyncWebSocket ws("/ws");
-AsyncWebSocketClient * globalClient = NULL;
 
 //Page not found
 void notFound(AsyncWebServerRequest *request) {
@@ -130,10 +126,24 @@ String IpAddress2String(const IPAddress& MyStaticIP)
   String(MyStaticIP[2]) + String(".") +\
   String(MyStaticIP[3])  ;
 }
-IPAddress Str2IPAddress(String IPAddrAsString){
-  IPAddress ipAddr;
-  mDebugMsg("Todo1:  implement conversion from string to IPAddress for MyStaticIP");
-  return ipAddr;
+
+IPAddress String2IpAddress(String sMyStaticIP)
+{
+  int Parts[4] = {0,0,0,0};
+  int Part = 0;
+  for ( int j=0; i=j<sMyStaticIP.length(); j++ )
+  {
+  	char c = sMyStaticIP[i];
+  	if ( c == '.' )
+  	{
+  		Part++;
+  		continue;
+  	}
+  	Parts[Part] *= 10;
+  	Parts[Part] += c - '0';
+  }
+  IPAddress ip ( Parts[0], Parts[1], Parts[2], Parts[3] );
+  return ip;
 }
 
 //Todo5: refactor/rename {InitSoftAP} to {mGetSetupViaSoftAP}
@@ -190,6 +200,7 @@ bool InitSoftAP() {
     {
       return true;
     }
+
   }
   delay(300000);
   mDebugHalt("Failed to get credentials, abort");
@@ -197,7 +208,7 @@ bool InitSoftAP() {
 }
 
 
-bool mUserFeedbackViaSoftAP(){ //Using global variables String AP_SSID,String AP_PASS,IPAddress MyStaticIP
+bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
 //Flowchart:   * reconnect to client via Soft AP
   //* send IP to client. Now user will know the IP, create a link to click
   mDebugHalt("Implement mUserFeedbackViaSoftAP");
@@ -228,24 +239,18 @@ bool mUserFeedbackViaSoftAP(){ //Using global variables String AP_SSID,String AP
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
           });
-        });
-    //Wait here until user has submitted the response in startapp (startAPP==true)
-    mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
-    for (int i=0;i<100;i++){
-      if (startAPP) return true;
-      delay(1000);
-    }
-    mDebugMsg("Timeout mUserFeedbackViaSoftAP did not get the credentials");
-    return false;
+});
+
+
 }
 
-bool mGetMyStaticIP(){;//(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
+bool mGetMyStaticIP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
   //Flowchart: connect to network and get the IP
   //TODO0 DEBUG
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
-   WiFi.mode(WIFI_STA);  //Todo: non capisco perche da errore qui
-   WiFi.disconnect();
-   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   mDebugMsg("Connecting to WIFI to get IP");
   for (int i=0;i<20;i++){ //Loop until timeout
     delay(500);
@@ -267,39 +272,36 @@ bool mGetMyStaticIP(){;//(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
 
 bool mWIFIConnect(){//RT210112 Refactoring code by FC
   //Get credentials from SPIFFS (Flowchart 0)
-  bool ret=mGetCredentials();//Global params: (AP_SSID,AP_PASS,MyStaticIP);
+  bool ret=mGetCredentials(AP_SSID,AP_PASS,MyStaticIP);
   //If  credentals  try to connect (Flowchart 1)
   if (ret){
     mDebugMsg("Setting up the websocket, connect to MyStaticIP");
-    bool ret=mStartWebSocket(); //passing globals char*(AP_SSID), char*(AP_PASS),MyStaticIP); //Setup the static IP obtained
+    bool ret=mStartWebSocket(char*(AP_SSID), char*(AP_PASS),MyStaticIP); //Setup the static IP obtained
     if (ret) return true; //Tell caller to proceed
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
     bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
-    if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
+    if (ret) ret=mGetMyStaticIP(AP_SSID, AP_PASS,MyStaticIP)
     if (ret){ //We got our credentials, save and restart
         //Setup the SoftAP from before, refresh client with full credentials
-        mUserFeedbackViaSoftAP(); //Arguments AP_SSID, AP_PASS,MyStaticIP as globals
-        mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
+        mUserFeedbackViaSoftAP(AP_SSID, AP_PASS,MyStaticIP);
+        mSetCredentials(AP_SSID, AP_PASS,MyStaticIP);
         return mWIFIConnect();
     } else {  //Fail in getting credentials
-        mDebugMsg("Fail in getting credentials, retry");
+        mDebugMsg("Fail in getting credentials, retry")
         return false;
     }
 
   }
   return false; //Tell caller that we are waiting for a client to connect
 }
-bool isWSConnected(){   //Wrapper to return the connection state
-    return (globalClient!=NULL);
-  }
-//const int MyStaticIP[4]={192, 168, 1, 51};
-bool mStartWebSocket(){//Use globals String AP_SSID, String AP_PASS, IPAddress MyStaticIP){
-  WiFi.config(MyStaticIP, gateway, subnet);  // if using static IP, enter parameters at the top
-  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
 
+//const int MyStaticIP[4]={192, 168, 1, 51};
+void mStartWebSocket( String AP_SSID, String AP_PASS, IPAddress MyStaticIP){
+  WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
+  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi..");
@@ -311,34 +313,25 @@ bool mStartWebSocket(){//Use globals String AP_SSID, String AP_PASS, IPAddress M
   IPAddress gateway(192, 168, 1, 1);
   IPAddress subnet(255, 255, 0, 0);
 
-
-  ws.onEvent(onWsEvent);
-  mDebugMsg("Waiting for isWSConnected  in mStartWebSocket");
-  for (int i=0;i<100;i++){  //Wait for async call to complete
-    if (isWSConnected()) return true;
-    delay(1000);
-  }
-  delay(300000);
-  mDebugHalt("Failed to isWSConnected, abort");
-  return isWSConnected();
-}
-
-void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
-    //AwsEventType describes what event has happened, like receive data or disconnetc
-  // data is the payload
-  if(type == WS_EVT_CONNECT){
-    Serial.println("Websocket client connection received");
-    globalClient = client; //Connection has happened
-  } else if(type == WS_EVT_DISCONNECT){
-    Serial.println("Websocket client connection finished");
-    globalClient = NULL;
-  } else if(type == WS_EVT_DATA){  //Data was received from client
-      mDebugHalt("mReceive is defined in lm_esp program");
-//     mReceive(data,len);
+  AsyncWebSocket ws("/ws");
+  AsyncWebSocketClient * globalClient = NULL;
+  void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+  		//AwsEventType describes what event has happened, like receive data or disconnetc
+  	// data is the payload
+    if(type == WS_EVT_CONNECT){
+      Serial.println("Websocket client connection received");
+      globalClient = client;
+    } else if(type == WS_EVT_DISCONNECT){
+      Serial.println("Websocket client connection finished");
+      globalClient = NULL;
+    } else if(type == WS_EVT_DATA){  //Data was received from client
+  	   mReceive(data,len);
+    }
   }
 }
 
-bool mGetCredentials(){// global parameters  AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
+
+bool mGetCredentials(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
   //RT210112: Moved code into method
   AP_SSID=readFile(SPIFFS, "/SSID.txt");
   Serial.print("Your ssid: ");
@@ -346,15 +339,14 @@ bool mGetCredentials(){// global parameters  AP_SSID,String AP_PASS,IPAddress My
   AP_PASS=readFile(SPIFFS, "/Password.txt");
   Serial.print("Your password: ");
   Serial.println(AP_PASS);
-  sMyStaticIP = readFile(SPIFFS, "/IP.txt");
-  MyStaticIP=Str2IPAddress(sMyStaticIP);
+  MyStaticIP = readFile(SPIFFS, "/IP.txt");
   Serial.print("Your IP: ");
   Serial.println(MyStaticIP);
   return true;
 }
 
 
-bool mSetCredentials();//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
+bool mSetCredentials(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
   //RT210112: Moved code into method
   writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
   writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str())
@@ -364,7 +356,6 @@ bool mSetCredentials();//Global params:(String AP_SSID,String AP_PASS,IPAddress 
   return true;
 }
 
-/*******   The two   STANDARD ARDUINO functions**********/
 void setup() {
  Serial.begin(115200);
  if(!SPIFFS.begin(true)){
@@ -377,14 +368,11 @@ void setup() {
   };      //Blocking until connection is made
 //- (moved) InitSoftAP(AP_SSID, AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
 } //Now we proceed to {loop}
-
-
 void loop() {
   if (!bWebSocketConnection) return;  //Only loop if on internetwifi
+
+
 }
-/* ENDOF ******   The two   STANDARD ARDUINO functions**********/
-
-
 
 //  Debugging  message and continue
   void mDebugMsg(char msg[]){
