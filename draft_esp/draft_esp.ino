@@ -131,7 +131,7 @@ IPAddress String2IpAddress(String sMyStaticIP)
 {
   int Parts[4] = {0,0,0,0};
   int Part = 0;
-  for ( int j=0; i=j<sMyStaticIP.length(); j++ )
+  for ( int i=0; i<sMyStaticIP.length(); i++ )
   {
   	char c = sMyStaticIP[i];
   	if ( c == '.' )
