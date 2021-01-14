@@ -278,7 +278,7 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
   //If  credentals  try to connect (Flowchart 1)
   if (ret){
     mDebugMsg("Setting up the websocket, connect to MyStaticIP");
-    bool ret=mStartWebSocket(char*(AP_SSID), char*(AP_PASS),MyStaticIP); //Setup the static IP obtained
+    bool ret=mStartWebSocket(AP_SSID, AP_PASS,MyStaticIP); //Setup the static IP obtained
     if (ret) return true; //Tell caller to proceed
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
