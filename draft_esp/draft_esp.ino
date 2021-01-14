@@ -45,11 +45,11 @@ proceed to main
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
-
+//Forward declarations,,,, sigh
 void mDebugMsg(char msg[]);
 void mDebugHalt(char msg[]);
 void mDebugInt(char msg[],int data);
-
+bool mStartWebSocket();
 AsyncWebServer server(80);
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
 //Todo: should really be a data object/structure
@@ -76,7 +76,9 @@ const char* PARAM_INPUT_2 = "Password";
 IPAddress local_IP(192,168,4,1);
 IPAddress gateway(192,168,4,9);
 IPAddress subnet(255,255,255,0);
-
+//SoftAP variables
+AsyncWebSocket ws("/ws");
+AsyncWebSocketClient * globalClient = NULL;
 
 //Page not found
 void notFound(AsyncWebServerRequest *request) {
@@ -239,12 +241,20 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
           });
-});
-
-
+        });
+    //Wait here until user has submitted the response in startapp (startAPP==true)
+    mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
+    return mWaitUntilTrueOrTimeout(startAPP);
 }
-
-bool mGetMyStaticIP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
+bool mWaitUntilTrueOrTimeout(bool &bFlag){
+  for (int i=0;i<100;i++){    //try until timeout
+    if (bFlag) return true;
+    delay(1000);
+  }
+  mDebugMsg("Timeout mWaitUntilTrueOrTimeout");
+  return false;
+}
+bool mGetMyStaticIP(){//Global params:{
   //Flowchart: connect to network and get the IP
   //TODO0 DEBUG
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
@@ -272,11 +282,11 @@ bool mGetMyStaticIP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
 
 bool mWIFIConnect(){//RT210112 Refactoring code by FC
   //Get credentials from SPIFFS (Flowchart 0)
-  bool ret=mGetCredentials(AP_SSID,AP_PASS,MyStaticIP);
+  bool ret=mGetCredentials();
   //If  credentals  try to connect (Flowchart 1)
   if (ret){
     mDebugMsg("Setting up the websocket, connect to MyStaticIP");
-    bool ret=mStartWebSocket(char*(AP_SSID), char*(AP_PASS),MyStaticIP); //Setup the static IP obtained
+    bool ret=mStartWebSocket();//(char*(AP_SSID), char*(AP_PASS),MyStaticIP); //Setup the static IP obtained
     if (ret) return true; //Tell caller to proceed
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
@@ -299,7 +309,7 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
 }
 
 //const int MyStaticIP[4]={192, 168, 1, 51};
-void mStartWebSocket( String AP_SSID, String AP_PASS, IPAddress MyStaticIP){
+void mStartWebSocket(){//Global params:
   WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   while (WiFi.status() != WL_CONNECTED) {
@@ -331,7 +341,7 @@ void mStartWebSocket( String AP_SSID, String AP_PASS, IPAddress MyStaticIP){
 }
 
 
-bool mGetCredentials(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
+bool mGetCredentials(){//Global params:   //Get credentials from spiff
   //RT210112: Moved code into method
   AP_SSID=readFile(SPIFFS, "/SSID.txt");
   Serial.print("Your ssid: ");
