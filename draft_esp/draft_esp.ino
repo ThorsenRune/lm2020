@@ -239,13 +239,13 @@ bool mUserFeedbackViaSoftAP(){ //Using global variables String AP_SSID,String AP
     return false;
 }
 
-bool mGetMyStaticIP();//(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
+bool mGetMyStaticIP(){;//(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
   //Flowchart: connect to network and get the IP
   //TODO0 DEBUG
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
-  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
+   WiFi.mode(WIFI_STA);  //Todo: non capisco perche da errore qui
+   WiFi.disconnect();
+   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   mDebugMsg("Connecting to WIFI to get IP");
   for (int i=0;i<20;i++){ //Loop until timeout
     delay(500);
@@ -364,6 +364,7 @@ bool mSetCredentials();//Global params:(String AP_SSID,String AP_PASS,IPAddress 
   return true;
 }
 
+/*******   The two   STANDARD ARDUINO functions**********/
 void setup() {
  Serial.begin(115200);
  if(!SPIFFS.begin(true)){
@@ -376,11 +377,14 @@ void setup() {
   };      //Blocking until connection is made
 //- (moved) InitSoftAP(AP_SSID, AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
 } //Now we proceed to {loop}
+
+
 void loop() {
   if (!bWebSocketConnection) return;  //Only loop if on internetwifi
-
-
 }
+/* ENDOF ******   The two   STANDARD ARDUINO functions**********/
+
+
 
 //  Debugging  message and continue
   void mDebugMsg(char msg[]){
