@@ -59,9 +59,10 @@ Simple Wifiserver
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
-  void mDebugMsg(char msg[]);
-  void mDebugHalt(char msg[]);
-  void mDebugInt(char msg[],int data);
+
+void mDebugMsg(char msg[]);
+void mDebugHalt(char msg[]);
+void mDebugInt(char msg[],int data);
 
 AsyncWebServer server(80);
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
@@ -69,6 +70,7 @@ AsyncWebServer server(80);
 String AP_SSID  ;  // your internet wifi  SSID
 bool isSet_AP_SSID=false;   //rt210113 true when AP_SSID is set a
 String AP_PASS ;   // your internet wifi  password
+String sMyStaticIP; //String version of MyStaticIP
 IPAddress MyStaticIP;  //The static IP address when using internet wifi router
 bool bWebSocketConnection =false;     //true when {mWIFIConnect == true}
 // Configure SoftAP (direct wifi ESP-client) characteristics
@@ -130,6 +132,15 @@ Serial.println("- write failed");
 }
 }
 
+//Convert IP address to String
+String IpAddress2String(const IPAddress& MyStaticIP)
+{
+  return String(MyStaticIP[0]) + String(".") +\
+  String(MyStaticIP[1]) + String(".") +\
+  String(MyStaticIP[2]) + String(".") +\
+  String(MyStaticIP[3])  ;
+}
+
 //Todo5: refactor/rename {InitSoftAP} to {mGetSetupViaSoftAP}
 bool InitSoftAP() {
   //Params are byref (will return new values)
@@ -172,7 +183,7 @@ bool InitSoftAP() {
     request->send(200, "text/plain", AP_SSID.c_str());
     });
    server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(200, "text/plain", IPvalue.c_str());
+    request->send(200, "text/plain", sMyStaticIP.c_str());
     });
   });
   server.onNotFound(notFound);
@@ -192,46 +203,47 @@ bool InitSoftAP() {
 }
 
 
-bool mUserFeedbackViaSoftAP(char* AP_SSID,char* AP_PASS,IPAddress MyStaticIP) {
- //Flowchart:   * reconnect to client via Soft AP
-   //* send IP to client. Now user will know the IP, create a link to click
-   mDebugHalt("Implement mUserFeedbackViaSoftAP");
-   //Start SoftAP mode again
-    WiFi.softAP(ssid_softap);
-    delay(100);
-   //Setting Wifi specifications
-   Serial.print("Setting soft-AP configuration ... ");
-   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
-   //Verify MeCFES IP Address (only for debuggin purposes for the moment)
-   Serial.print("Soft-AP available on IP address = ");
-   Serial.println(WiFi.softAPIP());
-    //Page dedicated to data shown for user
-    server.on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
-   // Send web page with SSID and IP fields to client
-   request->send(SPIFFS, "/onConnection.html", "text/html");
-   server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
-   request->send(200, "text/plain", AP_SSID.c_str());
-   });
-   server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
-   request->send(200, "text/plain", MyStaticIP.c_str());
-   });
-   server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
-  //Connect to AP mode
-  //Launch AP mode
-  //Send MeCFES bridgeapp
-  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
-  startAPP=true;
+bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
+//Flowchart:   * reconnect to client via Soft AP
+  //* send IP to client. Now user will know the IP, create a link to click
+  mDebugHalt("Implement mUserFeedbackViaSoftAP");
+  //Start SoftAP mode again
+   WiFi.softAP(ssid_softap);
+   delay(100);
+  //Setting Wifi specifications
+  Serial.print("Setting soft-AP configuration ... ");
+  Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
+  //Verify MeCFES IP Address (only for debuggin purposes for the moment)
+  Serial.print("Soft-AP available on IP address = ");
+  Serial.println(WiFi.softAPIP());
+   //Page dedicated to data shown for user
+   server.on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
+  // Send web page with SSID and IP fields to client
+  request->send(SPIFFS, "/onConnection.html", "text/html");
+  server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+  request->send(200, "text/plain", AP_SSID.c_str());
+  });
+  sMyStaticIP=IpAddress2String(MyStaticIP);
+  server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
+  request->send(200, "text/plain", sMyStaticIP.c_str());
+  });
+  server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+ //Connect to AP mode
+ //Launch AP mode
+ //Send MeCFES bridgeapp
+ request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+ startAPP=true;
 });
- });
+});
 
-    //TODO0
-    /*send the AP_SSID, AP_PASS,MyStaticIP to the connection from {InitSoftAP}
-      this time show the MyStaticIP, tell the user to switch NETWORK            ----> Data correctly shown!!, it misses a link to start the Server in AP Mode (server.on("/startap", HTTP_GET, [](AsyncWebServerRequest *request) ---> launch AP mode setup and ws)
-      ask user to:
-      1.  copy MyStaticIP -----> DONE!
-      2.  click link to serversite -----> DONE!
-      3.  paste the MyStaticIP for the websocket MainSetup (todo: insert this in websocket program) -----> DONE!
-    */
+   //TODO0
+   /*send the AP_SSID, AP_PASS,MyStaticIP to the connection from {InitSoftAP}
+     this time show the MyStaticIP, tell the user to switch NETWORK            ----> Data correctly shown!!, it misses a link to start the Server in AP Mode (server.on("/startap", HTTP_GET, [](AsyncWebServerRequest *request) ---> launch AP mode setup and ws)
+     ask user to:
+     1.  copy MyStaticIP -----> DONE!
+     2.  click link to serversite -----> DONE!
+     3.  paste the MyStaticIP for the websocket MainSetup (todo: insert this in websocket program) -----> DONE!
+   */
 }
 
 bool mGetMyStaticIP(char* AP_SSID,char* AP_PASS,IPAddress MyStaticIP) {
@@ -248,6 +260,7 @@ bool mGetMyStaticIP(char* AP_SSID,char* AP_PASS,IPAddress MyStaticIP) {
     if (WiFi.status() == WL_CONNECTED) { //Wifi connection good
       // get the IP
       MyStaticIP=WiFi.localIP();
+      sMyStaticIP=WiFi.localIP().toString();
       Serial.println("IP address obtained: ");
       Serial.println(WiFi.localIP());
       return true;
@@ -265,7 +278,7 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
   //If  credentals  try to connect (Flowchart 1)
   if (ret){
     mDebugMsg("Setting up the websocket, connect to MyStaticIP");
-    bool ret=mStartWebSocket(AP_SSID, AP_PASS,MyStaticIP); //Setup the static IP obtained
+    bool ret=mStartWebSocket(char*(AP_SSID), char*(AP_PASS),MyStaticIP); //Setup the static IP obtained
     if (ret) return true; //Tell caller to proceed
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
@@ -288,7 +301,7 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
 }
 
 //const int MyStaticIP[4]={192, 168, 1, 51};
-void mStartWebSocket( IPAddress MyStaticIP[4]){
+void mStartWebSocket( char* AP_SSID, char* AP_PASS, IPAddress MyStaticIP){
   WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
   WiFi.begin(AP_SSID, AP_PASS);
   while (WiFi.status() != WL_CONNECTED) {
@@ -320,7 +333,7 @@ void mStartWebSocket( IPAddress MyStaticIP[4]){
 }
 
 
-bool mGetCredentials(char* AP_SSID,char* AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
+bool mGetCredentials(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
   //RT210112: Moved code into method
   AP_SSID=readFile(SPIFFS, "/SSID.txt");
   Serial.print("Your ssid: ");
