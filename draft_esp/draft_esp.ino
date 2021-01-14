@@ -217,24 +217,24 @@ bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) 
   Serial.print("Soft-AP available on IP address = ");
   Serial.println(WiFi.softAPIP());
    //Page dedicated to data shown for user
-   server.on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
-  // Send web page with SSID and IP fields to client
-  request->send(SPIFFS, "/onConnection.html", "text/html");
-  server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
-  request->send(200, "text/plain", AP_SSID.c_str());
-  });
-  sMyStaticIP=IpAddress2String(MyStaticIP);
-  server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
-  request->send(200, "text/plain", sMyStaticIP.c_str());
-  });
-  server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
- //Connect to AP mode
- //Launch AP mode
- //Send MeCFES bridgeapp
- request->send(SPIFFS, "/bridgeAPP.html", "text/html");
- startAPP=true;
-});
-});
+  server.on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
+      // Send web page with SSID and IP fields to client
+      request->send(SPIFFS, "/onConnection.html", "text/html");
+      server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+          request->send(200, "text/plain", AP_SSID.c_str());
+      });
+      sMyStaticIP=IpAddress2String(MyStaticIP);
+      server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
+          request->send(200, "text/plain", sMyStaticIP.c_str());
+      });
+      server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+          //Connect to AP mode
+          //Launch AP mode
+          //Send MeCFES bridgeapp
+          request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+          startAPP=true;
+      });
+    });
 
    //TODO0
    /*send the AP_SSID, AP_PASS,MyStaticIP to the connection from {InitSoftAP}
