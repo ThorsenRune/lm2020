@@ -354,14 +354,13 @@ bool mGetCredentials(){// global parameters  AP_SSID,String AP_PASS,IPAddress My
 }
 
 
-bool mSetCredentials();//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
+void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
   //RT210112: Moved code into method
   writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
   writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str())
   if (MyStaticIP!=void){
     writeFile(SPIFFS, "/IP.txt", MyStaticIP.c_str())
   }
-  return true;
 }
 
 /*******   The two   STANDARD ARDUINO functions**********/
