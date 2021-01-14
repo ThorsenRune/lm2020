@@ -352,6 +352,7 @@ void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress 
   }
 }
 
+/*******   The two   STANDARD ARDUINO functions**********/
 void setup() {
  Serial.begin(115200);
  if(!SPIFFS.begin(true)){
@@ -369,7 +370,7 @@ void loop() {
 
 
 }
-
+/* ENDOF ******   The two   STANDARD ARDUINO functions**********/
 //  Debugging  message and continue
   void mDebugMsg(char msg[]){
       Serial.print("Debugger says: \t ");
