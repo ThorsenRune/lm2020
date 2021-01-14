@@ -45,10 +45,11 @@ proceed to main
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
-
+//Forward declarations,,,, sigh
 void mDebugMsg(char msg[]);
 void mDebugHalt(char msg[]);
 void mDebugInt(char msg[],int data);
+bool mStartWebSocket();
 
 AsyncWebServer server(80);
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
@@ -181,7 +182,6 @@ bool InitSoftAP() {
     {
       return true;
     }
-
   }
   delay(300000);
   mDebugHalt("Failed to get credentials, abort");
@@ -189,7 +189,7 @@ bool InitSoftAP() {
 }
 
 
-bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
+bool mUserFeedbackViaSoftAP(){ //Using global variables String AP_SSID,String AP_PASS,IPAddress MyStaticIP
 //Flowchart:   * reconnect to client via Soft AP
   //* send IP to client. Now user will know the IP, create a link to click
   mDebugHalt("Implement mUserFeedbackViaSoftAP");
@@ -225,6 +225,7 @@ bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) 
     mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
     for (int i=0;i<100;i++){
       if (startAPP) return true;
+      delay(1000);
     }
     mDebugMsg("Timeout mUserFeedbackViaSoftAP did not get the credentials");
     return false;
@@ -262,21 +263,21 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
   //If  credentals  try to connect (Flowchart 1)
   if (ret){
     mDebugMsg("Setting up the websocket, connect to MyStaticIP");
-    bool ret=mStartWebSocket(char*(AP_SSID), char*(AP_PASS),MyStaticIP); //Setup the static IP obtained
+    bool ret=mStartWebSocket(); //passing globals char*(AP_SSID), char*(AP_PASS),MyStaticIP); //Setup the static IP obtained
     if (ret) return true; //Tell caller to proceed
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
     bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
-    if (ret) ret=mGetMyStaticIP(AP_SSID, AP_PASS,MyStaticIP)
+    if (ret) ret=mGetMyStaticIP(AP_SSID, AP_PASS,MyStaticIP);
     if (ret){ //We got our credentials, save and restart
         //Setup the SoftAP from before, refresh client with full credentials
-        mUserFeedbackViaSoftAP(AP_SSID, AP_PASS,MyStaticIP);
+        mUserFeedbackViaSoftAP(); //Arguments AP_SSID, AP_PASS,MyStaticIP as globals
         mSetCredentials(AP_SSID, AP_PASS,MyStaticIP);
         return mWIFIConnect();
     } else {  //Fail in getting credentials
-        mDebugMsg("Fail in getting credentials, retry")
+        mDebugMsg("Fail in getting credentials, retry");
         return false;
     }
 
@@ -285,9 +286,10 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
 }
 
 //const int MyStaticIP[4]={192, 168, 1, 51};
-void mStartWebSocket( String AP_SSID, String AP_PASS, IPAddress MyStaticIP){
-  WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
+bool mStartWebSocket(){//Use globals String AP_SSID, String AP_PASS, IPAddress MyStaticIP){
+  WiFi.config(MyStaticIP, gateway, subnet);  // if using static IP, enter parameters at the top
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
+  bool isWSConnected=false;
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi..");
@@ -307,6 +309,7 @@ void mStartWebSocket( String AP_SSID, String AP_PASS, IPAddress MyStaticIP){
     if(type == WS_EVT_CONNECT){
       Serial.println("Websocket client connection received");
       globalClient = client;
+      isWSConnected=true;     //Connection has happened
     } else if(type == WS_EVT_DISCONNECT){
       Serial.println("Websocket client connection finished");
       globalClient = NULL;
@@ -314,6 +317,14 @@ void mStartWebSocket( String AP_SSID, String AP_PASS, IPAddress MyStaticIP){
   	   mReceive(data,len);
     }
   }
+  mDebugMsg("Waiting for isWSConnected  in mStartWebSocket");
+  for (int i=0;i<100;i++){  //Wait for async call to complete
+    if (isWSConnected) return true;
+    delay(1000);
+  }
+  delay(300000);
+  mDebugHalt("Failed to isWSConnected, abort");
+  return isWSConnected;
 }
 
 
