@@ -58,6 +58,7 @@ bool isSet_AP_SSID=false;   //rt210113 true when AP_SSID is set a
 String AP_PASS ;   // your internet wifi  password
 String sMyStaticIP; //String version of MyStaticIP
 IPAddress MyStaticIP;  //The static IP address when using internet wifi router
+bool  isMyStaticIPSet=false;
 bool bWebSocketConnection =false;     //true when {mWIFIConnect == true}
 // Configure SoftAP (direct wifi ESP-client) characteristics
 const char* ssid_softap = "MeCFES_Config";
@@ -231,6 +232,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                   request->send(200, "text/plain", AP_SSID.c_str());
           });
           sMyStaticIP=IpAddress2String(MyStaticIP);
+          isMyStaticIPSet=true;
           server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
                   request->send(200, "text/plain", sMyStaticIP.c_str());
           });
@@ -313,20 +315,27 @@ bool mStartWebSocket(){//Global params:
 
   AsyncWebSocket ws("/ws");
   AsyncWebSocketClient * globalClient = NULL;
-  void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
-  		//AwsEventType describes what event has happened, like receive data or disconnetc
-  	// data is the payload
-    if(type == WS_EVT_CONNECT){
-      Serial.println("Websocket client connection received");
-      globalClient = client;
-    } else if(type == WS_EVT_DISCONNECT){
-      Serial.println("Websocket client connection finished");
-      globalClient = NULL;
-    } else if(type == WS_EVT_DATA){  //Data was received from client
-  	   mReceive(data,len);
-    }
+  for (int i=0;i<100;i++){    //try until timeout
+    if (isWSConnected()) return true;
+    delay(1000);
   }
-  return mWaitUntilTrueOrTimeout(isWSConnected());
+  mDebugMsg("Timeout mWaitUntilTrueOrTimeout");
+  return false;
+}
+void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+  //rt210114 Moved out of function.
+    //AwsEventType describes what event has happened, like receive data or disconnetc
+  // data is the payload
+  if(type == WS_EVT_CONNECT){
+    Serial.println("Websocket client connection received");
+    globalClient = client;
+  } else if(type == WS_EVT_DISCONNECT){
+    Serial.println("Websocket client connection finished");
+    globalClient = NULL;
+  } else if(type == WS_EVT_DATA){  //Data was received from client
+      mDebugHalt("mReceive is defined in lm_esp program");
+    // mReceive(data,len);
+  }
 }
 
 
@@ -339,7 +348,8 @@ bool mGetCredentials(){//Global params:   //Get credentials from spiff
   Serial.print("Your password: ");
   Serial.println(AP_PASS);
   sMyStaticIP = readFile(SPIFFS, "/IP.txt");
-  MyStaticIP=Str2IPAddress(sMyStaticIP);
+  MyStaticIP=String2IpAddress(sMyStaticIP);
+  isMyStaticIPSet=true;
   Serial.print("Your IP: ");
   Serial.println(MyStaticIP);
   return true;
@@ -349,9 +359,10 @@ bool mGetCredentials(){//Global params:   //Get credentials from spiff
 void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
   //RT210112: Moved code into method
   writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
-  writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str())
-  if (MyStaticIP!=void){
-    writeFile(SPIFFS, "/IP.txt", MyStaticIP.c_str())
+  writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str());
+  if (isMyStaticIPSet){
+    //Todo1: what if an invaid ip is given to  String2IpAddress?
+    writeFile(SPIFFS, "/IP.txt", sMyStaticIP.c_str());
   }
 }
 
