@@ -49,7 +49,7 @@ proceed to main
 void mDebugMsg(char msg[]);
 void mDebugHalt(char msg[]);
 void mDebugInt(char msg[],int data);
-bool mStartWebSocket();
+
 AsyncWebServer server(80);
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
 //Todo: should really be a data object/structure
@@ -293,9 +293,11 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
   }
   return false; //Tell caller that we are waiting for a client to connect
 }
-
+bool isWSConnected(){   //Wrapper to return the connection state
+    return (globalClient!=NULL);
+  }
 //const int MyStaticIP[4]={192, 168, 1, 51};
-void mStartWebSocket(){//Global params:
+bool mStartWebSocket(){//Global params:
   WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   while (WiFi.status() != WL_CONNECTED) {
@@ -324,6 +326,7 @@ void mStartWebSocket(){//Global params:
   	   mReceive(data,len);
     }
   }
+  return mWaitUntilTrueOrTimeout(isWSConnected());
 }
 
 
