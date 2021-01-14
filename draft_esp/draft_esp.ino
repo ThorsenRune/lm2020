@@ -220,9 +220,14 @@ bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) 
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
           });
-});
-
-
+        });
+    //Wait here until user has submitted the response in startapp (startAPP==true)
+    mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
+    for (int i=0;i<100;i++){
+      if (startAPP) return true;
+    }
+    mDebugMsg("Timeout mUserFeedbackViaSoftAP did not get the credentials");
+    return false;
 }
 
 bool mGetMyStaticIP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
