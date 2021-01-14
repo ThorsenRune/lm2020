@@ -208,7 +208,7 @@ bool InitSoftAP() {
 }
 
 
-bool mUserFeedbackViaSoftAP(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
+bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
 //Flowchart:   * reconnect to client via Soft AP
   //* send IP to client. Now user will know the IP, create a link to click
   mDebugHalt("Implement mUserFeedbackViaSoftAP");
