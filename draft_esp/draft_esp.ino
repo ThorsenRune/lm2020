@@ -326,7 +326,7 @@ bool mGetMyStaticIP(){//Global params:{
   }
 
 
-bool mWIFIConnect(){//RT210112 Refactoring code by FC
+bool mWIFIConnect(){//Todo6- delete this
   mDebugMsg("Executin: mWIFIConnect");
   //Get credentials from SPIFFS (Flowchart 0)
   bool ret=mGetCredentials();
