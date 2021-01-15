@@ -255,7 +255,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
           // Send web page with SSID and IP fields to client
           request->send(SPIFFS, "/onConnection.html", "text/html");
           server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
-                  request->send("%s\n",200, "text/plain", AP_SSID.c_str());
+                  request->send(200, "text/plain", AP_SSID.c_str());
           });
           sMyStaticIP=IpAddress2String(MyStaticIP);
           isMyStaticIPSet=true;
