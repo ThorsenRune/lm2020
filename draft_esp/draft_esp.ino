@@ -392,7 +392,7 @@ bool mGetCredentials(){//Global params:   //Get credentials from spiff
 
 void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
   //RT210112: Moved code into method
-  writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
+  writeFile(SPIFFS, "/SSID.txt", AP_SSID.c_str());
   writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str());
   if (isMyStaticIPSet){
     //Todo1: what if an invaid ip is given to  String2IpAddress?
