@@ -45,16 +45,12 @@ proceed to main
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
-//Forward declarations,,,, sigh
-void mDebugMsg(char msg[]);
-void mDebugHalt(char msg[]);
-void mDebugInt(char msg[],int data);
+
 
 AsyncWebServer server(80);
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
 //Todo: should really be a data object/structure
 String AP_SSID  ;  // your internet wifi  SSID
-bool isSet_AP_SSID=false;   //rt210113 true when AP_SSID is set a
 String AP_PASS ;   // your internet wifi  password
 String sMyStaticIP; //String version of MyStaticIP
 IPAddress MyStaticIP;  //The static IP address when using internet wifi router
@@ -63,6 +59,11 @@ bool bWebSocketConnection =false;     //true when {mWIFIConnect == true}
 // Configure SoftAP (direct wifi ESP-client) characteristics
 const char* ssid_softap = "MeCFES_Config";
 
+// function prototypes for HTTP handlers (sigh!)
+//............
+
+// to pass parameters to lambda function (eg events)  use global vars - declare static
+static bool isWiFiStationConnected=false;  //Is device connected to softAP?
 
 String IPvalue="12.0.0.1";
 String ssidvalue;
@@ -71,7 +72,7 @@ bool startAPP=false;
 
 const char* PARAM_INPUT_1 = "SSID";
 const char* PARAM_INPUT_2 = "Password";
-
+const String bEmptyString=String();
 
 //IP Address settings
 IPAddress local_IP(192,168,4,1);
@@ -150,36 +151,70 @@ IPAddress String2IpAddress(String sMyStaticIP)
 }
 
 //Todo5: refactor/rename {InitSoftAP} to {mGetSetupViaSoftAP}
-bool InitSoftAP() {
+bool InitSoftAPOk=false;
+bool InitSoftAP() {  //Get credentials from user
   //Params are byref (will return new values)
   //Return the parameter values
   //return true/false when parameters are obtained
   //WiFi.softAP(ssid, password, channel, hidden, max_connection); // Remove the password parameter, if you want the AP (Access Point) to be open
+
   WiFi.softAP(ssid_softap);
   delay(100);
+  WiFi.onEvent(WiFiStationConnected, SYSTEM_EVENT_AP_STACONNECTED);
+  WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_AP_STADISCONNECTED);
+
    //Setting Wifi specifications
-  Serial.print("Setting soft-AP configuration ... ");
+  Serial.print("Setting direct wifi (soft-AP) server");
   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
   //Verify MeCFES IP Address
   Serial.print("Soft-AP available on IP address = ");
   Serial.println(WiFi.softAPIP());
+  mDebugMsg("Waiting for user to connect to direct wifi");
+  mWaitUntilTrueOrTimeout(isWiFiStationConnected);
+  mDebugMsg("Waiting for user to open page");
    // Send web page with input fields to client
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    mDebugMsg("/index.html");
     request->send(SPIFFS, "/index.html", "text/html");
   });
+  //Posting passwords is better than the GET method
+  server.on("/get", HTTP_POST, [] (AsyncWebServerRequest *request) {
+    mDebugMsg("HTTP_POST");
+    Serial.println("submit hit.");
+    //String message;
+    int params = request->params();
+    Serial.printf("%d params sent in\n", params);
+    if (request->hasParam(PARAM_INPUT_1,true)) {
+      mPrint(request->getParam(PARAM_INPUT_1,true)->name().c_str());
+      mPrint(request->getParam(PARAM_INPUT_1,true)->value().c_str());
+      AP_SSID = request->getParam(PARAM_INPUT_1,true)->value().c_str();
+      AP_PASS = request->getParam(PARAM_INPUT_2,true)->value();
+       mDebugMsg("Credentials:");
+       mPrint(AP_SSID);
+       mPrint((String)" & ");
+       mPrint(AP_PASS);
+       delay(1000);
+  //+ todo:enable     InitSoftAPOk=true;   //Proceed in flowchart
+    } else {
+      mDebugMsg("No message sent");
+    }
+    }
+  );
 
   // Send a GET request to <ESP_IP>/get?input1=<inputMessage>
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    mDebugMsg("HTTP_GET");
+
     // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
     if (request->hasParam(PARAM_INPUT_1)) {
       AP_SSID = request->getParam(PARAM_INPUT_1)->value();
       AP_PASS = request->getParam(PARAM_INPUT_2)->value();
-      isSet_AP_SSID=true; //Proceed in flowchart
-      /*  Obsolete by mSetCredentials
-      writeFile(SPIFFS, "/SSID.txt", ssidvalue.c_str());
-      writeFile(SPIFFS, "/Password.txt", passwordvalue.c_str());
-      */
-      return true; //Signal to caller to proceed with...
+       mDebugMsg("Credentials:");
+       mPrint(AP_SSID);
+       mPrint((String)" & ");
+       mPrint(AP_PASS);
+       delay(1000);
+       InitSoftAPOk=true;   //Proceed in flowchart
                   //                mSetCredentials(AP_SSID,AP_PASS,0);
     }
     else {
@@ -197,17 +232,8 @@ bool InitSoftAP() {
   server.onNotFound(notFound);
   server.begin();
   mDebugMsg("Waiting for user to insert credentials");
-  for (int i=0;i<100;i++){  //Wait for async call to complete
-    delay(1000);
-    if (isSet_AP_SSID)
-    {
-      return true;
-    }
-
-  }
-  delay(300000);
-  mDebugHalt("Failed to get credentials, abort");
-  return false;
+  //"Continue if good. else if Failed to get credentials, abort");
+  return mWaitUntilTrueOrTimeout(InitSoftAPOk);
 }
 
 
@@ -249,9 +275,9 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
     return mWaitUntilTrueOrTimeout(startAPP);
 }
 bool mWaitUntilTrueOrTimeout(bool &bFlag){
-  for (int i=0;i<100;i++){    //try until timeout
+  for (int i=0;i<100000;i++){    //try until timeout
     if (bFlag) return true;
-    delay(1000);
+    delay(100);
   }
   mDebugMsg("Timeout mWaitUntilTrueOrTimeout");
   return false;
@@ -269,6 +295,7 @@ bool mGetMyStaticIP(){//Global params:{
 
 
 bool mWIFIConnect(){//RT210112 Refactoring code by FC
+  mDebugMsg("mWIFIConnect");
   //Get credentials from SPIFFS (Flowchart 0)
   bool ret=mGetCredentials();
   //If  credentals  try to connect (Flowchart 1)
@@ -278,9 +305,11 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
     if (ret) return true; //Tell caller to proceed
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
+    mDebugMsg("Calling InitSoftAP ");
     bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
+      mDebugMsg("Calling mGetMyStaticIP ");
     if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
     if (ret){ //We got our credentials, save and restart
         //Setup the SoftAP from before, refresh client with full credentials
@@ -349,10 +378,15 @@ bool mGetCredentials(){//Global params:   //Get credentials from spiff
   Serial.println(AP_PASS);
   sMyStaticIP = readFile(SPIFFS, "/IP.txt");
   MyStaticIP=String2IpAddress(sMyStaticIP);
-  isMyStaticIPSet=true;
   Serial.print("Your IP: ");
   Serial.println(MyStaticIP);
-  return true;
+  if ((bEmptyString==AP_SSID)|| (bEmptyString==sMyStaticIP)||(bEmptyString==AP_PASS)) {
+    mDebugMsg("Missing credentals files");
+    return false;   //Invalid file
+  } else{           //We have credentials
+    isMyStaticIPSet=true;
+    return true;
+  }
 }
 
 
@@ -366,9 +400,30 @@ void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress 
   }
 }
 
+//  ***   WIFI EVENTS
+void WiFiStationConnected(WiFiEvent_t event, WiFiEventInfo_t info){
+  Serial.println("Station connected ");
+  isWiFiStationConnected=true;
+  /*-
+  for(int i = 0; i< 6; i++){
+    Serial.printf("%02X", info.sta_connected.mac[i]);
+    if(i<5)Serial.print(":");
+  }
+  Serial.println("\n------------");
+  */
+}
+
+
+void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info){
+  isWiFiStationConnected=false;
+  Serial.println("Station DISCONNECTED ");
+}
+
 /*******   The two   STANDARD ARDUINO functions**********/
 void setup() {
  Serial.begin(115200);
+ mDebugMsg("\nUnit testing\n");
+ mDebugMsg("In Arduino remember to: Tools - Sketch upload ");
  if(!SPIFFS.begin(true)){
   Serial.println("An Error has occurred while mounting SPIFFS");
   return;
@@ -385,7 +440,15 @@ void loop() {
 
 }
 /* ENDOF ******   The two   STANDARD ARDUINO functions**********/
+
+
+/*******************************************/
 //  Debugging  message and continue
+void mPrint(String msg){
+    delay(100);
+    Serial.printf("%s\n",msg );
+    delay(100);
+}
   void mDebugMsg(char msg[]){
       Serial.print("Debugger says: \t ");
       Serial.printf("%s\n",msg );
