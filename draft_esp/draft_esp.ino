@@ -181,7 +181,7 @@ bool InitSoftAP() {  //Get credentials from user
   server.on("/get", HTTP_POST, [] (AsyncWebServerRequest *request) {
     mDebugMsg("HTTP_POST");
     Serial.println("submit hit.");
-    //String message;
+    //String message;"%s\n",
     int params = request->params();
     Serial.printf("%d params sent in\n", params);
     if (request->hasParam(PARAM_INPUT_1,true)) {
@@ -194,7 +194,7 @@ bool InitSoftAP() {  //Get credentials from user
        mPrint((String)" & ");
        Serial.println(AP_PASS.c_str());
        delay(1000);
-  //+ todo:enable     InitSoftAPOk=true;   //Proceed in flowchart
+       InitSoftAPOk=true;   //Proceed in flowchart
     } else {
       mDebugMsg("No message sent");
     }
@@ -255,7 +255,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
           // Send web page with SSID and IP fields to client
           request->send(SPIFFS, "/onConnection.html", "text/html");
           server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
-                  request->send(200, "text/plain", AP_SSID.c_str());
+                  request->send("%s\n",200, "text/plain", AP_SSID.c_str());
           });
           sMyStaticIP=IpAddress2String(MyStaticIP);
           isMyStaticIPSet=true;
@@ -269,7 +269,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
           });
-        });
+        });mGetMyStaticIP
     //Wait here until user has submitted the response in startapp (startAPP==true)
     mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
     return mWaitUntilTrueOrTimeout(startAPP);
@@ -446,7 +446,7 @@ void loop() {
 //  Debugging  message and continue
 void mPrint(String msg){
     delay(100);
-    Serial.printf("%s\n",msg );
+    Serial.printf("%s\n",msg.c_str() );
     delay(100);
 }
   void mDebugMsg(char msg[]){
