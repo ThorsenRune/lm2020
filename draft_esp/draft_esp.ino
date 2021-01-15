@@ -291,7 +291,14 @@ bool mGetMyStaticIP(){//Global params:{
   WiFi.disconnect();
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   mDebugMsg("mGetMyStaticIP:Connecting to WIFI to get IP");
-  return mWaitUntilTrueOrTimeout(startAPP);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi..");
+  }
+  MyStaticIP=WiFi.localIP();  //Get the assigned IP, assume that it is free to take for next login
+  mDebugMsg("Obtained a MyStaticIP:");
+  Serial.println(MyStaticIP);
+  return true;
   }
 
 
@@ -313,6 +320,7 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
       mDebugMsg("Done InitSoftAP, Calling mGetMyStaticIP ");
     if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
     if (ret){ //We got our credentials, save and restart
+      mDebugMsg("Calling: mUserFeedbackViaSoftAP");
         //Setup the SoftAP from before, refresh client with full credentials
         mUserFeedbackViaSoftAP(); //Arguments AP_SSID, AP_PASS,MyStaticIP as globals
         mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
