@@ -153,6 +153,10 @@ bool InitSoftAP() {  //Get credentials from user
     mDebugMsg("/index.html");
     request->send(SPIFFS, "/index.html", "text/html");
   });
+  // Route to load style.css file
+ server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+   request->send(SPIFFS, "/style.css", "text/css");
+ });
   //Posting passwords is better than the GET method
   server.on("/get", HTTP_POST, [] (AsyncWebServerRequest *request) {
     if (request->hasParam(PARAM_INPUT_1,true)) {
@@ -163,6 +167,9 @@ bool InitSoftAP() {  //Get credentials from user
        mDebugMsg("Credentials received:");
        Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
        request->send(SPIFFS, "/onConnection.html", "text/html");
+       server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+   request->send(SPIFFS, "/style.css", "text/css");
+ });
        server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
      mDebugMsg("Sending AP_SSID to client");
     request->send(200, "text/plain", AP_SSID.c_str());
@@ -184,11 +191,7 @@ bool InitSoftAP() {  //Get credentials from user
     } else {
       mDebugMsg("No message sent");
     }
-<<<<<<< HEAD
     }
-=======
-      }
->>>>>>> 877e32dca3704b6257386d75508ebe812828020c
   );
 
   // Send a GET request to <ESP_IP>/get?input1=<inputMessage>
@@ -213,6 +216,9 @@ bool InitSoftAP() {  //Get credentials from user
     }
     // Send web page with input fields to client (Here only for debugging purposes, moved to mUserFeedbackViaSoftAP)
     request->send(SPIFFS, "/onConnection.html", "text/html");
+    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+   request->send(SPIFFS, "/style.css", "text/css");
+ });
    server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
      mDebugMsg("Sending AP_SSID to client");
     request->send(200, "text/plain", AP_SSID.c_str());
@@ -228,12 +234,7 @@ bool InitSoftAP() {  //Get credentials from user
            //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
-<<<<<<< HEAD
 
-=======
-           delay(5000);
-            WiFi.disconnect();
->>>>>>> 877e32dca3704b6257386d75508ebe812828020c
            startAPP=true;
     });
   server.onNotFound(notFound);
@@ -256,10 +257,17 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
   //Verify MeCFES IP Address (only for debuggin purposes for the moment)
   Serial.print("User feedback Soft-AP available on IP address = ");
   Serial.println(WiFi.softAPIP());
+  // Route to load style.css file
+   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+     request->send(SPIFFS, "/style.css", "text/css");
+   });
    //Page dedicated to data shown for user
   server.on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
           // Send web page with SSID and IP fields to client
           request->send(SPIFFS, "/onConnection.html", "text/html");
+          server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+   request->send(SPIFFS, "/style.css", "text/css");
+ });
           server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
                   request->send(200, "text/plain", AP_SSID.c_str());
           });
@@ -275,10 +283,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  //Send MeCFES bridgeapp
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
-<<<<<<< HEAD
                  stopsoftAP=true;
-=======
->>>>>>> 877e32dca3704b6257386d75508ebe812828020c
           });
         });
               //Wait here until user has submitted the response in startapp (startAPP==true)
