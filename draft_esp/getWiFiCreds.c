@@ -42,8 +42,6 @@ String AP_PASS ;   // your internet wifi  password
 
 //--------			SUB functions	----------------
 
-
-
 bool mGetCredentials1(){//Blocking. Will return true if credentials are in FLASH
   //RT210112: Moved code into method
   AP_SSID=readFile(SPIFFS, "/SSID.txt");

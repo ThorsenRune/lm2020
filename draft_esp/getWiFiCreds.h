@@ -42,7 +42,7 @@ extern "C" {
 
 #include <stdint.h>           //Define standard types uint32_t etc
 #include <stdbool.h>				//Boolan types rt210107
-#include <string>           //Allow string type
+#include <string.h>           //Allow string type
 /***************PROTOTYPES ************************/
 void mDebugMsg(char msg[]);        //Debugging messages
 bool mWIFIConnect1();             //Main entry point will return true when connected
