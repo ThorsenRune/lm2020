@@ -187,12 +187,12 @@ bool InitSoftAP() {  //Get credentials from user
     if (request->hasParam(PARAM_INPUT_1,true)) {
       mPrint(request->getParam(PARAM_INPUT_1,true)->name().c_str());
       mPrint(request->getParam(PARAM_INPUT_1,true)->value().c_str());
-      AP_SSID = request->getParam(PARAM_INPUT_1,true)->value().c_str();
+      AP_SSID = request->getParam(PARAM_INPUT_1,true)->value();
       AP_PASS = request->getParam(PARAM_INPUT_2,true)->value();
-       mDebugMsg("Credentials:");
-       mPrint(AP_SSID);
+      mDebugMsg("Credentials:");
+       Serial.println(AP_SSID.c_str());
        mPrint((String)" & ");
-       mPrint(AP_PASS);
+       Serial.println(AP_PASS.c_str());
        delay(1000);
   //+ todo:enable     InitSoftAPOk=true;   //Proceed in flowchart
     } else {
@@ -210,9 +210,9 @@ bool InitSoftAP() {  //Get credentials from user
       AP_SSID = request->getParam(PARAM_INPUT_1)->value();
       AP_PASS = request->getParam(PARAM_INPUT_2)->value();
        mDebugMsg("Credentials:");
-       mPrint(AP_SSID);
+       Serial.println(AP_SSID.c_str());
        mPrint((String)" & ");
-       mPrint(AP_PASS);
+       Serial.println(AP_PASS.c_str());
        delay(1000);
        InitSoftAPOk=true;   //Proceed in flowchart
                   //                mSetCredentials(AP_SSID,AP_PASS,0);
