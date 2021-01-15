@@ -185,12 +185,23 @@ bool InitSoftAP() {  //Get credentials from user
       AP_PASS.trim();
        mDebugMsg("Credentials received:");
        Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
-       request->send(SPIFFS, "/onConnection.html", "text/html");
+//       request->send(SPIFFS, "/onConnection.html", "text/html");
        delay(1000);
        InitSoftAPOk=true;   //Proceed in flowchart
     } else {
       mDebugMsg("No message sent");
     }
+    // Send web page with input fields to client (Here only for debugging purposes, moved to mUserFeedbackViaSoftAP)
+    request->send(SPIFFS, "/onConnection.html", "text/html");
+   server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+     mDebugMsg("Sending AP_SSID to client");
+    request->send(200, "text/plain", AP_SSID.c_str());
+    });
+   server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
+     mDebugMsg("Sending sMyStaticIP to client");
+    request->send(200, "text/plain", sMyStaticIP.c_str());
+    startAPP=true;
+    });
     }
   );
 
@@ -203,11 +214,8 @@ bool InitSoftAP() {  //Get credentials from user
     if (request->hasParam(PARAM_INPUT_1)) {
       AP_SSID = request->getParam(PARAM_INPUT_1)->value();
       AP_PASS = request->getParam(PARAM_INPUT_2)->value();
-       mDebugMsg("Credentials:");
-       Serial.println(AP_SSID.c_str());
-       mPrint((String)" & ");
-       Serial.println(AP_PASS.c_str());
-       delay(1000);
+      mDebugMsg("Credentials received:");
+      Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
        InitSoftAPOk=true;   //Proceed in flowchart
                   //                mSetCredentials(AP_SSID,AP_PASS,0);
     }
