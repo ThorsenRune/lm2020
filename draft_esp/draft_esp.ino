@@ -206,16 +206,16 @@ bool InitSoftAP() {  //Get credentials from user
       mDebugMsg("No message sent");
     }
     // Send web page with input fields to client (Here only for debugging purposes, moved to mUserFeedbackViaSoftAP)
-    request->send(SPIFFS, "/onConnection.html", "text/html");
-   server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(SPIFFS, "/onConnection.html", "text/html");
+      server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
      mDebugMsg("Sending AP_SSID to client");
     request->send(200, "text/plain", AP_SSID.c_str());
     });
-   server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
-     mDebugMsg("Sending sMyStaticIP to client");
-    request->send(200, "text/plain", sMyStaticIP.c_str());
-    startAPP=true;
-    });
+     server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
+       mDebugMsg("Sending sMyStaticIP to client");
+      request->send(200, "text/plain", sMyStaticIP.c_str());
+      startAPP=true;
+      });
     }
   );
 
