@@ -241,7 +241,6 @@ bool InitSoftAP() {  //Get credentials from user
 bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
 //Flowchart:   * reconnect to client via Soft AP
   //* send IP to client. Now user will know the IP, create a link to click
-  mDebugHalt("Implement mUserFeedbackViaSoftAP");
   //Start SoftAP mode again
    WiFi.softAP(ssid_softap);
    delay(100);
@@ -273,6 +272,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
         });
     //Wait here until user has submitted the response in startapp (startAPP==true)
     mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
+    mDebugHalt("Implement mUserFeedbackViaSoftAP");
     return mWaitUntilTrueOrTimeout(startAPP);
 }
 bool mWaitUntilTrueOrTimeout(bool &bFlag){
