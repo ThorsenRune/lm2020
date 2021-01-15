@@ -295,6 +295,7 @@ bool mGetMyStaticIP(){//Global params:{
       sMyStaticIP=WiFi.localIP().toString();
       Serial.println("IP address obtained: ");
       Serial.println(WiFi.localIP());
+      WiFi.disconnect();
       return true;
     }
   }
