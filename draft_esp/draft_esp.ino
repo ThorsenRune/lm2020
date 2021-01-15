@@ -179,20 +179,14 @@ bool InitSoftAP() {  //Get credentials from user
   });
   //Posting passwords is better than the GET method
   server.on("/get", HTTP_POST, [] (AsyncWebServerRequest *request) {
-    mDebugMsg("HTTP_POST");
-    Serial.println("submit hit.");
-    //String message;"%s\n",
-    int params = request->params();
-    Serial.printf("%d params sent in\n", params);
     if (request->hasParam(PARAM_INPUT_1,true)) {
-      mPrint(request->getParam(PARAM_INPUT_1,true)->name().c_str());
-      mPrint(request->getParam(PARAM_INPUT_1,true)->value().c_str());
       AP_SSID = request->getParam(PARAM_INPUT_1,true)->value();
       AP_PASS = request->getParam(PARAM_INPUT_2,true)->value();
-      mDebugMsg("Credentials:");
-       Serial.println(AP_SSID.c_str());
-       mPrint((String)" & ");
-       Serial.println(AP_PASS.c_str());
+      AP_SSID.trim();   //Remove spaces
+      AP_PASS.trim();
+       mDebugMsg("Credentials received:");
+       Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
+       request->send(SPIFFS, "/onConnection.html", "text/html");
        delay(1000);
        InitSoftAPOk=true;   //Proceed in flowchart
     } else {
@@ -290,15 +284,23 @@ bool mGetMyStaticIP(){//Global params:{
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
-  mDebugMsg("mGetMyStaticIP:Connecting to WIFI to get IP");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi..");
+  mDebugMsg("Connecting to internet WIFI to get IP");
+  Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
+  for (int i=0;i<20;i++){ //Loop until timeout
+    delay(500);
+    Serial.print(".");
+    if (WiFi.status() == WL_CONNECTED) { //Wifi connection good
+      // get the IP
+      MyStaticIP=WiFi.localIP();
+      sMyStaticIP=WiFi.localIP().toString();
+      Serial.println("IP address obtained: ");
+      Serial.println(WiFi.localIP());
+      return true;
+    }
   }
-  MyStaticIP=WiFi.localIP();  //Get the assigned IP, assume that it is free to take for next login
-  mDebugMsg("Obtained a MyStaticIP:");
-  Serial.println(MyStaticIP);
-  return true;
+  //We have a timeout
+    mDebugHalt("Cant get MyStaticIP in mGetMyStaticIP");
+    return false;
   }
 
 
@@ -470,8 +472,8 @@ void mPrint(String msg){
 //  Stop and do endless loop
 void mDebugHalt(char msg[]){
   while (1){
-    Serial.print("\nHALT Command (stopped with endless loop) ");
-    Serial.printf("\n%s",msg );
+    Serial.print("\n------------HALT Command (stopped with endless loop) ------");
+    Serial.println(msg );
     delay(300000);
   }
 }
