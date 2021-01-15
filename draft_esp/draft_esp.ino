@@ -1,31 +1,4 @@
-/*
-Flowchart of mWIFIConnect()
-mWIFIConnect will return true if connection is established and the program can
-proceed to main
 
-(0) credentials&IP=Read flash (SPIFF)
-      |
-      v
-(1) Connect to network
-        |-fail—> Setup SoftAP (2) {InitSoftAP}
-        |-success-->Wait for client
-        V
-    on connect
-        |--> LM Program
-        |--(timeout) —> Jump to (2)
-        =
-
-(2) Setup SoftAP {InitSoftAP}
-      |--> Connect to client via Soft AP
-              | Get credentials from client. User writes SSID & Password
-              | connect to network and get the IP
-              | reconnect to client via Soft AP
-              | send IP to client. Now user will know the IP, create a link to click
-              | save credentials&IP to FLASH (SPIFF)
-      *------*
-      |
-  Jump to (1)
- */
 
   /*
     This module establish connection to the  wifi accesspoint (WAP or internet WiFi router)
@@ -45,7 +18,9 @@ proceed to main
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
-
+extern "C" {  //Note- neccessary to implement C files
+  #include "getWiFiCreds.h"
+}
 
 AsyncWebServer server(80);
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
@@ -209,7 +184,11 @@ bool InitSoftAP() {  //Get credentials from user
     } else {
       mDebugMsg("No message sent");
     }
+<<<<<<< HEAD
     }
+=======
+      }
+>>>>>>> 877e32dca3704b6257386d75508ebe812828020c
   );
 
   // Send a GET request to <ESP_IP>/get?input1=<inputMessage>
@@ -249,7 +228,12 @@ bool InitSoftAP() {  //Get credentials from user
            //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+<<<<<<< HEAD
 
+=======
+           delay(5000);
+            WiFi.disconnect();
+>>>>>>> 877e32dca3704b6257386d75508ebe812828020c
            startAPP=true;
     });
   server.onNotFound(notFound);
@@ -291,7 +275,10 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  //Send MeCFES bridgeapp
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
+<<<<<<< HEAD
                  stopsoftAP=true;
+=======
+>>>>>>> 877e32dca3704b6257386d75508ebe812828020c
           });
         });
               //Wait here until user has submitted the response in startapp (startAPP==true)
@@ -481,6 +468,7 @@ void setup() {
   bWebSocketConnection=false;
   while (!bWebSocketConnection){
     bWebSocketConnection=mWIFIConnect();
+    bWebSocketConnection=mWIFIConnect1();
   };      //Blocking until connection is made
 //- (moved) InitSoftAP(AP_SSID, AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
 } //Now we proceed to {loop}
