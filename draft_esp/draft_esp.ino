@@ -193,14 +193,12 @@ bool InitSoftAP() {  //Get credentials from user
    server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
      mDebugMsg("Sending sMyStaticIP to client");
     request->send(200, "text/plain", sMyStaticIP.c_str());
-    startAPP=true;
     });
     server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Connect to AP mode
            //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
-           startAPP=true;
     });
        delay(1000);
        InitSoftAPOk=true;   //Proceed in flowchart
@@ -239,14 +237,13 @@ bool InitSoftAP() {  //Get credentials from user
    server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
      mDebugMsg("Sending sMyStaticIP to client");
     request->send(200, "text/plain", sMyStaticIP.c_str());
-    startAPP=true;
+
     });
     server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Connect to AP mode
            //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
-           startAPP=true;
     });
   });
   server.onNotFound(notFound);
