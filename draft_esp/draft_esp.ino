@@ -67,8 +67,7 @@ static bool isWiFiStationConnected=false;  //Is device connected to softAP?
 
 String IPvalue="12.0.0.1";
 String ssidvalue;
-bool startAPP=false;
-//- obsolete:String passwordvalue;
+bool startAPP=false;    //Ready to launch main LM_program
 
 const char* PARAM_INPUT_1 = "SSID";
 const char* PARAM_INPUT_2 = "Password";
@@ -218,10 +217,13 @@ bool InitSoftAP() {  //Get credentials from user
     // Send web page with input fields to client (Here only for debugging purposes, moved to mUserFeedbackViaSoftAP)
     request->send(SPIFFS, "/onConnection.html", "text/html");
    server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+     mDebugMsg("Sending AP_SSID to client");
     request->send(200, "text/plain", AP_SSID.c_str());
     });
    server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
+     mDebugMsg("Sending sMyStaticIP to client");
     request->send(200, "text/plain", sMyStaticIP.c_str());
+    startAPP=true;
     });
   });
   server.onNotFound(notFound);
@@ -266,7 +268,6 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
         });
     //Wait here until user has submitted the response in startapp (startAPP==true)
     mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
-    mDebugHalt("Implement mUserFeedbackViaSoftAP");
     return mWaitUntilTrueOrTimeout(startAPP);
 }
 bool mWaitUntilTrueOrTimeout(bool &bFlag){
@@ -306,7 +307,7 @@ bool mGetMyStaticIP(){//Global params:{
 
 
 bool mWIFIConnect(){//RT210112 Refactoring code by FC
-  mDebugMsg("mWIFIConnect");
+  mDebugMsg("Executin: mWIFIConnect");
   //Get credentials from SPIFFS (Flowchart 0)
   bool ret=mGetCredentials();
   //If  credentals  try to connect (Flowchart 1)
@@ -325,9 +326,12 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
     if (ret){ //We got our credentials, save and restart
       mDebugMsg("Calling: mUserFeedbackViaSoftAP");
         //Setup the SoftAP from before, refresh client with full credentials
-        mUserFeedbackViaSoftAP(); //Arguments AP_SSID, AP_PASS,MyStaticIP as globals
-        mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
-        return mWIFIConnect();
+        ret=mUserFeedbackViaSoftAP(); //Arguments AP_SSID, AP_PASS,MyStaticIP as globals
+        if (ret) { // credentials ready save them
+          mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
+        }
+        return mWIFIConnect(); //If credentials have been saved now the recursive call should end width
+          //  --->mStartWebSocket
     } else {  //Fail in getting credentials
         mDebugMsg("Fail in getting credentials, retry");
         return false;
@@ -403,12 +407,17 @@ bool mGetCredentials(){//Global params:   //Get credentials from spiff
 
 
 void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
-  //RT210112: Moved code into method
+  //Saving credentials to SPIFFS
+  mDebugMsg("Saving credentials in FLASH");
   writeFile(SPIFFS, "/SSID.txt", AP_SSID.c_str());
   writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str());
-  if (isMyStaticIPSet){
-    //Todo1: what if an invaid ip is given to  String2IpAddress?
-    writeFile(SPIFFS, "/IP.txt", sMyStaticIP.c_str());
+  sMyStaticIP=IpAddress2String(MyStaticIP);
+  //Todo1: what if an invaid ip is given to  String2IpAddress?
+  writeFile(SPIFFS, "/IP.txt", sMyStaticIP.c_str());
+  if (mGetCredentials()) {  //Readback
+    return;
+  }else{
+    mDebugHalt("Error in mSetCredentials");
   }
 }
 
