@@ -225,6 +225,13 @@ bool InitSoftAP() {  //Get credentials from user
     request->send(200, "text/plain", sMyStaticIP.c_str());
     startAPP=true;
     });
+    server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+           //Connect to AP mode
+           //Launch AP mode
+           //Send MeCFES bridgeapp
+           request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+           startAPP=true;
+    });
   });
   server.onNotFound(notFound);
   server.begin();
@@ -241,10 +248,10 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
    WiFi.softAP(ssid_softap);
    delay(100);
   //Setting Wifi specifications
-  Serial.print("Setting soft-AP configuration ... ");
+  Serial.print("User feedback Setting soft-AP configuration ... ");
   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
   //Verify MeCFES IP Address (only for debuggin purposes for the moment)
-  Serial.print("Soft-AP available on IP address = ");
+  Serial.print("User feedback Soft-AP available on IP address = ");
   Serial.println(WiFi.softAPIP());
    //Page dedicated to data shown for user
   server.on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
