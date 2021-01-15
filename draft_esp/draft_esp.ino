@@ -43,6 +43,8 @@ static bool isWiFiStationConnected=false;  //Is device connected to softAP?
 String IPvalue="12.0.0.1";
 String ssidvalue;
 bool startAPP=false;    //Ready to launch main LM_program
+bool stopsoftAP=false;    //Ready to launch main LM_program
+
 
 const char* PARAM_INPUT_1 = "SSID";
 const char* PARAM_INPUT_2 = "Password";
@@ -182,7 +184,11 @@ bool InitSoftAP() {  //Get credentials from user
     } else {
       mDebugMsg("No message sent");
     }
+<<<<<<< HEAD
+    }
+=======
       }
+>>>>>>> 877e32dca3704b6257386d75508ebe812828020c
   );
 
   // Send a GET request to <ESP_IP>/get?input1=<inputMessage>
@@ -222,8 +228,12 @@ bool InitSoftAP() {  //Get credentials from user
            //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+<<<<<<< HEAD
+
+=======
            delay(5000);
             WiFi.disconnect();
+>>>>>>> 877e32dca3704b6257386d75508ebe812828020c
            startAPP=true;
     });
   server.onNotFound(notFound);
@@ -257,6 +267,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
           isMyStaticIPSet=true;
           server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
                   request->send(200, "text/plain", sMyStaticIP.c_str());
+                  startAPP=true;
           });
           server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
                  //Connect to AP mode
@@ -264,6 +275,10 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  //Send MeCFES bridgeapp
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
+<<<<<<< HEAD
+                 stopsoftAP=true;
+=======
+>>>>>>> 877e32dca3704b6257386d75508ebe812828020c
           });
         });
               //Wait here until user has submitted the response in startapp (startAPP==true)
@@ -345,6 +360,7 @@ bool isWSConnected(){   //Wrapper to return the connection state
   }
 //const int MyStaticIP[4]={192, 168, 1, 51};
 bool mStartWebSocket(){//Global params:
+
   WiFi.config(MyStaticIP, gateway, subnet);  // if using static IP, enter parameters at the top
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   while (WiFi.status() != WL_CONNECTED) {
@@ -457,6 +473,7 @@ void setup() {
 //- (moved) InitSoftAP(AP_SSID, AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
 } //Now we proceed to {loop}
 void loop() {
+
   if (!bWebSocketConnection) return;  //Only loop if on internetwifi
 
 
