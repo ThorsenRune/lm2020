@@ -248,7 +248,7 @@ bool InitSoftAP() {  //Get credentials from user
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
            delay(5000);
-            Wifi.disconnect();
+            WiFi.disconnect();
            startAPP=true;
     });
   server.onNotFound(notFound);
