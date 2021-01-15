@@ -193,29 +193,20 @@ bool InitSoftAP() {  //Get credentials from user
    server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
      mDebugMsg("Sending sMyStaticIP to client");
     request->send(200, "text/plain", sMyStaticIP.c_str());
+    startAPP=true;
     });
     server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Connect to AP mode
            //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+           startAPP=true;
     });
        delay(1000);
        InitSoftAPOk=true;   //Proceed in flowchart
     } else {
       mDebugMsg("No message sent");
     }
-    // Send web page with input fields to client (Here only for debugging purposes, moved to mUserFeedbackViaSoftAP)
-    request->send(SPIFFS, "/onConnection.html", "text/html");
-   server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
-     mDebugMsg("Sending AP_SSID to client");
-    request->send(200, "text/plain", AP_SSID.c_str());
-    });
-   server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
-     mDebugMsg("Sending sMyStaticIP to client");
-    request->send(200, "text/plain", sMyStaticIP.c_str());
-    startAPP=true;
-    });
     }
   );
 
@@ -228,8 +219,11 @@ bool InitSoftAP() {  //Get credentials from user
     if (request->hasParam(PARAM_INPUT_1)) {
       AP_SSID = request->getParam(PARAM_INPUT_1)->value();
       AP_PASS = request->getParam(PARAM_INPUT_2)->value();
-      mDebugMsg("Credentials received:");
-      Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
+       mDebugMsg("Credentials:");
+       Serial.println(AP_SSID.c_str());
+       mPrint((String)" & ");
+       Serial.println(AP_PASS.c_str());
+       delay(1000);
        InitSoftAPOk=true;   //Proceed in flowchart
                   //                mSetCredentials(AP_SSID,AP_PASS,0);
     }
@@ -245,15 +239,18 @@ bool InitSoftAP() {  //Get credentials from user
    server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
      mDebugMsg("Sending sMyStaticIP to client");
     request->send(200, "text/plain", sMyStaticIP.c_str());
-
+    startAPP=true;
     });
-    server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+  });
+   server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Connect to AP mode
            //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+           delay(5000);
+            Wifi.disconnect();
+           startAPP=true;
     });
-  });
   server.onNotFound(notFound);
   server.begin();
   mDebugMsg("Waiting for user to insert credentials");
@@ -292,7 +289,6 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  //Send MeCFES bridgeapp
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
-              
           });
         });
               //Wait here until user has submitted the response in startapp (startAPP==true)
