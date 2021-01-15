@@ -284,6 +284,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  //Send MeCFES bridgeapp
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
+              
           });
         });
               //Wait here until user has submitted the response in startapp (startAPP==true)
