@@ -269,7 +269,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
           });
-        });mGetMyStaticIP
+        });
     //Wait here until user has submitted the response in startapp (startAPP==true)
     mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
     return mWaitUntilTrueOrTimeout(startAPP);
