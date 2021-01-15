@@ -207,7 +207,7 @@ bool InitSoftAP() {  //Get credentials from user
     } else {
       mDebugMsg("No message sent");
     }
-    }
+      }
   );
 
   // Send a GET request to <ESP_IP>/get?input1=<inputMessage>
