@@ -185,7 +185,23 @@ bool InitSoftAP() {  //Get credentials from user
       AP_PASS.trim();
        mDebugMsg("Credentials received:");
        Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
-//       request->send(SPIFFS, "/onConnection.html", "text/html");
+       request->send(SPIFFS, "/onConnection.html", "text/html");
+       server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+     mDebugMsg("Sending AP_SSID to client");
+    request->send(200, "text/plain", AP_SSID.c_str());
+    });
+   server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
+     mDebugMsg("Sending sMyStaticIP to client");
+    request->send(200, "text/plain", sMyStaticIP.c_str());
+    startAPP=true;
+    });
+    server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+           //Connect to AP mode
+           //Launch AP mode
+           //Send MeCFES bridgeapp
+           request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+           startAPP=true;
+    });
        delay(1000);
        InitSoftAPOk=true;   //Proceed in flowchart
     } else {
@@ -233,6 +249,13 @@ bool InitSoftAP() {  //Get credentials from user
     request->send(200, "text/plain", sMyStaticIP.c_str());
     startAPP=true;
     });
+    server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+           //Connect to AP mode
+           //Launch AP mode
+           //Send MeCFES bridgeapp
+           request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+           startAPP=true;
+    });
   });
   server.onNotFound(notFound);
   server.begin();
@@ -249,10 +272,10 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
    WiFi.softAP(ssid_softap);
    delay(100);
   //Setting Wifi specifications
-  Serial.print("Setting soft-AP configuration ... ");
+  Serial.print("User feedback Setting soft-AP configuration ... ");
   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
   //Verify MeCFES IP Address (only for debuggin purposes for the moment)
-  Serial.print("Soft-AP available on IP address = ");
+  Serial.print("User feedback Soft-AP available on IP address = ");
   Serial.println(WiFi.softAPIP());
    //Page dedicated to data shown for user
   server.on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
@@ -274,7 +297,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  startAPP=true;
           });
         });
-    //Wait here until user has submitted the response in startapp (startAPP==true)
+              //Wait here until user has submitted the response in startapp (startAPP==true)
     mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
     return mWaitUntilTrueOrTimeout(startAPP);
 }
