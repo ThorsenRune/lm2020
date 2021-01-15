@@ -151,7 +151,7 @@ IPAddress String2IpAddress(String sMyStaticIP)
 }
 
 //Todo5: refactor/rename {InitSoftAP} to {mGetSetupViaSoftAP}
-bool InitSoftAPOk=false;
+bool InitSoftAPOk=false;  //Set true by InitSoftAP when user  has inserted SSID&PWD
 bool InitSoftAP() {  //Get credentials from user
   //Params are byref (will return new values)
   //Return the parameter values
@@ -202,6 +202,7 @@ bool InitSoftAP() {  //Get credentials from user
   );
 
   // Send a GET request to <ESP_IP>/get?input1=<inputMessage>
+  // Obsolete HTTP_GET by HTTP_POST
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
     mDebugMsg("HTTP_GET");
 
@@ -289,7 +290,7 @@ bool mGetMyStaticIP(){//Global params:{
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
-  mDebugMsg("Connecting to WIFI to get IP");
+  mDebugMsg("mGetMyStaticIP:Connecting to WIFI to get IP");
   return mWaitUntilTrueOrTimeout(startAPP);
   }
 
@@ -309,7 +310,7 @@ bool mWIFIConnect(){//RT210112 Refactoring code by FC
     bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
-      mDebugMsg("Calling mGetMyStaticIP ");
+      mDebugMsg("Done InitSoftAP, Calling mGetMyStaticIP ");
     if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
     if (ret){ //We got our credentials, save and restart
         //Setup the SoftAP from before, refresh client with full credentials
