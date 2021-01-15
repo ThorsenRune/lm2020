@@ -1,4 +1,4 @@
- /*
+ /*file: getWiFiCreds.h
     This module will get the WiFi credentials stored in the FLASH memory
     If the credentals are not valid, it will setup a direct wifi at (todo8: always same address?)
     The client can connect to the local wifi network and insert the credentials of the internetwifi
@@ -32,3 +32,24 @@
        |
    Jump to (1)
   */
+#ifndef ___getWiFiCreds    // only once guard to avoid recursive inclusion
+#define ___getWiFiCreds
+#ifdef __cplusplus    //important- Tell the compiler that we have c code
+extern "C" {
+#endif
+/***************INCLUDES************************/
+
+
+#include <stdint.h>           //Define standard types uint32_t etc
+#include <stdbool.h>				//Boolan types rt210107
+
+/***************PROTOTYPES ************************/
+void mDebugMsg(char msg[]);        //Debugging messages
+bool mWIFIConnect1();
+ /***********************/
+   //Business code
+ /***********************/
+ #ifdef __cplusplus // important- Tell the compiler that we have c has ended
+ }
+ #endif
+ #endif  //___getWiFiCreds

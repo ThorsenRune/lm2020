@@ -452,6 +452,7 @@ void setup() {
   bWebSocketConnection=false;
   while (!bWebSocketConnection){
     bWebSocketConnection=mWIFIConnect();
+    bWebSocketConnection=mWIFIConnect1();
   };      //Blocking until connection is made
 //- (moved) InitSoftAP(AP_SSID, AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
 } //Now we proceed to {loop}
