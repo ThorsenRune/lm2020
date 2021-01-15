@@ -186,6 +186,22 @@ bool InitSoftAP() {  //Get credentials from user
        mDebugMsg("Credentials received:");
        Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
        request->send(SPIFFS, "/onConnection.html", "text/html");
+       server.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+     mDebugMsg("Sending AP_SSID to client");
+    request->send(200, "text/plain", AP_SSID.c_str());
+    });
+   server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
+     mDebugMsg("Sending sMyStaticIP to client");
+    request->send(200, "text/plain", sMyStaticIP.c_str());
+    startAPP=true;
+    });
+    server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+           //Connect to AP mode
+           //Launch AP mode
+           //Send MeCFES bridgeapp
+           request->send(SPIFFS, "/bridgeAPP.html", "text/html");
+           startAPP=true;
+    });
        delay(1000);
        InitSoftAPOk=true;   //Proceed in flowchart
     } else {
@@ -273,7 +289,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  startAPP=true;
           });
         });
-    //Wait here until user has submitted the response in startapp (startAPP==true)
+              //Wait here until user has submitted the response in startapp (startAPP==true)
     mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
     return mWaitUntilTrueOrTimeout(startAPP);
 }
