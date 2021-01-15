@@ -406,12 +406,17 @@ bool mGetCredentials(){//Global params:   //Get credentials from spiff
 
 
 void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP ) ){   //Get credentials from spiff
-  //RT210112: Moved code into method
+  //Saving credentials to SPIFFS
+  mDebugMsg("Saving credentials in FLASH");
   writeFile(SPIFFS, "/SSID.txt", AP_SSID.c_str());
   writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str());
-  if (isMyStaticIPSet){
-    //Todo1: what if an invaid ip is given to  String2IpAddress?
-    writeFile(SPIFFS, "/IP.txt", sMyStaticIP.c_str());
+  sMyStaticIP=IpAddress2String(MyStaticIP);
+  //Todo1: what if an invaid ip is given to  String2IpAddress?
+  writeFile(SPIFFS, "/IP.txt", sMyStaticIP.c_str());
+  if (mGetCredentials()) {  //Readback
+    return;
+  }else{
+    mDebugHalt("Error in mSetCredentials");
   }
 }
 
