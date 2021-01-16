@@ -34,24 +34,33 @@
   */
 #ifndef ___getWiFiCreds    // only once guard to avoid recursive inclusion
 #define ___getWiFiCreds
-#ifdef __cplusplus    //important- Tell the compiler that we have c code
-extern "C" {
-#endif
+
 /***************INCLUDES************************/
 
-
+#include <Arduino.h>
 #include <stdint.h>           //Define standard types uint32_t etc
 #include <stdbool.h>				//Boolan types rt210107
-#include <string.h>           //Allow string type
-/***************PROTOTYPES ************************/
+#include "WiFi.h"
+#include "SPIFFS.h"
+#include "ESPAsyncWebServer.h"
+#include <AsyncTCP.h>
+/***************PROTOTYPES ***sigh*********************/
 void mDebugMsg(char msg[]);        //Debugging messages
-bool mWIFIConnect1();             //Main entry point will return true when connected
+void mDebugHalt(char msg[]);
+void mPrint(String msg);
 
-bool mGetCredentials1();
- /***********************/
-   //Business code
- /***********************/
- #ifdef __cplusplus // important- Tell the compiler that we have c has ended
- }
- #endif
+bool mWIFIConnect();             //Main entry point will return true when connected
+bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS);
+//  -------- private functions
+bool mGetCredentials();
+bool mStartWebSocket();
+bool InitSoftAP();
+bool mGetMyStaticIP();
+bool mUserFeedbackViaSoftAP();
+void mSetCredentials();
+String readFile(fs::FS &fs, const char * path);
+void writeFile(fs::FS &fs, const char * path, const char * message);
+IPAddress String2IpAddress(String sMyStaticIP);
+String IpAddress2String(const IPAddress& MyStaticIP);
+
  #endif  //___getWiFiCreds
