@@ -14,19 +14,26 @@ bridgeAPP     tell the user to switch NETWORK, note down static IP and connect t
   <h2> Come avviare l'applicazione</h2>
   <p>1- Connettiti alla rete <b><span id="SSID">%SSID%</span></b> con il tuo dispositivo.</p>
 <br>
-  <p>2- Visita il <a href="https://thorsen.it/public/demo/egloveweb/webbluetooth.html#home">sito</a> dedicato a MeCFES.</p>
-  <p>2- Visita il <a href=%LM_ServerSite% id="URL">sito</a> dedicato a MeCFES.</p>
+  <p>2- Visita il <a href="#" id="URL">sito</a> dedicato a MeCFES.</p>
 <br>
 <p>3- Inserisci l'indirizzo IP: <b><span id="IP">%IP%</span></b></p>
  <br>
+
 <script>
+var str1 = "http://thorsen.it/public/lm2020/lm_webapp/index.php?ws=";
+var str2;
+
+
 
 setInterval(function() {
   // Call a function repetatively with 2 Second interval
   getDataIP();
   getDataSSID();
-  getDataURL();
+  var res = str1.concat(str2);
+  document.getElementById("URL").href = res;
+
 }, 2000); //2000mSeconds update rate
+
 
 function getDataIP() {
   var xhttp = new XMLHttpRequest();
@@ -34,6 +41,7 @@ function getDataIP() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("IP").innerHTML =
       this.responseText;
+      str2=String(this.responseText);
     }
   };
   xhttp.open("GET", "ip", true);
@@ -51,17 +59,7 @@ function getDataSSID() {
   xhttp.open("GET", "ssid", true);
   xhttp.send();
 }
-function getDataURL() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("URL").innerHTML =
-      this.responseText;
-    }
-  };
-  xhttp.open("GET", "url", true);
-  xhttp.send();
-}
+
 </script>
 </body>
 </html>
