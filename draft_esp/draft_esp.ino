@@ -50,7 +50,7 @@ AsyncWebSocketClient * globalClient = NULL;
 
 
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This is the LM communication protocol
-    delay(5000);
+    delay(15000);
     WiFi.softAPdisconnect (true);
     IPAddress gateway(192, 168, 1, 1);
     IPAddress subnet(255, 255, 0, 0);
