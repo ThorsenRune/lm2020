@@ -3,7 +3,7 @@
 
 //--------      Global VARIABLES
 // Configure SoftAP (direct wifi ESP-client) characteristics
-const char* SoftAP_SSID = "Arduino";
+const char* SoftAP_SSID = "Arduino_LM";  //Name of the SoftAP - Arduino gets nicely first in the network list
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
 String AP_SSID="";  // your internet wifi  SSID
 String AP_PASS="";   // your internet wifi  password
@@ -96,8 +96,7 @@ bool mWaitUntilTrueOrTimeout(bool &bFlag){
   return false;
 }
 
-bool mUserFeedbackViaSoftAP(){
-//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
+bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
 //Flowchart:   * reconnect to client via Soft AP
   //* send IP to client. Now user will know the IP, create a link to click
   //Start SoftAP mode again
@@ -131,6 +130,8 @@ bool mUserFeedbackViaSoftAP(){
 
         });
            server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+                 //Connect to AP mode
+                 //Launch AP mode
                  //Send MeCFES bridgeapp
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
@@ -245,6 +246,8 @@ bool InitSoftAP() {  //Get credentials from user
     startAPP=true;
     });
       server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+           //Connect to AP mode
+           //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
            startAPP=true;
@@ -289,6 +292,8 @@ bool InitSoftAP() {  //Get credentials from user
     });
   });
    server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+           //Connect to AP mode
+           //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
 
