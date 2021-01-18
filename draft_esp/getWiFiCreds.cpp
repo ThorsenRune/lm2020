@@ -6,6 +6,9 @@
 const char* SoftAP_SSID = "Arduino_LM";  //Name of the SoftAP - Arduino gets nicely first in the network list
 const char* LM_ServerSite="https://thorsen.it/public/lm2020/lm_webapp/index.php";  //Address of the server
 const char* LM_ServerSite2="localhost/public/lm2020/lm_webapp/index.php";  //Address of the server
+const char* wsappend = "?ws=";
+const char* LM_ServerSiteCompl;  //Address of the server
+
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
 String AP_SSID="";  // your internet wifi  SSID
 String AP_PASS="";   // your internet wifi  password
@@ -110,6 +113,9 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
   //Verify MeCFES IP Address (only for debuggin purposes for the moment)
   Serial.print("User feedback Soft-AP available on IP address = ");
   Serial.println(WiFi.softAPIP());
+  LM_ServerSiteCompl =+ LM_ServerSite;
+  LM_ServerSiteCompl =+ wsappend;
+  LM_ServerSiteCompl =+ IpAddress2String(MyStaticIP).c_str();
   // Route to load style.css file
    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
      request->send(SPIFFS, "/style.css", "text/css");
@@ -136,6 +142,10 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
                  stopsoftAP=true;
+                 server.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
+                         request->send(200, "text/plain", LM_ServerSiteCompl.c_str());
+                 });
+
           });
               //Wait here until user has submitted the response in startapp (startAPP==true)
     mDebugMsg("Waiting for user in mUserFeedbackViaSoftAP");
