@@ -1,16 +1,8 @@
 
-
   /*
     This module establish connection to the  wifi accesspoint (WAP or internet WiFi router)
     If no connection is made it will enter a mode for setting up WAP credentials using a temporary
     soft accesspoint (SoftAP or Direct WiFi)
-
-    Index.html -  user can configure the WIFI send the AP_SSID, AP_PASS,MyStaticIP to the connection from {InitSoftAP}
-   this time show the MyStaticIP, tell the user to switch NETWORK            ----> Data correctly shown!!, it misses a link to start the Server in AP Mode (server.on("/startap", HTTP_GET, [](AsyncWebServerRequest *request) ---> launch AP mode setup and ws)
-   ask user to:
-   1.  copy MyStaticIP -----> DONE!
-   2.  click link to serversite -----> DONE!
-   3.  paste the MyStaticIP for the websocket MainSetup (todo: insert this in websocket program) -----> DONE!
  */
 
 #include <Arduino.h>
