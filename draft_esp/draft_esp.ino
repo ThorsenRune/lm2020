@@ -17,28 +17,9 @@ extern "C" {  //Note- neccessary to implement C files
 //AsyncWebServer server(80);
 
 
-
-// function prototypes for HTTP handlers (sigh!)
-//............
-
-
-String ssidvalue;
-
-
-
-
-
-
-
 //SoftAP variables
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient * globalClient = NULL;
-
-
-
-
-//Todo5: refactor/rename {InitSoftAP} to {mGetSetupViaSoftAP}
-
 
 
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This is the LM communication protocol
