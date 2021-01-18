@@ -4,6 +4,8 @@
 //--------      Global VARIABLES
 // Configure SoftAP (direct wifi ESP-client) characteristics
 const char* SoftAP_SSID = "Arduino_LM";  //Name of the SoftAP - Arduino gets nicely first in the network list
+const char* LM_ServerSite="https://thorsen.it/public/lm2020/lm_webapp/index.php";  //Address of the server
+const char* LM_ServerSite2="localhost/public/lm2020/lm_webapp/index.php";  //Address of the server
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
 String AP_SSID="";  // your internet wifi  SSID
 String AP_PASS="";   // your internet wifi  password
