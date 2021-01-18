@@ -6,7 +6,6 @@
     soft accesspoint (SoftAP or Direct WiFi)
  */
 
-//#include <Arduino.h>
 #include "WiFi.h"
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
@@ -15,32 +14,12 @@ extern "C" {  //Note- neccessary to implement C files
 }
 #include "getWiFiCreds.h"
 
-//AsyncWebServer server(80);
-
-
-
 // function prototypes for HTTP handlers (sigh!)
 //............
 
-
-String ssidvalue;
-
-
-
-
-
-
-
-//SoftAP variables
+//webSocket variables
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient * globalClient = NULL;
-
-
-
-
-//Todo5: refactor/rename {InitSoftAP} to {mGetSetupViaSoftAP}
-
-
 
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This is the LM communication protocol
     delay(15000);
@@ -70,7 +49,6 @@ bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This 
   }
 
 
-//const int MyStaticIP[4]={192, 168, 1, 51};
 void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
   //rt210114 Moved out of function.
     //AwsEventType describes what event has happened, like receive data or disconnetc
@@ -89,8 +67,9 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
 
 
 
-/*******   The two   STANDARD ARDUINO functions**********/
+/*******   The two STANDARD ARDUINO functions (setup and loop)   **********/
 bool bWebSocketConnection =false;     //true when {mWIFIConnect == true}
+
 void setup() {
  Serial.begin(115200);
  mDebugMsg("\nUnit testing\n");
@@ -101,21 +80,21 @@ void setup() {
   }
   bWebSocketConnection=false;
   while (!bWebSocketConnection){
-    //bWebSocketConnection=mWIFIConnect();
     bWebSocketConnection=mWIFIConnect();
   };      //Blocking until connection is made
-//- (moved) InitSoftAP(AP_SSID, AP_PASS);  //Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
 } //Now we proceed to {loop}
+
+
 void loop() {
 
   if (!bWebSocketConnection) return;  //Only loop if on internetwifi
 
 
 }
-/* ENDOF ******   The two   STANDARD ARDUINO functions**********/
+
+/* ENDOF ******   The two STANDARD ARDUINO functions**********/
 
 
-/*******************************************/
 //  Debugging  message and continue
 void mPrint(String msg){
     delay(100);
