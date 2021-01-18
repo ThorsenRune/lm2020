@@ -130,8 +130,6 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
 
         });
            server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
-                 //Connect to AP mode
-                 //Launch AP mode
                  //Send MeCFES bridgeapp
                  request->send(SPIFFS, "/bridgeAPP.html", "text/html");
                  startAPP=true;
@@ -246,8 +244,6 @@ bool InitSoftAP() {  //Get credentials from user
     startAPP=true;
     });
       server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
-           //Connect to AP mode
-           //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
            startAPP=true;
@@ -292,8 +288,6 @@ bool InitSoftAP() {  //Get credentials from user
     });
   });
    server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
-           //Connect to AP mode
-           //Launch AP mode
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
 
