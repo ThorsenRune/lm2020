@@ -1,11 +1,12 @@
 
+
   /*
     This module establish connection to the  wifi accesspoint (WAP or internet WiFi router)
     If no connection is made it will enter a mode for setting up WAP credentials using a temporary
     soft accesspoint (SoftAP or Direct WiFi)
  */
 
-#include <Arduino.h>
+//#include <Arduino.h>
 #include "WiFi.h"
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
