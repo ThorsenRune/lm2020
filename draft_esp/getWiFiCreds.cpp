@@ -125,7 +125,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
           isMyStaticIPSet=true;
           server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
                   request->send(200, "text/plain", IpAddress2String(MyStaticIP).c_str());
-                  startAPP=true;
+                  //startAPP=true;
           });
           server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
                  //Connect to AP mode
