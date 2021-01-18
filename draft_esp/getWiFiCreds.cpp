@@ -143,7 +143,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
                  startAPP=true;
                  stopsoftAP=true;
                  server.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
-                         request->send(200, "text/plain", LM_ServerSiteCompl.c_str());
+                         request->send(200, "text/plain", LM_ServerSiteCompl);
                  });
 
           });
