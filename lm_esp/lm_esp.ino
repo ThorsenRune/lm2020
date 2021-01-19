@@ -1,12 +1,10 @@
 
 //#include lm_esp.ino
-//gdoc:  https://docs.google.com/document/d/1Ha8A9y34Ny4x2S-3-gUzyEWjeiVSwqKzoqvjnu9GzHY
 /*
     COMMUNICATION
       mReceive: receive data from client and send to internal protocol or passes to subsystem (LM)
       mTransmit: inverse of mReceive, sends to client
       use : publishvars.c to expose variables to the client
-
 */
 #define DEBUG_ON   0          //Conditional compilation for DEBUGGING
 //  0-  release

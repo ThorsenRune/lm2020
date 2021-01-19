@@ -1,5 +1,8 @@
+/*  Unit testing for lm_esp
+    This is our playground where we test new functionality
 
-
+*/
+#define DEBUG_ON   0          // for DEBUGGING (eg  speed up compilation omitting libs)
 #include "WiFi.h"
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
@@ -7,10 +10,11 @@
 extern "C" {  //Note- neccessary to implement C files
 }
 #include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
-
-// function prototypes for HTTP handlers (sigh!)
-//............
-
+#include <stdint.h>           //Define standard types uint32_t etc
+extern "C" {  //Note- neccessary to implement C files
+  #include "C:\Thorsen\Rune\www\html\public\lm2020\lm_esp\system.h"
+  #include "C:\Thorsen\Rune\www\html\public\lm2020\lm_esp\inoProtocol.h"      //Including h file allows you to access the functions
+}
 //webSocket variables
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient * globalClient = NULL;
