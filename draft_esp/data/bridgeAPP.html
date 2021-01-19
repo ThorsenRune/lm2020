@@ -20,8 +20,9 @@ bridgeAPP     tell the user to switch NETWORK, note down static IP and connect t
  <br>
 
 <script>
-var str1 = "http://thorsen.it/public/lm2020/lm_webapp/index.php?ws=";
-var str2;
+var str1;
+var str2 = "?ws=";
+var str3;
 
 
 
@@ -29,7 +30,9 @@ setInterval(function() {
   // Call a function repetatively with 2 Second interval
   getDataIP();
   getDataSSID();
-  var res = str1.concat(str2);
+  getDataURL();
+  var respart = str1.concat(str2);
+  var res = respart.concat(str3);
   document.getElementById("idURL").href = res;
 
 }, 1000); //1000mSeconds update rate
@@ -41,7 +44,7 @@ function getDataIP() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("idIP").innerHTML =
       this.responseText;
-      str2=String(this.responseText);
+      str3=String(this.responseText);
     }
   };
   xhttp.open("GET", "ip", true);
@@ -57,6 +60,17 @@ function getDataSSID() {
     }
   };
   xhttp.open("GET", "ssid", true);
+  xhttp.send();
+}
+
+function getDataURL() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+    str1=String(this.responseText);
+    }
+  };
+  xhttp.open("GET", "url", true);
   xhttp.send();
 }
 
