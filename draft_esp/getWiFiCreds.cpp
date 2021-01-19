@@ -18,7 +18,7 @@
 //String AP_SSID="";  // your internet wifi  SSID
 //String AP_PASS="";   // your internet wifi  password
 //const char* SoftAP_SSID = "Arduino_LM";  //Name of the SoftAP - Arduino gets nicely first in the network list
-//String LM_URL = "http://thorsen.it/public/lm2020/lm_webapp";
+
 
 
 IPAddress MyStaticIP;  //The static IP address when using internet wifi router
