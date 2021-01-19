@@ -45,9 +45,9 @@
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
 /***************PROTOTYPES ***sigh*********************/
-void mDebugMsg(char msg[]);        //Debugging messages
-void mDebugHalt(char msg[]);
-void mPrint(String msg);
+void mDebugMsgcpp(char msg[]);        //Debugging messages
+void mDebugHaltcpp(char msg[]);
+void mPrintcpp(String msg);
 
 bool mWIFIConnect();             //Main entry point will return true when connected
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS);

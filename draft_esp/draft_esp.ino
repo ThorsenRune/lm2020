@@ -3,19 +3,22 @@
 
 */
 #define DEBUG_ON   0          // for DEBUGGING (eg  speed up compilation omitting libs)
-#include "WiFi.h"
-#include "SPIFFS.h"
-#include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
 extern "C" {  //Note- neccessary to implement C files
 }
-#include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
 #include <stdint.h>           //Define standard types uint32_t etc
+#if (DEBUG_ON!=1)
+  #include "SPIFFS.h"
+  #include "WiFi.h"
+  #include "ESPAsyncWebServer.h"
+#endif
 extern "C" {  //Note- neccessary to implement C files
   //Note: Arduino does NOT support relative paths
-  #include "C:\Thorsen\Rune\www\html\public\lm2020\lm_esp\system.h"
-  #include "C:\Thorsen\Rune\www\html\public\lm2020\lm_esp\inoProtocol.h"      //Including h file allows you to access the functions
+  #include "system.h"
+  #include "inoProtocol.h"      //Including h file allows you to access the functions
 }
+#include "credentials.h"        //Default WIFI CREDENTIALS IN THIS FILE
+#include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
 //webSocket variables
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient * globalClient = NULL;
@@ -105,12 +108,24 @@ void mPrint(String msg){
       Serial.printf("%s\n",msg );
       delay(100);
   }
+  void  mDebugMsgcpp(char msg[]){
+        Serial.print("Debugger says: \t ");
+        Serial.printf("%s\n",msg );
+        delay(100);
+    }
   void mDebugInt(char msg[],int data){
     Serial.printf("%s  \t:\t %i\t %c\n",msg,data,(char)data);
     delay(100);
   }
 //  Stop and do endless loop
 void mDebugHalt(char msg[]){
+  while (1){
+    Serial.print("\n------------HALT Command (stopped with endless loop) ------");
+    Serial.println(msg );
+    delay(300000);
+  }
+}
+void mDebugHaltcpp(char msg[]){
   while (1){
     Serial.print("\n------------HALT Command (stopped with endless loop) ------");
     Serial.println(msg );

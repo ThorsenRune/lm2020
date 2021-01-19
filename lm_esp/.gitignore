@@ -1,5 +1,5 @@
 # Ignore the password file for the wifi
-credentials.h
+#credentials.h
 # Ignoring the following files
 # Compiled source #
 ###################
