@@ -26,6 +26,7 @@ IPAddress MyStaticIP;  //The static IP address when using internet wifi router
 //    Params from HTML pages
 const char* PARAM_INPUT_1 = "SSID";
 const char* PARAM_INPUT_2 = "Password";
+const char* PARAM_INPUT_3 = "Urlserver";
 //IP Address settings
 IPAddress SoftAP_IP(192,168,4,1);
 IPAddress gateway(192,168,4,9);
@@ -160,6 +161,7 @@ void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress 
   mDebugMsgcpp("Saving credentials in FLASH");
   writeFile(SPIFFS, "/SSID.txt", AP_SSID.c_str());
   writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str());
+  writeFile(SPIFFS, "/Url.txt", LM_URL.c_str());
 
   //Todo1: what if an invaid ip is given to  String2IpAddress?
   writeFile(SPIFFS, "/IP.txt", IpAddress2String(MyStaticIP).c_str());
@@ -178,6 +180,9 @@ bool mGetCredentials(){//Blocking. Will return true if credentials are in FLASH
   AP_PASS=readFile(SPIFFS, "/Password.txt");
   Serial.print("Your password: ");
   Serial.println(AP_PASS);
+  LM_URL=readFile(SPIFFS, "/Url.txt");
+  Serial.print("Your server: ");
+  Serial.println(LM_URL);
   MyStaticIP=String2IpAddress(readFile(SPIFFS, "/IP.txt"));
   Serial.print("Your IP: ");
   Serial.println(MyStaticIP);
@@ -241,8 +246,10 @@ bool InitSoftAP() {  //Get credentials from user
     if (request->hasParam(PARAM_INPUT_1,true)) {
       AP_SSID = request->getParam(PARAM_INPUT_1,true)->value();
       AP_PASS = request->getParam(PARAM_INPUT_2,true)->value();
+      LM_URL = request->getParam(PARAM_INPUT_3,true)->value();
       AP_SSID.trim();   //Remove spaces
       AP_PASS.trim();
+      LM_URL.trim();
       mDebugMsgcpp("Credentials received:");
       Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
       request->send(SPIFFS, "/onConnection.html", "text/html");
@@ -280,6 +287,7 @@ bool InitSoftAP() {  //Get credentials from user
     if (request->hasParam(PARAM_INPUT_1)) {
       AP_SSID = request->getParam(PARAM_INPUT_1)->value();
       AP_PASS = request->getParam(PARAM_INPUT_2)->value();
+      LM_URL = request->getParam(PARAM_INPUT_3)->value();
        mDebugMsgcpp("Credentials:");
        Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
        InitSoftAPOk=true;   //Proceed in flowchart
