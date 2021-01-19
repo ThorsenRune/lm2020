@@ -14,11 +14,13 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
   <p>Inserisci per favore i credenziali della rete WiFi che si desirera utilizzare</p>
   <p>Please insert the credentals for the Internet WiFi you want to use<p>
 <!--
-  the action="/get" is misleading 
+  the action="/get" is misleading
 -->
   <form action="/get"  method="POST" enctype="application/x-www-form-urlencoded" accept-charset="UTF-8">
     SSID rete Wifi: <input type="text" name="SSID">
     Password: <input type="password" name="Password" id="myPass">
+    Server : <input type="text" name="LM_URL" id="idLM_URL">
+
     <!-- An element to toggle between password visibility -->
     <br>
     <input type="checkbox" onclick="viewPassword()">Mostra Password
