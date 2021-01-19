@@ -17,7 +17,7 @@ extern "C" {  //Note- neccessary to implement C files
   #include "system.h"
   #include "inoProtocol.h"      //Including h file allows you to access the functions
 }
-#include "credentials.h"        //Default WIFI CREDENTIALS IN THIS FILE
+//#include "credentials.h"        //Default WIFI CREDENTIALS IN THIS FILE
 #include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
 //webSocket variables
 AsyncWebSocket ws("/ws");
