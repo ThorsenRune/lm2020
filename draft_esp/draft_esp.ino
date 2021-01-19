@@ -12,6 +12,7 @@ extern "C" {  //Note- neccessary to implement C files
 #include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
 #include <stdint.h>           //Define standard types uint32_t etc
 extern "C" {  //Note- neccessary to implement C files
+  //Note: Arduino does NOT support relative paths
   #include "C:\Thorsen\Rune\www\html\public\lm2020\lm_esp\system.h"
   #include "C:\Thorsen\Rune\www\html\public\lm2020\lm_esp\inoProtocol.h"      //Including h file allows you to access the functions
 }
