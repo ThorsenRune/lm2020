@@ -53,7 +53,7 @@ bool mWIFIConnect();             //Main entry point will return true when connec
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS);
 //  -------- private functions
 bool mGetCredentials();
-bool mStartWebSocket();
+ 
 bool InitSoftAP();
 bool mGetMyStaticIP();
 bool mUserFeedbackViaSoftAP();

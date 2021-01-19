@@ -36,20 +36,24 @@ AsyncWebServer server2(80);
 AsyncWebSocketClient * globalClient = NULL;
 
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This is the LM communication protocol
+
+    //todo: copy code from lm_esp.ino line 38
+
+    IPAddress staticIP(MyStaticIP[0],MyStaticIP[1],MyStaticIP[2],MyStaticIP[3]); // parameters below are for your static IP address, if used
     IPAddress gateway(192, 168, 1, 1);
     IPAddress subnet(255, 255, 0, 0);
-    WiFi.config(MyStaticIP, gateway, subnet);  // if using static IP, enter parameters at the top
+    WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
     WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
       Serial.println("Connecting to WiFi..");
     }
+    mDebugMsg("Local IP address");
     Serial.println(WiFi.localIP());
-    //todo: copy code from lm_esp.ino line 38
-    IPAddress staticIP(MyStaticIP[0],MyStaticIP[1],MyStaticIP[2],MyStaticIP[3]); // parameters below are for your static IP address, if used
-
 
   //AsyncWebSocket ws("/ws");
+    ws.onEvent(onWsEvent);
+    server2.addHandler(&ws);
     mDebugMsg("Connecting mStartWebSocket");
     AsyncWebSocketClient * globalClient = NULL;
     for (int i=0;i<100;i++){    //try until timeout
@@ -57,28 +61,12 @@ bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This 
       delay(1000);
     }
     mDebugMsg("Timeout mWaitUntilTrueOrTimeout");
-    delay(5000);
-    WiFi.softAPdisconnect (true);
+  //  delay(5000);
+  //  WiFi.softAPdisconnect (true);
     return false;
   }
 
-/*
-void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
-  //rt210114 Moved out of function.
-    //AwsEventType describes what event has happened, like receive data or disconnetc
-  // data is the payload
-  if(type == WS_EVT_CONNECT){
-    Serial.println("Websocket client connection received");
-    globalClient = client;
-  } else if(type == WS_EVT_DISCONNECT){
-    Serial.println("Websocket client connection finished");
-    globalClient = NULL;
-  } else if(type == WS_EVT_DATA){  //Data was received from client
-      mDebugHalt("mReceive is defined in lm_esp program");
-    // mReceive(data,len);
-  }
-}
-*/
+
 void onWsEvent(AsyncWebSocket * server2, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
     //AwsEventType describes what event has happened, like receive data or disconnetc
   // data is the payload
@@ -108,12 +96,12 @@ void setup() {
   }
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);  //Connection to LM subsystem
   bWebSocketConnection=false;
-    Serial.println("Connecting to WiFi..");
+    Serial.println("Connecting to webSocket..");
   while (!bWebSocketConnection){
     bWebSocketConnection=mWIFIConnect();
   };      //Blocking until connection is made
     Serial.println(WiFi.localIP());
-    ws.onEvent(onWsEvent);
+
     #endif
     #if  ( DEBUG_ON!=1)
       server2.begin();   //Todo4: do we need this?
