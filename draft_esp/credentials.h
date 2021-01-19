@@ -2,7 +2,6 @@
 #ifndef ___CREDSH    // only once guard to avoid recursive inclusion
 #define ___CREDSH
 
-
 String AP_SSID = "networkname";  // your router's SSID here
 String AP_PASS = "password";     // your router's password here
 const char* LM_URL = "http://thorsen.it/public/lm2020/lm_webapp";
