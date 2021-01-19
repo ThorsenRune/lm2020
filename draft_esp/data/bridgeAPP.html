@@ -12,11 +12,11 @@ bridgeAPP     tell the user to switch NETWORK, note down static IP and connect t
   <link rel="stylesheet" type="text/css" href="style.css">
   </head><body>
   <h2> Come avviare l'applicazione</h2>
-  <p>1- Connettiti alla rete <b><span id="SSID">%SSID%</span></b> con il tuo dispositivo.</p>
+  <p>1- Connettiti alla rete <b><span id="idSSID">%SSID%</span></b> con il tuo dispositivo.</p>
 <br>
-  <p>2- Visita il <a href="#" id="URL">sito</a> dedicato a MeCFES.</p>
+  <p>2- Visita il <a href="#" id="idURL">sito</a> dedicato a MeCFES.</p>
 <br>
-<p>3- Inserisci l'indirizzo IP: <b><span id="IP">%IP%</span></b></p>
+<p>3- Inserisci l'indirizzo IP: <b><span id="idIP">%IP%</span></b></p>
  <br>
 
 <script>
@@ -30,7 +30,7 @@ setInterval(function() {
   getDataIP();
   getDataSSID();
   var res = str1.concat(str2);
-  document.getElementById("URL").href = res;
+  document.getElementById("idURL").href = res;
 
 }, 1000); //1000mSeconds update rate
 
@@ -39,7 +39,7 @@ function getDataIP() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("IP").innerHTML =
+      document.getElementById("idIP").innerHTML =
       this.responseText;
       str2=String(this.responseText);
     }
@@ -52,7 +52,7 @@ function getDataSSID() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("SSID").innerHTML =
+      document.getElementById("idSSID").innerHTML =
       this.responseText;
     }
   };
