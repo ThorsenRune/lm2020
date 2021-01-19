@@ -1,9 +1,9 @@
  // This is a module of prototype.html used for websocket.ino to interface with LM from browser (client)
  // todo: rename globally to webserial.js
 var ws=null;	//The websocket - a serial RX/TX channel to LM
-var mGetIpFromLocationbar(){
+var mGetIpFromLocationbar=function(){
 	if (!location.search) return false;
-	if (location.search.split('=')[0]) = "?ws"
+	if (location.search.split('=')[0] == "?ws")
 	return location.search.split('=')[1];
 
 }
