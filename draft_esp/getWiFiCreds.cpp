@@ -1,5 +1,11 @@
 #include "getWiFiCreds.h"
 
+  /*
+    This module establish connection to the  wifi accesspoint (WAP or internet WiFi router)
+    If no connection is made it will enter a mode for setting up WAP credentials using a temporary
+    soft accesspoint (SoftAP or Direct WiFi)
+ */
+
 
 //--------      Global VARIABLES
 // Configure SoftAP (direct wifi ESP-client) characteristics

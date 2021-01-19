@@ -1,18 +1,12 @@
 
 
-  /*
-    This module establish connection to the  wifi accesspoint (WAP or internet WiFi router)
-    If no connection is made it will enter a mode for setting up WAP credentials using a temporary
-    soft accesspoint (SoftAP or Direct WiFi)
- */
-
 #include "WiFi.h"
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
 extern "C" {  //Note- neccessary to implement C files
 }
-#include "getWiFiCreds.h"
+#include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
 
 // function prototypes for HTTP handlers (sigh!)
 //............
