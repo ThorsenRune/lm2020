@@ -46,7 +46,7 @@ bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This 
     }
     mDebugMsg("Timeout mWaitUntilTrueOrTimeout");
     delay(5000);
-    WiFi.softAPdisconnect (true);
+    //WiFi.softAPdisconnect (true);
     return false;
   }
 

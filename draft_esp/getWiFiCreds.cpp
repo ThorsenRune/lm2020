@@ -18,7 +18,7 @@
 //String AP_SSID="";  // your internet wifi  SSID
 //String AP_PASS="";   // your internet wifi  password
 //const char* SoftAP_SSID = "Arduino_LM";  //Name of the SoftAP - Arduino gets nicely first in the network list
-//const char* LM_URL = "http://thorsen.it/public/lm2020/lm_webapp";
+//String LM_URL = "http://thorsen.it/public/lm2020/lm_webapp";
 
 
 IPAddress MyStaticIP;  //The static IP address when using internet wifi router
@@ -140,6 +140,10 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
           isMyStaticIPSet=true;
           server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
                   request->send(200, "text/plain", IpAddress2String(MyStaticIP).c_str());
+                  startAPP=true;
+          });
+          server.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
+                  request->send(200, "text/plain", LM_URL.c_str());
                   startAPP=true;
           });
 
@@ -265,6 +269,10 @@ bool InitSoftAP() {  //Get credentials from user
     request->send(200, "text/plain",IpAddress2String(MyStaticIP).c_str());
     startAPP=true;
     });
+    server.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
+                  request->send(200, "text/plain", LM_URL.c_str());
+                  startAPP=true;
+          });
       server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
@@ -310,6 +318,10 @@ bool InitSoftAP() {  //Get credentials from user
     request->send(200, "text/plain", IpAddress2String(MyStaticIP).c_str());
     startAPP=true;
     });
+    server.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
+                  request->send(200, "text/plain", LM_URL.c_str());
+                  startAPP=true;
+          });
   });
    server.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Send MeCFES bridgeapp
