@@ -1,4 +1,5 @@
 #include "getWiFiCreds.h"
+#include "credentials.h"        //Default WIFI CREDENTIALS IN THIS FILE
 
   /*
     This module establish connection to the  wifi accesspoint (WAP or internet WiFi router)

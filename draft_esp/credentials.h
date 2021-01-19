@@ -1,7 +1,7 @@
 // REPLACE WITH YOUR NETWORK CREDENTIALS
 #ifndef ___CREDSH    // only once guard to avoid recursive inclusion
 #define ___CREDSH
-#ifdef __cplusplus    //important- Tell the compiler that we have c code
+ 
 
 const char* AP_SSID = "networkname";  // your router's SSID here
 const char* AP_PASS = "password";     // your router's password here
