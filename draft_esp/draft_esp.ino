@@ -49,7 +49,8 @@ bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This 
     IPAddress staticIP(MyStaticIP[0],MyStaticIP[1],MyStaticIP[2],MyStaticIP[3]); // parameters below are for your static IP address, if used
 
 
-    AsyncWebSocket ws("/ws");
+  //AsyncWebSocket ws("/ws");
+    mDebugMsg("Connecting mStartWebSocket");
     AsyncWebSocketClient * globalClient = NULL;
     for (int i=0;i<100;i++){    //try until timeout
       if (globalClient!=NULL) return true;
