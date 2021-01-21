@@ -34,12 +34,21 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
 AsyncWebSocket ws("/ws");
 AsyncWebServer server(80);
 AsyncWebSocketClient * globalClient = NULL;
+<<<<<<< HEAD
 
 /*bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This is the LM communication protocol
 
     //todo: copy code from lm_esp.ino line 38
 
    /* IPAddress staticIP(MyStaticIP[0],MyStaticIP[1],MyStaticIP[2],MyStaticIP[3]); // parameters below are for your static IP address, if used
+=======
+/*
+bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This is the LM communication protocol
+
+    //todo: copy code from lm_esp.ino line 38
+
+    IPAddress staticIP(MyStaticIP[0],MyStaticIP[1],MyStaticIP[2],MyStaticIP[3]); // parameters below are for your static IP address, if used
+>>>>>>> ccd45bcee06e67998c5b636bc35da41fcec307d6
     IPAddress gateway(192, 168, 1, 1);
     IPAddress subnet(255, 255, 0, 0);
     WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
@@ -47,7 +56,11 @@ AsyncWebSocketClient * globalClient = NULL;
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
       Serial.println("Connecting to WiFi..");
+<<<<<<< HEAD
     }/*******   The two STANDARD ARDUINO functions (setup and loop)   *********
+=======
+    }/*******   The two STANDARD ARDUINO functions (setup and loop)   **********/
+>>>>>>> ccd45bcee06e67998c5b636bc35da41fcec307d6
     mDebugMsg("mStartWebSocket:Local IP address");
     Serial.println(WiFi.localIP());
 
