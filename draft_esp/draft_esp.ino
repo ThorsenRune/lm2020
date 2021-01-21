@@ -4,8 +4,6 @@
 */
 #define DEBUG_ON   0          // for DEBUGGING (eg  speed up compilation omitting libs)
 #include <AsyncTCP.h>
-extern "C" {  //Note- neccessary to implement C files
-}
 #include <stdint.h>           //Define standard types uint32_t etc
 #if (DEBUG_ON!=1)
   #include "SPIFFS.h"
@@ -17,7 +15,9 @@ extern "C" {  //Note- neccessary to implement C files
   #include "system.h"
   #include "inoProtocol.h"      //Including h file allows you to access the functions
 }
-
+extern IPAddress MyStaticIP;
+extern String AP_SSID;
+extern String AP_PASS;
 #include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
 
 //Define the pins for  U2UXD
@@ -32,9 +32,9 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
 
 //webSocket variables
 AsyncWebSocket ws("/ws");
-AsyncWebServer server2(80);
+AsyncWebServer server(80);
 AsyncWebSocketClient * globalClient = NULL;
-
+/*
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This is the LM communication protocol
 
     //todo: copy code from lm_esp.ino line 38
@@ -47,16 +47,17 @@ bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This 
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
       Serial.println("Connecting to WiFi..");
-    }
-    mDebugMsg("Local IP address");
+    }/*******   The two STANDARD ARDUINO functions (setup and loop)   **********/
+    mDebugMsg("mStartWebSocket:Local IP address");
     Serial.println(WiFi.localIP());
 
   //AsyncWebSocket ws("/ws");
     ws.onEvent(onWsEvent);
-    server2.addHandler(&ws);
+    server.addHandler(&ws);
     mDebugMsg("Connecting mStartWebSocket");
     AsyncWebSocketClient * globalClient = NULL;
     for (int i=0;i<100;i++){    //try until timeout
+        Serial.print("Waiting .");
       if (globalClient!=NULL) return true;
       delay(1000);
     }
@@ -66,8 +67,8 @@ bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS){//This 
     return false;
   }
 
-
-void onWsEvent(AsyncWebSocket * server2, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+*/
+void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
     //AwsEventType describes what event has happened, like receive data or disconnetc
   // data is the payload
   if(type == WS_EVT_CONNECT){
@@ -90,27 +91,45 @@ void setup() {
  mDebugMsg("\nUnit testing\n");
  mDebugMsg("In Arduino remember to: Tools - Sketch upload ");
 #if  ( DEBUG_ON!=1)
- if(!SPIFFS.begin(true)){
-  Serial.println("An Error has occurred while mounting SPIFFS");
-  return;
+  mCheckSpiffs();
+  mHWSetup();
+  bool ret=mGetCredentials();
+  if (!ret) mDebugHalt("Insert call to mWIFIConnect that calls setup");
+  //If  credentals  try to connect (Flowchart 1)
+
+  IPAddress staticIP=MyStaticIP;
+  IPAddress gateway(192, 168, 1, 1);
+  IPAddress subnet(255, 255, 0, 0);
+  WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
+  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi..");
   }
-  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);  //Connection to LM subsystem
+  Serial.println(WiFi.localIP());
+  ws.onEvent(onWsEvent);
+  /*  Why is this neccessary???*/
+  server.addHandler(&ws);
+  server.on("/html", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/ws.html", "text/html");
+  });
+#endif
+#if  ( DEBUG_ON!=1)
+  server.begin();
+#endif
+  MainSetup();		//Setup the system, protocol & .. (rt210107)
+  mDebugMsg("calling main loop");
+#if ( DEBUG_ON==1)
+  mTesting();
+#endif
+return;
   bWebSocketConnection=false;
-    Serial.println("Connecting to webSocket..");
-  while (!bWebSocketConnection){
+    Serial.println("Calling mWIFIConnect");
+/*  while (!bWebSocketConnection){
     bWebSocketConnection=mWIFIConnect();
   };      //Blocking until connection is made
-    Serial.println(WiFi.localIP());
+  */
 
-    #endif
-    #if  ( DEBUG_ON!=1)
-      server2.begin();   //Todo4: do we need this?
-    #endif
-    MainSetup();		//Setup the system, protocol & .. (rt210107)
-    mDebugMsg("calling main loop");
-  #if ( DEBUG_ON==1)
-    mTesting();
-  #endif
   //- Serial.printf("Receive buffer reset. Free: %i ",mFIFO_Free(oRX));
 
   }// This returns to an intrinsic call to loop()
@@ -263,4 +282,16 @@ void mDebugHaltcpp(char msg[]){
     Serial.println(msg );
     delay(300000);
   }
+}
+
+void mCheckSpiffs(){
+  if(!SPIFFS.begin()){
+     Serial.println("An Error has occurred while mounting SPIFFS");
+     mDebugHalt("Fatal problem in spiffs");
+  }
+}
+void mHWSetup(){
+  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);  //Connection to LM subsystem
+
+
 }

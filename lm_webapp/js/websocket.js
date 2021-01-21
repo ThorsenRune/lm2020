@@ -12,7 +12,9 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 /*		the staticIP has to match the address set in websocket.ino   */
 	var  staticIP="192.168.1.51"; //OBS: no spaces & use .
 	if (mGetIpFromLocationbar()) staticIP=mGetIpFromLocationbar();
-	ws = new WebSocket("ws://"+staticIP+"/ws");
+	s="ws://"+staticIP+"/ws";
+	mMessage("Connecting to:"+s);
+	ws = new WebSocket(s);
 	document.getElementById( "idStatus").innerHTML="Calling device";
 	aRXData=[]
 	ws.binaryType="arraybuffer"
