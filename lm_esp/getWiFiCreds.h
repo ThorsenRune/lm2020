@@ -44,16 +44,21 @@
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
+/***********    INTERFACE   ******************/
+String getAP_SSID();
+String getAP_PASS();
+IPAddress getIP();
+
 /***************PROTOTYPES ***sigh*********************/
 void mDebugMsgcpp(char msg[]);        //Debugging messages
 void mDebugHaltcpp(char msg[]);
 void mPrintcpp(String msg);
 
-bool mWIFIConnect();             //Main entry point will return true when connected
+bool mWIFISetup();             //Main entry point will return true when connected
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS);
 //  -------- private functions
 bool mGetCredentials();
- 
+
 bool InitSoftAP();
 bool mGetMyStaticIP();
 bool mUserFeedbackViaSoftAP();
