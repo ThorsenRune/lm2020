@@ -54,12 +54,12 @@ void mDebugMsgcpp(char msg[]);        //Debugging messages
 void mDebugHaltcpp(char msg[]);
 void mPrintcpp(String msg);
 
-bool mWIFISetup();             //Main entry point will return true when connected
+bool mWIFISetup(AsyncWebServer &gserver);             //Main entry point will return true when connected
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS);
 //  -------- private functions
 bool mGetCredentials();
 
-bool InitSoftAP();
+bool InitSoftAP(AsyncWebServer &gserver);
 bool mGetMyStaticIP();
 bool mUserFeedbackViaSoftAP();
 void mSetCredentials();

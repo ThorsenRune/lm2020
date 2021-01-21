@@ -17,7 +17,6 @@ int nDbgLvel=5;   //Verbosity level for debuggin messages
 /*    MOVED TO creadentials.h:   */
 //String AP_SSID="";  // your internet wifi  SSID
 //String AP_PASS="";   // your internet wifi  password
-//const char* SoftAP_SSID = "Arduino_LM";  //Name of the SoftAP - Arduino gets nicely first in the network list
 String AP_SSID = "networkname";  // your router's SSID here
 String AP_PASS = "password";     // your router's password here
 String LM_URL = "url";
@@ -48,7 +47,7 @@ const char* PARAM_INPUT_3 = "LM_URL";
 IPAddress SoftAP_IP(192,168,4,1);
 IPAddress gateway(192,168,4,9);
 IPAddress subnet(255,255,255,0);
-AsyncWebServer gserver(80);
+//AsyncWebServer gserver(80);
 
 //      Flags of statemachine. set by async calls  (see flowchart)
 bool InitSoftAPOk=false;  //Set true by InitSoftAP when user  has inserted SSID&PWD
@@ -56,16 +55,18 @@ bool isMyStaticIPSet=false;
 bool startAPP=false;    //Ready to launch main LM_program
 bool stopsoftAP=false;    //Ready to launch main LM_program
 bool isWiFiStationConnected=false;  //Is device connected to softAP?
-bool mWIFISetup(){//Setup SOFT AP FOR CONFIGURING WIFI
+bool mWIFISetup(AsyncWebServer & gserver){//Setup SOFT AP FOR CONFIGURING WIFI
             //(Flowchart 2)
+    bool ret=false;
     WiFi.disconnect();
     mDebugMsgcpp("Calling InitSoftAP ");
-    bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
+    ret=InitSoftAP(gserver);//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
       mDebugMsgcpp("Done InitSoftAP, Calling mGetMyStaticIP ");
     if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
     if (ret){ //We got our credentials, save and restart
+      if (nDbgLvel>2) Serial.printf("Reading file: %s\r\n", path); 
       mDebugMsgcpp("Calling: mUserFeedbackViaSoftAP");
         //Setup the SoftAP from before, refresh client with full credentials
         ret=mUserFeedbackViaSoftAP(); //Arguments AP_SSID, AP_PASS,MyStaticIP as globals
@@ -94,7 +95,7 @@ bool mWIFIConnect(){//Main entry point - a blocking call
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
     mDebugMsgcpp("Calling InitSoftAP ");
-    bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
+    //bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
       mDebugMsgcpp("Done InitSoftAP, Calling mGetMyStaticIP ");
@@ -118,12 +119,12 @@ bool mWIFIConnect(){//Main entry point - a blocking call
 }
 
 //--------			SUB functions	----------------
-bool mGetMyStaticIP(){//Global params:{
+bool mGetMyStaticIP(){//Get a free  IP address and make it static
   //Flowchart: connect to network and get the IP
   //TODO0 DEBUG
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
-  WiFi.mode(WIFI_STA);
   WiFi.disconnect();
+  WiFi.mode(WIFI_STA);
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());
   mDebugMsgcpp("Connecting to internet WIFI to get IP");
   Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
@@ -147,6 +148,7 @@ bool mGetMyStaticIP(){//Global params:{
 bool mWaitUntilTrueOrTimeout(bool &bFlag){
   for (int i=0;i<100000;i++){    //try until timeout
     if (bFlag) return true;
+
     delay(100);
   }
   mDebugMsgcpp("Timeout mWaitUntilTrueOrTimeout");
@@ -154,11 +156,12 @@ bool mWaitUntilTrueOrTimeout(bool &bFlag){
 }
 
 bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPAddress MyStaticIP) {
+  /*
 //Flowchart:   * reconnect to client via Soft AP
   //* send IP to client. Now user will know the IP, create a link to click
   //Start SoftAP mode again
    WiFi.softAP(SoftAP_SSID);
-   delay(100);
+   delay(1000);
   //Setting Wifi specifications
   Serial.print("User feedback Setting soft-AP configuration ... ");
   Serial.println(WiFi.softAPConfig(SoftAP_IP, gateway, subnet) ? "Ready" : "Failed!");
@@ -166,7 +169,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
   Serial.print("User feedback Soft-AP available on IP address = ");
   Serial.println(WiFi.softAPIP());
   // Route to load style.css file
-   gserver.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
      request->send(SPIFFS, "/style.css", "text/css");
    });
    //Page dedicated to data shown for user
@@ -201,6 +204,7 @@ bool mUserFeedbackViaSoftAP(){//Global params:(String AP_SSID,String AP_PASS,IPA
               //Wait here until user has submitted the response in startapp (startAPP==true)
     mDebugMsgcpp("Waiting for user in mUserFeedbackViaSoftAP");
     return mWaitUntilTrueOrTimeout(startAPP);
+    */
 }
 
 void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress  ) ){   //Get credentials from spiff
@@ -255,20 +259,20 @@ void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info){
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Pagina non trovata");
 }
-bool InitSoftAP() {  //Get credentials from user
+bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
   //Params are byref (will return new values)
   //Return the parameter values
   //return true/false when parameters are obtained
   //WiFi.softAP(ssid, password, channel, hidden, max_connection); // Remove the password parameter, if you want the AP (Access Point) to be open
-
   WiFi.softAP(SoftAP_SSID);
-  delay(100);
+  delay(500);
+  bool ret1=WiFi.softAPConfig(SoftAP_IP, gateway, subnet);
+  Serial.print("Setting direct wifi (soft-AP) server:");
+  Serial.println(ret1 ? "Ready" : "Failed!");
   WiFi.onEvent(WiFiStationConnected, SYSTEM_EVENT_AP_STACONNECTED);
   WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_AP_STADISCONNECTED);
 
    //Setting Wifi specifications
-  Serial.print("Setting direct wifi (soft-AP) server");
-  Serial.println(WiFi.softAPConfig(SoftAP_IP, gateway, subnet) ? "Ready" : "Failed!");
   //Verify MeCFES IP Address
   Serial.print("Soft-AP available on IP address = ");
   Serial.println(WiFi.softAPIP());
@@ -277,55 +281,58 @@ bool InitSoftAP() {  //Get credentials from user
   mDebugMsgcpp("Waiting for user to open page");
    // Send web page with input fields to client
   gserver.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    mDebugMsgcpp("/index.html");
+    mDebugMsgcpp("serving index.html");
     request->send(SPIFFS, "/index.html", "text/html");
   });
-  // Route to load style.css file
- gserver.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
-   request->send(SPIFFS, "/style.css", "text/css");
- });
-  //Posting passwords is better than the GET method TODO:Change method to POST
-  gserver.on("/get", HTTP_POST, [] (AsyncWebServerRequest *request) {
-    if (request->hasParam(PARAM_INPUT_1,true)) {
-      AP_SSID = request->getParam(PARAM_INPUT_1,true)->value();
-      AP_PASS = request->getParam(PARAM_INPUT_2,true)->value();
-      LM_URL = request->getParam(PARAM_INPUT_3,true)->value();
-      AP_SSID.trim();   //Remove spaces
-      AP_PASS.trim();
-      LM_URL.trim();
-      mDebugMsgcpp("Credentials received:");
-      Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
-      request->send(SPIFFS, "/onConnection.html", "text/html");
-      gserver.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){//Serve the stylesheet
-          request->send(SPIFFS, "/style.css", "text/css");
-      });
-      gserver.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
-     mDebugMsgcpp("Sending AP_SSID to client");
-    request->send(200, "text/plain", AP_SSID.c_str());
+  // Serve style.css file
+  gserver.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    mDebugMsgcpp("serving style.css");
+    request->send(SPIFFS, "/style.css", "text/css");
+  });
+    gserver.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
+      mDebugMsgcpp("Sending AP_SSID to client");
+      request->send(200, "text/plain", AP_SSID.c_str());
     });
     gserver.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
-     mDebugMsgcpp("Sending sMyStaticIP to client");
-    request->send(200, "text/plain",AP_StaticIP.c_str());
-    startAPP=true;
+      mDebugMsgcpp("Sending sMyStaticIP to client");
+      request->send(200, "text/plain",AP_StaticIP.c_str());
     });
     gserver.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
        mDebugMsgcpp("Sending url to client");
-                  request->send(200, "text/plain", LM_URL.c_str());
-                  startAPP=true;
-          });
-      gserver.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+       request->send(200, "text/plain", LM_URL.c_str());
+    });
+    gserver.on("/pass", HTTP_GET, [](AsyncWebServerRequest *request){
+         mDebugMsgcpp("index.html Sending AP_PASS to client");
+        request->send(200, "text/plain",AP_PASS.c_str());
+    });
+    gserver.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
-           startAPP=true;
-
+          // startAPP=true;
     });
-      delay(1000);
+    gserver.on("/get", HTTP_POST, [] (AsyncWebServerRequest *request) {
+      if (request->hasParam(PARAM_INPUT_1,true)) {
+        mDebugMsgcpp("Credentials received:");
+        AP_SSID = request->getParam(PARAM_INPUT_1,true)->value();
+        AP_PASS = request->getParam(PARAM_INPUT_2,true)->value();
+        LM_URL = request->getParam(PARAM_INPUT_3,true)->value();
+        AP_SSID.trim();   //Remove spaces
+        AP_PASS.trim();
+        LM_URL.trim();
+        Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
+        InitSoftAPOk=true;
+        //request->send(SPIFFS, "/onConnection.html", "text/html");
+      }
+    });
+    /*
+      delay(10000);
       InitSoftAPOk=true;   //Proceed in flowchart
     } else {
       mDebugMsgcpp("No message sent");
     }
     }
   );
+  /*
   gserver.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
      mDebugMsgcpp("index.html Sending url to client");
                 request->send(200, "text/plain", LM_URL.c_str());
@@ -339,10 +346,7 @@ bool InitSoftAP() {  //Get credentials from user
        mDebugMsgcpp("index.html Sending ip to client");
       request->send(200, "text/plain",AP_StaticIP.c_str());
   });
-  gserver.on("/pass", HTTP_GET, [](AsyncWebServerRequest *request){
-       mDebugMsgcpp("index.html Sending AP_PASS to client");
-      request->send(200, "text/plain",AP_PASS.c_str());
-  });
+
   // Send a GET request to <ESP_IP>/get?input1=<inputMessage>
   // Obsolete HTTP_GET by HTTP_POST
   gserver.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
@@ -380,17 +384,21 @@ bool InitSoftAP() {  //Get credentials from user
                   startAPP=true;
           });
   });
-   gserver.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
+  gserver.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Send MeCFES bridgeapp
            request->send(SPIFFS, "/bridgeAPP.html", "text/html");
 
            startAPP=true;
     });
+    */
   gserver.onNotFound(notFound);
   gserver.begin();
+  Serial.println("HTTP server started");
   mDebugMsgcpp("Waiting for user to insert credentials");
   //"Continue if good. else if Failed to get credentials, abort");
-  return mWaitUntilTrueOrTimeout(InitSoftAPOk);
+  bool ret= mWaitUntilTrueOrTimeout(InitSoftAPOk);
+  mDebugMsgcpp("InitSoftAP Done");
+  return ret;
 }
 
 

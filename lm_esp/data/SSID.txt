@@ -1,1 +1,1 @@
-some SSID
+networkname

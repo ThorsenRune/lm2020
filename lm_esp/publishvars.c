@@ -28,4 +28,5 @@ void Expose2Protocol(){  //todo5:refactor name to 'PublishProtocol'
   EXPOSEARRAY(&oTXProt,nTimerInMs);
   EXPOSEARRAY(&oTXProt,nMode.all_flags);
   EXPOSEARRAY(&oTXProt,bErrFlags.all_flags);
+  //EXPOSEARRAY(&oTXProt,Art_signal);
 }

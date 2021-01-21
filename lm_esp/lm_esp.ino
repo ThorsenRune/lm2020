@@ -68,12 +68,15 @@ void setup(){
   mESPSetup();
   mDebugMsg("Calling mGetCredentials");
   bool ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
+  //Testing insert credentials
+  if (nDbgLvl>20) ret= InitSoftAP(server);
   if (!ret) mDebugHalt("Insert call to mWIFIConnect that calls setup");
   else {
     ret=mStartWebSocket1();
   }
   if (!ret){      //Error in connection setup wifi
-    mWIFISetup();
+    mWIFISetup(server);
+    mDebugHalt("Stop for now");
     setup();  //Repeat until wifi & WS is working
   }
   Serial.printf("Connected to WiFi: %s pwd:%s \n",getAP_SSID().c_str(),getAP_PASS().c_str());
@@ -82,7 +85,7 @@ void setup(){
   ret=mWaitForWSClient(TimeOutClient);
   if (!ret){
     mDebugMsg("Client not there,,,,going into mWIFISetup mode");
-    mWIFISetup();
+    mWIFISetup(server);
     setup();  //Repeat until wifi & WS is working
   }
   MainSetup();		//Setup the system, protocol & .. (rt210107)
