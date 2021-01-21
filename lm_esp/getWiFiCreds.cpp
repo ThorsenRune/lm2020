@@ -44,9 +44,7 @@ const char* PARAM_INPUT_1 = "SSID";
 const char* PARAM_INPUT_2 = "Password";
 const char* PARAM_INPUT_3 = "LM_URL";
 //IP Address settings
-IPAddress SoftAP_IP(192,168,4,1);
-IPAddress gateway(192,168,4,9);
-IPAddress subnet(255,255,255,0);
+
 //AsyncWebServer gserver(80);
 
 //      Flags of statemachine. set by async calls  (see flowchart)
@@ -60,7 +58,7 @@ bool mWIFISetup(AsyncWebServer & gserver){//Setup SOFT AP FOR CONFIGURING WIFI
     bool ret=false;
     WiFi.disconnect();
     mDebugMsgcpp("Calling InitSoftAP ");
-    ret=InitSoftAP(gserver);//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
+    ret=InitSoftAP(gserver);//Sets AP_SSID, AP_PASS by Setup a soft accesspoint   and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
       mDebugMsgcpp("Calling mGetMyStaticIP ");
@@ -94,7 +92,7 @@ bool mWIFIConnect(){//Main entry point - a blocking call
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
     mDebugMsgcpp("Calling InitSoftAP ");
-    //bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
+    //bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint  and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
       mDebugMsgcpp("Done InitSoftAP, Calling mGetMyStaticIP ");
@@ -158,7 +156,7 @@ bool mWaitUntilTrueOrTimeout(bool &bFlag){
   return false;
 }
 
- 
+
 void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress  ) ){   //Get credentials from spiff
   //Saving credentials to SPIFFS
   mDebugMsgcpp("Saving credentials in FLASH");
@@ -219,9 +217,11 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
   InitSoftAPOk=false;     //Blocking flag to wait for user to accept settings
   WiFi.softAP(SoftAP_SSID);
   delay(500);
-  bool ret1=WiFi.softAPConfig(SoftAP_IP, gateway, subnet);
+  IPAddress SoftAP_IP(192,168,1,1);
+  IPAddress subnet(255,255,255,0);
+  bool ret=WiFi.softAPConfig(SoftAP_IP, SoftAP_IP, subnet);
   Serial.print("Setting direct wifi (soft-AP) server:");
-  Serial.println(ret1 ? "Ready" : "Failed!");
+  Serial.println(ret ? "Ready" : "Failed!");
   WiFi.onEvent(WiFiStationConnected, SYSTEM_EVENT_AP_STACONNECTED);
   WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_AP_STADISCONNECTED);
 
@@ -289,7 +289,7 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
   Serial.println("HTTP server started");
   mDebugMsgcpp("Waiting for user to insert credentials");
   //"Continue if good. else if Failed to get credentials, abort");
-  bool ret= mWaitUntilTrueOrTimeout(InitSoftAPOk);
+  ret= mWaitUntilTrueOrTimeout(InitSoftAPOk);
   mDebugMsgcpp("InitSoftAP Done");
   delay(5000);  //Wait for transactions to finish before closing?
   WiFi.disconnect();
@@ -298,11 +298,8 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
   return ret;
 }
 
+//  *** FLASH files *************
 
-
-
-
-//  *** FLASH files
 //Read credentials from files (SSID.txt,Password.txt and IP.txt)
 String readFile(fs::FS &fs, const char * path){
   if (nDbgLvel==6) Serial.printf("Reading file: %s\r\n", path);

@@ -51,7 +51,7 @@ bool mWIFIConnect(){//Main entry point - a blocking call
   } else {  //Fail in websocket connection, get credentials via SoftAP
             //(Flowchart 2)
     mDebugMsgcpp("Calling InitSoftAP ");
-    bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint 192.168.4.1 and ask the user for credentials
+    bool ret=InitSoftAP();//Sets AP_SSID, AP_PASS by Setup a soft accesspoint  and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
       mDebugMsgcpp("Done InitSoftAP, Calling mGetMyStaticIP ");

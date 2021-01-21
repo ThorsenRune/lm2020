@@ -63,26 +63,19 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
 /*  ----------   ARDUINO ENTRY POINT  ---------------------*/
 
 void setup(){
-  mDebugMsg("--------------------STARTING ------------");
   mESPSetup();
-  mDebugMsg("Calling mGetCredentials");
+  mDebugMsg("-------------running Android setup ------------");
   bool ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
-  if (!ret){      //Error in connection setup wifi
-    mWIFISetup(server);
-    mDebugHalt("Stop for now");
-    setup();  //Repeat until wifi & WS is working
-    return;
-  }
-  ret=mStartWebSocket1();
-  if (ret){
+  if (ret) ret=mStartWebSocket1(); //Use credentials to attempt connection
+  if (ret){ //Connection good wait for client to activate WS
     Serial.printf("Connected to WiFi: %s pwd:%s \n",getAP_SSID().c_str(),getAP_PASS().c_str());
     ret=mWaitForWSClient(TimeOutClient);
   }
   if (!ret){
-    mDebugMsg("Client not there,,,,going into mWIFISetup mode");
     mWIFISetup(server);
     setup();  //Repeat until wifi & WS is working
   }
+  //Websocket running ok
   MainSetup();		//Setup the system, protocol & .. (rt210107)
   mDebugMsg("calling main loop in LM_ESP.ino");
 #if ( DEBUG_ON==1)
@@ -142,14 +135,19 @@ bool mStartWebSocket1(){
   WiFi.disconnect();
   return false;   //WiFi not available maybe creaden
 }
+
+
 bool mWaitForWSClient(int TimeOutClient){
   Serial.print("WiFi.localIP() ");  Serial.println(WiFi.localIP());
   ws.onEvent(onWsEvent);
   /*  Why is this neccessary???*/
   server.addHandler(&ws);
+  /*
   server.on("/html", HTTP_GET, [](AsyncWebServerRequest *request){
+    mDebugMsg("html served");
     request->send(SPIFFS, "/ws.html", "text/html");
   });
+  */
   server.begin();
   mDebugMsg("Waiting for client to connect");
   for (int i=0;i<TimeOutClient;i++){    //try until timeout
@@ -277,9 +275,9 @@ void  mDebugMsgcpp(char msg[]){
       delay(100);
   }
   void mDebugHaltcpp(char msg[]){
-    while (1){
-      Serial.print("\n------------HALT Command (stopped with endless loop) ------");
+      Serial.print("\n------------HALT  ------\n");
       Serial.println(msg );
+    while (1){
       delay(300000);
     }
   }
