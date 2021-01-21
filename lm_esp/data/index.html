@@ -27,7 +27,7 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
     <br>
     Server : <input type="text" name="LM_URL" id="idLM_URL" value="URL OF THE SERVER">
     <br>
-    <input type="submit" value="Invia">
+    <input type="submit" value="Accetta Valori">
   </form>
     <hr>
     IP : <input type="text" name="LM_URL" id="idIP" value="196.168.1.1">
@@ -39,6 +39,7 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
 function mAppStart(){
       getDataURL();
       getDataIP();
+      getStartWS();
       alert('Connect to your wifi internet '+ WiFiSSID);
       var s="http://"+LM_ServerUrl+"?ws="+LM_Ip;
       alert('Opening'+s);
@@ -51,6 +52,16 @@ function viewPassword() {
   } else {
     x.type = "password";
   }
+}
+function getStartWS() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      alert(this.responseText);
+    }
+  };
+  xhttp.open("GET", "startapp", true);
+  xhttp.send();
 }
 function getDataIP() {
   var xhttp = new XMLHttpRequest();

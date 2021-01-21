@@ -10,8 +10,8 @@
 //  0-  release
 //  1- No wifi for quicker compile and test purpose
 int nDbgLvl=5;   //Verbosity level for debuggin messages
-int TimeoutWifi=5;  //Seconds of timeout
-int TimeOutClient=5;//Seconds of timeout mWaitForWSClient
+int TimeoutWifi=20;  //Seconds of timeout to get wifi connection
+int TimeOutClient=60;//Seconds of timeout mWaitForWSClient, time for user to connect
 int TimeOutStaticIDFetch=5;//Seconds of timeout mGetMyStaticIP
 
 //  END OF DEBUGGING STuFF
@@ -63,26 +63,21 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
 /*  ----------   ARDUINO ENTRY POINT  ---------------------*/
 
 void setup(){
-  mDebugMsg("Calling mESPSetup");
-#if  ( DEBUG_ON!=1)
+  mDebugMsg("--------------------STARTING ------------");
   mESPSetup();
   mDebugMsg("Calling mGetCredentials");
   bool ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
-  //Testing insert credentials
-  if (nDbgLvl>20) ret= InitSoftAP(server);
-  if (!ret) mDebugHalt("Insert call to mWIFIConnect that calls setup");
-  else {
-    ret=mStartWebSocket1();
-  }
   if (!ret){      //Error in connection setup wifi
     mWIFISetup(server);
     mDebugHalt("Stop for now");
     setup();  //Repeat until wifi & WS is working
+    return;
   }
-  Serial.printf("Connected to WiFi: %s pwd:%s \n",getAP_SSID().c_str(),getAP_PASS().c_str());
-
-#endif
-  ret=mWaitForWSClient(TimeOutClient);
+  ret=mStartWebSocket1();
+  if (ret){
+    Serial.printf("Connected to WiFi: %s pwd:%s \n",getAP_SSID().c_str(),getAP_PASS().c_str());
+    ret=mWaitForWSClient(TimeOutClient);
+  }
   if (!ret){
     mDebugMsg("Client not there,,,,going into mWIFISetup mode");
     mWIFISetup(server);
