@@ -40,9 +40,9 @@ function mAppStart(){
       getDataURL();
       getDataIP();
       getStartWS();
-      alert('Connect to your wifi internet '+ WiFiSSID);
+      alert('Connect to your wifi internet '+ WiFiSSID + ' and reset the board before proceeding.');
       var s="http://"+LM_ServerUrl+"?ws="+LM_Ip;
-      alert('Opening'+s);
+      alert('Opening '+s);
       location.href=s;
 }
 function viewPassword() {
