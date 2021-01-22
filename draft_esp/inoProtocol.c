@@ -193,7 +193,7 @@ Revisions:
   static uint8_t zState;				// State machine indicator
   static int *  DestData;
   while (!mFIFO_isEmpty(oRX)) {     // Char in buffer, go read and process it
-    mDebugInt("Available",mFIFO_available(oRX));
+    if (nDbgLvl>3) mDebugInt("Available",mFIFO_available(oRX));
     rcv1=mFIFO_pop(oRX);       //Get new data
     if (nDbgLvl>6)mDebugInt("popped",rcv1);
     if (0==rxCmd) 			//Set command as receive data

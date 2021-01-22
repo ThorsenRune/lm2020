@@ -33,7 +33,9 @@ void mTesting2(){
 void mGenerateSignal(){
   int len=sizeof(Art_signal)/sizeof(Art_signal[0]);
   for (int i=0;i<len ;i++){    //try until timeout
-    Art_signal[i]=(int)(sin(i/30)*(float)Gain[0]);
+    float arg=((float)i)/10;
+    Art_signal[i]=(int)(sin(arg)*(float)Gain[0]);
+    Art_signal[i]=Art_signal[i]+(nTimerInMs[0]%100);
   }
 }
 

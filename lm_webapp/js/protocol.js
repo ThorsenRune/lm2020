@@ -367,7 +367,7 @@ prot.mVarValue=function(sVarName,idx,val){		// Rev 191107
 		var oDesc=prot.oVarDesc[sVarName]
 		if (val!=undefined){
 			var raw=(val/oDesc.Factor)+Number(oDesc.Offset);
-			oData.Vector[idx]=raw;
+      if (oData.Vector)			oData.Vector[idx]=raw;    //RT210121  guard void
 			oData.Poke=true;	//Request a write to device
 			oData.PeekValue=true;	//Request a readback from device
 		} else {

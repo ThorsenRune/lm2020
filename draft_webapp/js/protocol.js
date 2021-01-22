@@ -193,10 +193,9 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		}
 		serial.RXFiFo=serial.RXFiFo.slice(idx);	//Remove cmd & payload
 		var el=prot.ElementByVarId(nId)
-		if (el.Poke) debugger; //Todo: write before read (call mTX_SetReq(oElem);
-		el.Vector=data
+    if (!el) return;
+		if (!el.Poke)  	el.Vector=data  //Don't read if you are writing
 		if (debug) debug.ReceivedElement=el
-
 		return true
 	}
 
@@ -231,6 +230,7 @@ function mTX_SetReq(oProtElem){      /* Change data in device memory          Wr
         debugger
         return;
     }
+    if (!oProtElem.Vector) return false;
 	//Loop through object data elements
     for(offs=0; offs<oProtElem.nDataLength; offs++)
 	{
@@ -379,7 +379,7 @@ prot.mVarValue=function(sVarName,idx,val){		// Rev 191107
 		var oDesc=prot.oVarDesc[sVarName]
 		if (val!=undefined){
 			var raw=(val/oDesc.Factor)+Number(oDesc.Offset);
-			oData.Vector[idx]=raw;
+		    if (oData.Vector)			oData.Vector[idx]=raw;    //RT210121  guard void
 			oData.Poke=true;	//Request a write to device
 			oData.PeekValue=true;	//Request a readback from device
 		} else {

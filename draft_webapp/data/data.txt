@@ -461,7 +461,6 @@
         "Gain": {
             "VarName": "Gain",
 
-            "nIdx": 9,
             "Size": 2,
             "Vector": [
                 0,
@@ -633,7 +632,7 @@
             "Index": 0,
             "Range": [
                 0,
-                100
+                500
             ]
         }
     },

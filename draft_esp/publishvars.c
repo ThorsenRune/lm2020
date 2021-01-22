@@ -19,7 +19,7 @@ int nTimerInMs[3]={};							// Milliseconds 1= T0 start of cycle 2=actual ms, 3H
 int nTestVar[3]={901,902,903};							// a test variable
 int Art_signal[120]={3};                      //Artificial signal
 int Gain[2]={100,10};								// Stimulation level gain
-int nDbgLvl=5;   //Verbosity level for debuggin messages
+int nDbgLvl=1;   //Verbosity level for debuggin messages
 
 /***********    INSERT THOSE YOU WANT TO PUBLISH BELOW *************/
 void Expose2Protocol(){  //todo5:refactor name to 'PublishProtocol'
