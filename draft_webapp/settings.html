@@ -1,4 +1,11 @@
-<!--  A FORM FOR EDITING VARIABLE INFORMATION  -->
+<!-- Prototype of a FORM FOR EDITING VARIABLE INFORMATION  -->
+
+<div class='cLeft'>	<!-- Command buttons   -->
+	<input type="button" class='cLeft'   value="Set IP address" onclick="oWS.EditIP()"			><br>
+	<input type="button"  class='cLeft' value="WiFi Setup" onclick="location.href='devicesetup.html'"			>
+	<input type="button"  class='cLeft' value="Reset" onClick="Main_Init();" /><br>
+	<br>
+</div>
 <div  class="form1" action="">
 	<label>Firmware name</label>
 	<pre id='idVarName'>Title</pre><br>
@@ -29,12 +36,12 @@
 	<label >	RAW Offset			</label>
 	<small>zero of firmware data</small>
 	<input id="idOffset" type="number" step=100>
-	
+
 	<label >	Display max			</label>
 	<small>Range  on widget</small>
 	<input id="idDispMax" type="number" type="number">
 	<label >	Display min			</label>
 	<input id="idDispMin" type="number" type="number">
-	
-	
+
+
 </div>

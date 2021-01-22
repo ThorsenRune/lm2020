@@ -40,3 +40,17 @@ void mGenerateSignal(){
   }
 
 }
+
+void mWaitCycleStart(void){						 	// Wait using the system clock 
+	int i;
+	nTimerInMs[2]=60-(nTimerInMs[0]-nTimerInMs[1]);	//Time since epoch start = the spare CPU time
+	i=SysTimer();
+	while ((LastSysTick-kMainLoopIntervalInSystemTicks)<i) {
+		if (LastSysTick<i){
+			LastSysTick=LastSysTick+0x00FFFFFF;					// i roll over, add 24 bit to LastSysTick
+		}
+		i=SysTimer();
+	}
+	LastSysTick=i;
+	nTimerInMs[1]=nTimerInMs[0];							//Start of cycle time nTimerInMs[1] is the current time in mS
+}

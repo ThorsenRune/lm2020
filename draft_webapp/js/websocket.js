@@ -1,6 +1,16 @@
  // This is a module of prototype.html used for websocket.ino to interface with LM from browser (client)
  // todo: rename globally to webserial.js
+var oWS={			//The websocket interface class
+	EditIP:function(){	//Let user insert IP manually
+			var wsip=mGetIpFromLocationbar();
+			wsip=prompt("Websocket IP:",wsip);
+			if (wsip) location.search='ws='+wsip;
+			Main_Init();
+	}
+}
+
 var ws=null;	//The websocket - a serial RX/TX channel to LM
+
 var mGetIpFromLocationbar=function(){		//This will get a WS ip from local storage or from search query
 	if (location.search)
 	if (location.search.split('=')[0] == "?ws"){		//A websocket IP was supplied

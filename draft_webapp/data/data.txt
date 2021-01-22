@@ -141,7 +141,7 @@
     "oProtElemVar": {
         "aRMSfilt": {
             "VarName": "aRMSfilt",
-             
+
             "nIdx": 0,
             "Size": 2,
             "Vector": [
@@ -153,7 +153,7 @@
         },
         "nMode.all_flags": {
             "VarName": "nMode.all_flags",
-             
+
             "nIdx": 1,
             "Size": 1,
             "Vector": [
@@ -164,7 +164,7 @@
         },
         "xData": {
             "VarName": "xData",
-             
+
             "nIdx": 2,
             "Size": 100,
             "Vector": [
@@ -284,7 +284,7 @@
         },
         "yData": {
             "VarName": "yData",
-             
+
             "nIdx": 3,
             "Size": 100,
             "Vector": [
@@ -404,7 +404,7 @@
         },
         "xData1": {
             "VarName": "xData1",
-             
+
             "nIdx": 4,
             "Size": 1,
             "Vector": [
@@ -415,7 +415,7 @@
         },
         "yData1": {
             "VarName": "yData1",
-             
+
             "nIdx": 5,
             "Size": 1,
             "Vector": [
@@ -426,7 +426,7 @@
         },
         "IMin": {
             "VarName": "IMin",
-             
+
             "nIdx": 6,
             "Size": 2,
             "Vector": [
@@ -438,7 +438,7 @@
         },
         "aIAmp": {
             "VarName": "aIAmp",
-             
+
             "nIdx": 7,
             "Size": 2,
             "Vector": [
@@ -450,7 +450,7 @@
         },
         "Offset": {
             "VarName": "Offset",
-             
+
             "nIdx": 8,
             "Size": 2,
             "Vector": [
@@ -462,7 +462,7 @@
         },
         "Gain": {
             "VarName": "Gain",
-             
+
             "nIdx": 9,
             "Size": 2,
             "Vector": [
@@ -474,7 +474,7 @@
         },
         "IMax": {
             "VarName": "IMax",
-             
+
             "nIdx": 10,
             "Size": 2,
             "Vector": [
@@ -486,7 +486,7 @@
         },
         "HVValue": {
             "VarName": "HVValue",
-             
+
             "nIdx": 11,
             "Size": 1,
             "Vector": [
@@ -497,7 +497,7 @@
         },
         "nBlankInterval": {
             "VarName": "nBlankInterval",
-             
+
             "nIdx": 12,
             "Size": 4,
             "Vector": [
@@ -511,7 +511,7 @@
         },
         "bErrFlags.all_flags": {
             "VarName": "bErrFlags.all_flags",
-             
+
             "nIdx": 13,
             "Size": 1,
             "Vector": [
@@ -522,7 +522,7 @@
         },
         "nTimerInMs": {
             "VarName": "nTimerInMs",
-             
+
             "nIdx": 14,
             "Size": 3,
             "Vector": [
@@ -535,7 +535,7 @@
         },
         "StimCountEx": {
             "VarName": "StimCountEx",
-             
+
             "nIdx": 15,
             "Size": 4,
             "Vector": [
@@ -549,7 +549,7 @@
         },
         "aMLev": {
             "VarName": "aMLev",
-             
+
             "nIdx": 16,
             "Size": 2,
             "Vector": [
@@ -561,7 +561,7 @@
         },
         "IMaxLimit": {
             "VarName": "IMaxLimit",
-             
+
             "nIdx": 17,
             "Size": 1,
             "Vector": [
@@ -572,7 +572,7 @@
         },
         "StimNegDur": {
             "VarName": "StimNegDur",
-             
+
             "nIdx": 18,
             "Size": 2,
             "Vector": [
@@ -622,7 +622,7 @@
         },
         "wss1": {
             "id": "wss1",
-            "varname": "xData",
+            "varname": "Art_signal",
             "Index": 10,
             "Range": [
                 -200,

@@ -1,6 +1,6 @@
 {
-    "Title": "LM 2020 App with ESP32\/8266 bridge",
-    "nPeriod": 1000,
+    "Title": "Android Webview App 191107",
+    "nPeriod": 2000,
     "sFileName": "data.txt",
     "prot": {},
     "oVarDesc": {
@@ -138,10 +138,10 @@
             "Alias": "StimNegDur"
         }
     },
-    "oProtElemVar": {
+    "oVarData": {
         "aRMSfilt": {
             "VarName": "aRMSfilt",
-             
+            "Id": -1,
             "nIdx": 0,
             "Size": 2,
             "Vector": [
@@ -153,7 +153,7 @@
         },
         "nMode.all_flags": {
             "VarName": "nMode.all_flags",
-             
+            "Id": -1,
             "nIdx": 1,
             "Size": 1,
             "Vector": [
@@ -164,7 +164,7 @@
         },
         "xData": {
             "VarName": "xData",
-             
+            "Id": -1,
             "nIdx": 2,
             "Size": 100,
             "Vector": [
@@ -284,7 +284,7 @@
         },
         "yData": {
             "VarName": "yData",
-             
+            "Id": -1,
             "nIdx": 3,
             "Size": 100,
             "Vector": [
@@ -404,7 +404,7 @@
         },
         "xData1": {
             "VarName": "xData1",
-             
+            "Id": -1,
             "nIdx": 4,
             "Size": 1,
             "Vector": [
@@ -415,7 +415,7 @@
         },
         "yData1": {
             "VarName": "yData1",
-             
+            "Id": -1,
             "nIdx": 5,
             "Size": 1,
             "Vector": [
@@ -426,7 +426,7 @@
         },
         "IMin": {
             "VarName": "IMin",
-             
+            "Id": -1,
             "nIdx": 6,
             "Size": 2,
             "Vector": [
@@ -438,11 +438,11 @@
         },
         "aIAmp": {
             "VarName": "aIAmp",
-             
+            "Id": -1,
             "nIdx": 7,
             "Size": 2,
             "Vector": [
-                12000,
+                82000,
                 0
             ],
             "Peek": true,
@@ -450,11 +450,11 @@
         },
         "Offset": {
             "VarName": "Offset",
-             
+            "Id": -1,
             "nIdx": 8,
             "Size": 2,
             "Vector": [
-                337000,
+                455000,
                 -1
             ],
             "Peek": true,
@@ -462,23 +462,23 @@
         },
         "Gain": {
             "VarName": "Gain",
-             
+            "Id": -1,
             "nIdx": 9,
             "Size": 2,
             "Vector": [
-                0,
+                64,
                 0
             ],
             "Peek": true,
-            "Poke": false
+            "Poke": true
         },
         "IMax": {
             "VarName": "IMax",
-             
+            "Id": -1,
             "nIdx": 10,
             "Size": 2,
             "Vector": [
-                33000,
+                38000,
                 0
             ],
             "Peek": true,
@@ -486,7 +486,7 @@
         },
         "HVValue": {
             "VarName": "HVValue",
-             
+            "Id": -1,
             "nIdx": 11,
             "Size": 1,
             "Vector": [
@@ -497,7 +497,7 @@
         },
         "nBlankInterval": {
             "VarName": "nBlankInterval",
-             
+            "Id": -1,
             "nIdx": 12,
             "Size": 4,
             "Vector": [
@@ -511,7 +511,7 @@
         },
         "bErrFlags.all_flags": {
             "VarName": "bErrFlags.all_flags",
-             
+            "Id": -1,
             "nIdx": 13,
             "Size": 1,
             "Vector": [
@@ -522,7 +522,7 @@
         },
         "nTimerInMs": {
             "VarName": "nTimerInMs",
-             
+            "Id": -1,
             "nIdx": 14,
             "Size": 3,
             "Vector": [
@@ -535,7 +535,7 @@
         },
         "StimCountEx": {
             "VarName": "StimCountEx",
-             
+            "Id": -1,
             "nIdx": 15,
             "Size": 4,
             "Vector": [
@@ -549,7 +549,7 @@
         },
         "aMLev": {
             "VarName": "aMLev",
-             
+            "Id": -1,
             "nIdx": 16,
             "Size": 2,
             "Vector": [
@@ -561,7 +561,7 @@
         },
         "IMaxLimit": {
             "VarName": "IMaxLimit",
-             
+            "Id": -1,
             "nIdx": 17,
             "Size": 1,
             "Vector": [
@@ -572,7 +572,7 @@
         },
         "StimNegDur": {
             "VarName": "StimNegDur",
-             
+            "Id": -1,
             "nIdx": 18,
             "Size": 2,
             "Vector": [
@@ -639,7 +639,7 @@
             ]
         }
     },
-    "cmd": null,
+    "cmd": 101,
     "Poke": true,
     "status": {
         "SerialDeviceName": "LM-BT07",
