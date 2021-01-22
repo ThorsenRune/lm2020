@@ -42,15 +42,29 @@ void mGenerateSignal(){
 }
 
 void mWaitCycleStart(void){						 	// Wait using the system clock
-  /* To implement
-	int i;
+  /*
+  int t, ttresh = 60, told=0;
+  t=millis();           //Returns the number of milliseconds passed since the Arduino board began running the current program. This number will overflow (go back to zero), after approximately 50 days.
+  if ((t-ttresh-told)==0)
+  {
+  DO SOMETHING
+  told=t;
+  }
+
+  */
+
+
+  int i;
 	nTimerInMs[2]=60-(nTimerInMs[0]-nTimerInMs[1]);	//Time since epoch start = the spare CPU time
-	i=SysTimer();
-	while ((LastSysTick-kMainLoopIntervalInSystemTicks)<i) {
-		if (LastSysTick<i){
-			LastSysTick=LastSysTick+0x00FFFFFF;					// i roll over, add 24 bit to LastSysTick
-		}
-		i=SysTimer();
+	i=SysTimer();  // Potrebbe essere i=millis()???
+	while ((LastSysTick-kMainLoopIntervalInSystemTicks)<i)
+  {
+
+		                         if (LastSysTick<i)
+                            {
+			                              LastSysTick=LastSysTick+0x00FFFFFF;					// i roll over, add 24 bit to LastSysTick
+		                        }
+		                        i=SysTimer();
 	}
 	LastSysTick=i;
 	nTimerInMs[1]=nTimerInMs[0];							//Start of cycle time nTimerInMs[1] is the current time in mS
