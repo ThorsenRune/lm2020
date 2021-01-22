@@ -371,6 +371,7 @@ prot.mVarValue=function(sVarName,idx,val){		// Rev 191107
 			oData.Poke=true;	//Request a write to device
 			oData.PeekValue=true;	//Request a readback from device
 		} else {
+      if (undefined ===oData.Vector ) return undefined
 			if (undefined ===oData.Vector[idx]) return undefined
 			var val=oData.Vector[idx]
 			if (val===undefined) debugger;	//Error you probably missed the index

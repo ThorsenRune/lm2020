@@ -7,51 +7,11 @@ var dataurl='data.php'	;
 
 // PROTOCOL
 /*
- 
+
 */
 
-//----------------------   SERVER   
-var oRetData={};	//Create a permanent copy 
-var mAndExchange=function(){	//Write old data and get new from server
-	if (bAndroid) {
-		for (var sName in prot.oProtElemVar){
-			var obj=prot.oProtElemVar[sName];
-			if (obj){
-			if (obj.Poke){
-				mPokeData(obj)
-				obj.Poke=false;
-			} else if (obj.Peek){
-				mPeekData(obj)
-				obj.Peek=false;
-			}}
-		}
-	}	
-	function mPeekData(oProtElemVar )	{	//Read from device or server
-		if (!oProtElemVar ) return;  //The protocol hasnt been initialized
-		if (bRelay) return;	//Not in app
-		var varidx=oProtElemVar .nIdx;		//Index of the variable for oaProtElem[varidx].mDataRead(nOffs);
-		var ArrLen=oProtElemVar .Size;		//Length of the data array
-		var aVals=oProtElemVar .Vector;			//Clear previous data
-		for (var i=0;i<ArrLen;i++){
-			aVals[i]=Android.mJS2And1(prot.kGetReq,parseInt(varidx),i,0);
-		}
-	}
-	function mPokeData(oProtElemVar )	{//Send Data to android or server
-		if (!oProtElemVar ) return;  //The protocol hasnt been initialized
-		if (bRelay) return;	//Not in app
-		var varidx=oProtElemVar .nIdx;		//Index of the variable for oaProtElem[varidx].mDataRead(nOffs);
-		var aVals=oProtElemVar .Vector;				//Data vector
-		for (var nOffs=0;nOffs<aVals.length;nOffs++){
-			if (aVals[nOffs]!==undefined)
-			Android.mJS2And1(prot.kSetReq,		//Send to device
-				parseInt(varidx)
-				,nOffs
-				,parseInt(aVals[nOffs])
-			);	//Send the value ->And->BT
-		}
-	}
-	
-}
+//----------------------   SERVER
+var oRetData={};	//Create a permanent copy
 
 //	****************************	SERVER INTERFACE	***************
 var mPHPCall = function(url,cmd,data,callback) {
@@ -65,7 +25,7 @@ var mPHPCall = function(url,cmd,data,callback) {
 	//	s=encodeURIComponent(s);
 		xhr.open('POST', url, true);
 		xhr.timeout = 4000;			//See https://stackoverflow.com/questions/23725085/failed-to-load-resource-neterr-network-io-suspended
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded; charset=ISO-8859-1');	
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded; charset=ISO-8859-1');
 		xhr.onreadystatechange = function(){
 			if(this.readyState==4)
 			if(this.status == 200 ){

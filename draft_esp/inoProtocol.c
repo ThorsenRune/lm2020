@@ -5,7 +5,7 @@
 */
 
 #include "inoProtocol.h"
-
+#include "publishvars.h"
 
 uint8_t aTX[kTXBufferSize];		// Transmit array
 uint8_t aRX[kTXBufferSize];		//Receive array
@@ -195,7 +195,7 @@ Revisions:
   while (!mFIFO_isEmpty(oRX)) {     // Char in buffer, go read and process it
     mDebugInt("Available",mFIFO_available(oRX));
     rcv1=mFIFO_pop(oRX);       //Get new data
-    mDebugInt("popped",rcv1);
+    if (nDbgLvl>6)mDebugInt("popped",rcv1);
     if (0==rxCmd) 			//Set command as receive data
       {
         rxCmd=(tUartCmd) rcv1;
@@ -253,7 +253,7 @@ Revisions:
        oTXProt.TXCount[idx]++; //Make it send
        zState=0;				//End  statemachine
        rxCmd=kReady;
-        mDebugInt("kGetReq for ",idx);
+        if (nDbgLvl>6) mDebugInt("kGetReq for ",idx);
        //todo: enable mPowerWatchDogReset();		//R180920 Reset the watchdog for power timeout
      }
      else {

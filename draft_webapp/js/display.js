@@ -36,6 +36,7 @@ display.redraw=function(){	//Redraw the display
 	}
 	oWX=prot.oWX(signal.id())		//Setup the signal
 	//Make a dropdown selector for the protocol elements
+	prot.CleanUp();
 	lib.mFillDataList(display.idVarName1,Object.keys(prot.oProtElemVar));	// To gui
 	display.doRedraw=false;
 }

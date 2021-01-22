@@ -14,9 +14,9 @@ int cLoopCount[1]={0};
 //			Stimulation, gain, offset parameters
 int aIAmp[2]={0,0};									// Stimulation level in  micro Ampere
 int IMax[2]={0,0};									// Stimulation level higher limit microAmp
-int aMLev[2]={0,0};									//Level of EMG   
+int aMLev[2]={0,0};									//Level of EMG
 int Offset[2]={100000,100000};			// Stimulation offset threshold
-int Gain[2]={10,10};								// Stimulation level gain
+
 int IMin[2]={0,0};									// Stimulation level lower limit
 int IMaxLimit[1]={30000};							// Maximum limit of the current  )
 
@@ -37,8 +37,6 @@ int nBlankInterval[4]={0,0,0,0};		// Interval for blanking
 int diff;
 
 
-//+			CONTROL DATA
-int nTimerInMs[3]={0};							// Milliseconds 1= T0 start of cycle 2=actual ms, 3How many clockcycles are available as resource
 int uMode[2]={0};										// Change mode of operation
 uint8_t bFlip=0;
 //+			Led counters

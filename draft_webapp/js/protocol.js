@@ -66,7 +66,14 @@ prot.state=function(setState){ //Returns the state of the protocol
   	return true;
   }
 }
-
+prot.CleanUp=function(){  //Remove unregistered variables from protocol
+//						all elements have nVarId valid number in range 64--100
+  var aNames=Object.keys(prot.oProtElemVar)
+  for (var i=0;i<aNames.length;i++){
+    var el=prot.oProtElemVar[aNames[i]];
+    if (!el.nVarId)delete(prot.oProtElemVar[aNames[i]]); 		//Undefined id remove it
+  }
+}
 
 //Higher level functions
 
@@ -376,6 +383,7 @@ prot.mVarValue=function(sVarName,idx,val){		// Rev 191107
 			oData.Poke=true;	//Request a write to device
 			oData.PeekValue=true;	//Request a readback from device
 		} else {
+      if (undefined ===oData.Vector) return undefined
 			if (undefined ===oData.Vector[idx]) return undefined
 			var val=oData.Vector[idx]
 			if (val===undefined) debugger;	//Error you probably missed the index

@@ -26,47 +26,26 @@ void mTesting(){
 
 }
 void mTesting2(){
-  mDebugMsg("mTesting2");
-  mPushRX2FIFO(kGetReq);		//Simulate kCommInit reception
-  mPushRX2FIFO(64 );		//first variable
+   mGenerateSignal();
 }
 #define ARRAYLENGTH(x)     (sizeof(x)/sizeof(x[0]))
+
 void mGenerateSignal(){
   int len=sizeof(Art_signal)/sizeof(Art_signal[0]);
-  int amplitude=1234;
   for (int i=0;i<len ;i++){    //try until timeout
-    //Art_signal[i]=amplitude*sin(i/30);
-    Art_signal[i]=i;
+    Art_signal[i]=(int)(sin(i/30)*(float)Gain[0]);
   }
-
 }
 
-void mWaitCycleStart(void){						 	// Wait using the system clock
-  /*
-  int t, ttresh = 60, told=0;
-  t=millis();           //Returns the number of milliseconds passed since the Arduino board began running the current program. This number will overflow (go back to zero), after approximately 50 days.
-  if ((t-ttresh-told)==0)
-  {
-  DO SOMETHING
-  told=t;
-  }
-
- 
-
-
-  int i;
-	nTimerInMs[2]=60-(nTimerInMs[0]-nTimerInMs[1]);	//Time since epoch start = the spare CPU time
-	i=SysTimer();  // Potrebbe essere i=millis()???
-	while ((LastSysTick-kMainLoopIntervalInSystemTicks)<i)
-  {
-
-		                         if (LastSysTick<i)
-                            {
-			                              LastSysTick=LastSysTick+0x00FFFFFF;					// i roll over, add 24 bit to LastSysTick
-		                        }
-		                        i=SysTimer();
+void mWaitCycleStart(void){						 	// Wait until 60ms has passed since last call
+  int kCycleTime=60000;    //Cycle time in us
+  nTimerInMs[0]=micros();  //   microseconds
+  nTimerInMs[2]=kCycleTime-(nTimerInMs[0]-nTimerInMs[1]);	//the spare CPU time, time spend in loop waiting
+	for (int i=0;i<(100*kCycleTime);i++){
+    nTimerInMs[0]=micros();  //   microseconds
+    if ((kCycleTime<(nTimerInMs[0]-nTimerInMs[1])) ) break; //kCycleTime has elapsed
+    if ((nTimerInMs[0]-nTimerInMs[1])<0) break;   //Brutal overflow check
+    sleep(1);
 	}
-	LastSysTick=i;
 	nTimerInMs[1]=nTimerInMs[0];							//Start of cycle time nTimerInMs[1] is the current time in mS
-  */
 }

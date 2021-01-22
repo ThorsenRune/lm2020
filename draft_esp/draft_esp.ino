@@ -13,7 +13,6 @@
 #define DEBUG_ON   0          //Conditional compilation for DEBUGGING
 //  0-  release
 //  1- No wifi for quicker compile and test purpose
-int nDbgLvl=5;   //Verbosity level for debuggin messages
 int TimeoutWifi   =20;  //Seconds of timeout to get wifi connection
 int TimeOutClient =120;//Seconds of timeout mWaitForWSClient, time for user to connect
 
@@ -38,7 +37,6 @@ extern String AP_SSID;
 //Define the pins for  U2UXD
 #define RXD2 16
 #define TXD2 17
-int nTimerInMs[3]={0};							// Milliseconds 1= T0 start of cycle 2=actual ms, 3How many clockcycles are available as resource
 
 
 bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
@@ -95,14 +93,13 @@ void setup(){
 /*******************ARDUINO MAIN WHILE LOOP *******************************/
 //      AUTOMATICALLTY CALLED BT ARDUINO IDE
 void loop(){		//The main loop of the
-    nTimerInMs[2]++;    //Increase a timer just for fun
+    mWaitCycleStart();							// 1.  Wait for a block start using system clocks
     mSerialReceive();
 	//delay(1);
 
   mGenerateSignal();
 /*************      BUSINESS LOGIC FOR THE SIGNAL PROCESSING AND COMMUNICATION  *****/
 //  TODO5 : enable / implement following calls
-//+  mWaitCycleStart();							// 1.  Wait for a block start using system clocks
 //+  mADCAux_Start();				//Todo1 maybe this corrupts EMG?
 //+  if ( nMode.bits.SINEGENERATOR) mOutputSineWave();
 //    mADCRestart(bFlip);
@@ -110,18 +107,11 @@ void loop(){		//The main loop of the
 //  mSignalProcessing();					//3. Signal Processing
 //  mSystemActions();						//4.System management
     mTransmit();  //send data to client. Corresponding  mReceive is interrupt handled
-    #if ( DEBUG_ON==1)
-      delay(1000);  //todo9: remove
-      mTesting2();
-    #endif
+    mTesting2();
 }
 /******************************* END MAIN WHILE(1) *******************************/
 
 
-
-
-
-int nCounter=0;
 String sRcvdData;
 long rssi=0;	//signal strength
 
@@ -135,7 +125,7 @@ bool mStartWebSocket1(){
   for (int i=0;i<TimeoutWifi;i++){ //Loop until timeout
     if (WiFi.status() == WL_CONNECTED) return true;   //Happily connected to wifi
     delay(1000); //Sleep to let connect
-    if (nDbgLvl>2) Serial.print("."); //Make some waiting dots
+    Serial.print("."); //Make some waiting dots
   }
   mDebugMsg("WiFi is not available, check credentials");
   WiFi.disconnect();
@@ -169,7 +159,7 @@ bool mWaitForWSClient(int TimeOutClient){
 void mTransmit(){   //Transmit internal protocol data to client
   //todo0:   oTX&RX are initialized in setup-->---->	MainSetup --->mCommInitialize
   mCommunication();						//Process RX/TX buffers
-  if (!mFIFO_isEmpty(oTX)) mDebugMsg("mTransmit to client");
+  if (nDbgLvl>6)  if (!mFIFO_isEmpty(oTX)) mDebugMsg("mTransmit to client");
   while (!mFIFO_isEmpty(oTX)){
     uint8_t sendbyte=mPopTXFIFO();    //Get byte from  protocol
     mSendToClient(sendbyte);
@@ -179,9 +169,9 @@ void mTransmit(){   //Transmit internal protocol data to client
 void mReceive(uint8_t *data, size_t len){ //Get data from client
 	sRcvdData="";
 	int i=0;
-  mDebugInt("mReceive",len);
+  if (nDbgLvl>6) mDebugInt("mReceive",len);
     for( i=0; i < len; i++) {
-        mDebugInt("data",data[i]);
+        if (nDbgLvl>7) mDebugInt("data",data[i]);
         if (bRelayLM2018){  //Pass through to subdevice (LM)
           sRcvdData=sRcvdData+(char) data[i];	//Fill up a buffer from RX0
           Serial2.write(data[i]);		//Send incoming data  to LM
@@ -206,28 +196,22 @@ void mSendToClient(uint8_t sendbyte ){
   //Serial.print(mSendData[SendDataBuf],DEC)  ;Serial.print(" \t ");
   SendDataBuf++;
 }
-void mSerialReceive(){
-  #if ( DEBUG_ON==0)
-     if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
-  	if (SendDataBuf>0){
-  		globalClient->binary(mSendData,SendDataBuf );
-  		Serial.printf("TX2 -> Client %d data\n ",SendDataBuf);
-  		SendDataBuf=0;
-  		delay(1); //Max messages per second =15 dont go below 100
-      	//note 201111
-  	  }
-     }
-  #endif
+void mSerialReceive(){    //This is where  the data exchange with the client happenes
+  if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+    if (SendDataBuf>0){
+        globalClient->binary(mSendData,SendDataBuf );
+        Serial.printf("TX2 -> Client %d data\n ",SendDataBuf);
+        SendDataBuf=0;
+        delay(1); //Max messages per second =15 dont go below 100    	//note 201111
+    }
+   }
 	while (Serial2.available()&&(SendDataBuf<MAXL)) {
     int sendbyte=Serial2.read();
     mSendToClient(sendbyte);
-/* todo:delete		mSendData[SendDataBuf]=Serial2.read();    //Get a byte from serial port
-		//Serial.print(SendDataBuf,DEC) ;Serial.print(": ");
-		//Serial.print(mSendData[SendDataBuf],DEC)  ;Serial.print(" \t ");
-		SendDataBuf++;*/
 	}
-//	if (SendDataBuf>0) Serial.printf("RX0 data: %d \n ",SendDataBuf);
 }
+
+
 void serialEvent2() {  //automatic event
 	mSerialReceive();
 }
@@ -259,11 +243,16 @@ void mESPSetup(){
   void mDebugMsg(char msg[]){
       Serial.print("Debugger says: \t ");
       Serial.printf("%s\n",msg );
-      delay(100);
+      if (Serial.available()>0){
+        int debuglevel = Serial.parseInt();
+        if (debuglevel>0){
+          Serial.printf("Changed debugging level to : %i",debuglevel);
+          nDbgLvl=debuglevel;
+        }
+      }
   }
   void mDebugInt(char msg[],int data){
     Serial.printf("%s  \t:\t %i\t %c\n",msg,data,(char)data);
-    delay(100);
   }
 //  Stop and do endless loop
 void mDebugHalt(char msg[]){

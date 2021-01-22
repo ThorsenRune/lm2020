@@ -9,8 +9,12 @@ extern "C" {
 extern int nTimerInMs[3];     //GLOBAL VARIABLES for the Protocol
 extern int nTestVar[3];
 extern int Art_signal[120];
-void mGenerateSignal();
+extern int Gain[2];
+extern int nDbgLvl;
 
+/*        GLOBAL METHODS        */
+void mGenerateSignal();
+void mWaitCycleStart(void);
 
 typedef union {			//Flags for the operation modes
 int     all_flags[1];      				/* Allows us to refer to the flags 'en masse' */

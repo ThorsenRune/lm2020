@@ -100,7 +100,6 @@ void loop(){		//The main loop of the
 
 /*************      BUSINESS LOGIC FOR THE SIGNAL PROCESSING AND COMMUNICATION  *****/
 //  TODO5 : enable / implement following calls
-//+  mWaitCycleStart();							// 1.  Wait for a block start using system clocks
 //+  mADCAux_Start();				//Todo1 maybe this corrupts EMG?
 //+  if ( nMode.bits.SINEGENERATOR) mOutputSineWave();
 //    mADCRestart(bFlip);
