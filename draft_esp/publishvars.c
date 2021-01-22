@@ -16,7 +16,7 @@
 /*********GLOBAL VARIABLES**************/
 ModeType nMode;
 int nTestVar[3]={901,902,903};							// a test variable
-int Art_signal[120];                      //Artificial signal
+int Art_signal[120]={3};                      //Artificial signal
 
 /***********    INSERT THOSE YOU WANT TO PUBLISH BELOW *************/
 void Expose2Protocol(){  //todo5:refactor name to 'PublishProtocol'

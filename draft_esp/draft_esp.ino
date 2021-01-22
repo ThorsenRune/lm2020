@@ -16,7 +16,7 @@
 int nDbgLvl=5;   //Verbosity level for debuggin messages
 int TimeoutWifi   =20;  //Seconds of timeout to get wifi connection
 int TimeOutClient =120;//Seconds of timeout mWaitForWSClient, time for user to connect
- 
+
 
 //  END OF DEBUGGING STuFF
 #include <stdint.h>           //Define standard types uint32_t etc
@@ -31,6 +31,7 @@ int TimeOutClient =120;//Seconds of timeout mWaitForWSClient, time for user to c
 extern "C" {  //Note- neccessary to implement C files
   #include "system.h"
   #include "inoProtocol.h"      //Including h file allows you to access the functions
+  #include "publishvars.h"
 }
 
 extern String AP_SSID;
@@ -172,7 +173,7 @@ void mTransmit(){   //Transmit internal protocol data to client
   while (!mFIFO_isEmpty(oTX)){
     uint8_t sendbyte=mPopTXFIFO();    //Get byte from  protocol
     mSendToClient(sendbyte);
-    mDebugInt("sending",sendbyte);
+    if (nDbgLvl>5) mDebugInt("sending",sendbyte);
   }
 }
 void mReceive(uint8_t *data, size_t len){ //Get data from client

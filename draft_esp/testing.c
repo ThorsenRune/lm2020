@@ -30,13 +30,13 @@ void mTesting2(){
   mPushRX2FIFO(kGetReq);		//Simulate kCommInit reception
   mPushRX2FIFO(64 );		//first variable
 }
-
+#define ARRAYLENGTH(x)     (sizeof(x)/sizeof(x[0]))
 void mGenerateSignal(){
-  int len=sizeof(Art_signal);
+  int len=sizeof(Art_signal)/sizeof(Art_signal[0]);
   int amplitude=1234;
-  for (int i=0;i<len;i++){    //try until timeout
+  for (int i=0;i<len ;i++){    //try until timeout
     //Art_signal[i]=amplitude*sin(i/30);
-    Art_signal[i]=amplitude+i;
+    Art_signal[i]=i;
   }
 
 }
