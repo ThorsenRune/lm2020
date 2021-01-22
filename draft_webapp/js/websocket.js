@@ -1,17 +1,18 @@
  // This is a module of prototype.html used for websocket.ino to interface with LM from browser (client)
  // todo: rename globally to webserial.js
 var ws=null;	//The websocket - a serial RX/TX channel to LM
-var mGetIpFromLocationbar=function(){
-	if (!location.search) return false;
-	if (location.search.split('=')[0] == "?ws")
-	return location.search.split('=')[1];
-
+var mGetIpFromLocationbar=function(){		//This will get a WS ip from local storage or from search query
+	if (location.search)
+	if (location.search.split('=')[0] == "?ws"){		//A websocket IP was supplied
+		localStorage.WS_IP=location.search.split('=')[1];	//Set the new IP
+	}
+	if (localStorage.WS_IP) return localStorage.WS_IP;
+	else return "192.168.1.8";//Some default value OBS: no spaces & use .
 }
 
 var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 /*		the staticIP has to match the address set in websocket.ino   */
-	var  staticIP="192.168.1.51"; //OBS: no spaces & use .
-	if (mGetIpFromLocationbar()) staticIP=mGetIpFromLocationbar();
+	var  staticIP=mGetIpFromLocationbar();
 	var gateway="ws://"+staticIP+"/ws";
 	mMessage("Connecting to:"+gateway);
 	ws = new WebSocket(gateway);

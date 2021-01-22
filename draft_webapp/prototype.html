@@ -28,8 +28,10 @@
 	<div>
 		<label id='idStatus' >Unconnected</label>
 		<input type="text" id="idVarName1"  placeholder="VarName"  onclick='this.focus();this.select()'>
+    <input type="button"  class='cRight' value="WiFi Setup" onclick="location.href='devicesetup.html'"			> 
 		<input type="button" class='cRight' value="Reset" onClick="Main_Init();" />
 		<input type="button" class='cRight' value="Edit" onClick="popup.mSettings();" />
+    <br>
 		<button onclick='Main_Loop()'>Step Processing</button>
 	</div>
 	<details open > <!-- During development for testing purpose -->
