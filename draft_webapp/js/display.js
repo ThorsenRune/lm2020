@@ -51,7 +51,9 @@ display.refresh=	function(){			//Will refresh controls in the display
 		if (!mIsVisible(c)) {				//Skip non visible elements
 
 		}else if (c.id==signal.id()){		//Signal panel
-			if (oWX.VectorUnits()){			//Only if valid
+			if(!oWX.oVarDesc){
+				signal.Title('Undefined Descriptor'); //missing oVarDesc in data.txt file
+			}else if (oWX.VectorUnits()){			//Only if valid
 				signal.Title(oWX.Alias)
 				var X=oWX.VectorUnits()
 				var r=oWX.Range()

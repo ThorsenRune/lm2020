@@ -211,6 +211,7 @@ Revisions:
            mDebugMsg("dbmSendVersionInfo");
            mSendVersionInfo();
            bErrFlags.all_flags[0] = 0U	;		//Reset error flags
+            rxCmd=kReady;											//Command is processed  RT210121  (Forgot this)
          }
       }
      //Longer messages will be processed here

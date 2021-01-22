@@ -44,14 +44,14 @@ const prot={		//Encapsulating communication protocol
 	}
 
 }
-prot.state=function (setState){ //Returns the state of the protocol
+prot.state=function(setState){ //Returns the state of the protocol
   if(typeof(this._state)==='undefined') this._state=konst.kCommInit;
   if(typeof(setState)!=='undefined') this._state=setState;
   if (this._state==konst.kReady) return this._state
   if (validate()) this._state=konst.kReady
   return this._state
 
-  function validate (){	//Check if protocol is received from device
+  function validate(){	//Check if protocol is received from device
   //						all elements have nVarId valid number in range 64--100
   //rev201125			todo:move into object
   	var aNames=Object.keys(prot.oProtElemVar)
@@ -73,8 +73,10 @@ prot.state=function (setState){ //Returns the state of the protocol
 
 prot.mTX_ProtReset=function(){		//Resettig the communicato protocol with kCommInit
 	if (debug) mMessage('Resetting protocol',true);
+  serial.send(konst.kHandshake);  //Send the reset request to device (There is some bug so resend the request)
 	serial.send(konst.kCommInit);  //Send the reset request to device (There is some bug so resend the request)
   prot.state('initializing');  //Set protocol as invalid until validated
+  //Will be altered in mRX_ProtInit
 }
 prot.oaProtElem=[];		//Array of elements in the protocol
 						//Set at ,get oProtElemVar (){return oWatch.oProtElemVar;}
@@ -95,9 +97,8 @@ prot.TXDispatch=function(){	//mTXDispatch - the response will be mRXDispatch
 		var aNames=Object.keys(prot.oProtElemVar)
 		for (var i=0;i<aNames.length;i++){
 			var VarData=prot.oProtElemVar[aNames[i]];
-      if (!VarData.nVarId){
-          mMessage("Unregistered variable "+aNames[i]);
-          debugger
+      if (!VarData.nVarId){//          mMessage("Unregistered variable "+aNames[i]);
+//          debugger
       }else if (VarData.Poke){
 				mTX_SetReq(VarData);
 				VarData.Poke=false;	//Clear write request flag
@@ -158,6 +159,9 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		el.nDataLength=serial.RXFiFo[idx++];//Length of data array
 		el.nVarType=serial.RXFiFo[idx++];//Length of data array
 		prot.SetElement(el);	//Register the element in the protocol
+    if (prot.ListVarNames().indexOf(el.VarName)>(prot.ListVarNames().length-2)) {  //Assume the protocol is ready when last var has been received
+      prot.state(konst.kReady); //Assume that prot is ready
+    }
 		serial.RXFiFo=serial.RXFiFo.slice(idx);	//Remove cmd & payload
 		if (debug) mMessage(JSON.stringify(el));
 		display.doRedraw=true;	//request to redraw the display
@@ -188,6 +192,7 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 
 		return true
 	}
+
 }
 
 
@@ -391,12 +396,14 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
 			prot.Poke(oProtElemVar );
 		} else {
 //			if (undefined ===oProtElemVar .Vector) return undefined
-			var vector=oProtElemVar .Vector
-			var vY=Array(vector.length);
-			for (var idx=0;idx<vector.length;idx++){//Scale raw data to units
-				 vY[idx]=(vector[idx]-oDesc.Offset)*oDesc.Factor;
-			}
-			oProtElemVar .PeekValue=true;
+			var vector=oProtElemVar.Vector       //The data array
+      if (vector){
+  			var vY=Array(vector.length);
+  			for (var idx=0;idx<vector.length;idx++){//Scale raw data to units
+  				 vY[idx]=(vector[idx]-oDesc.Offset)*oDesc.Factor;
+  			}
+      }
+			oProtElemVar.PeekValue=true;           //Request a new read from LM device
 			return vY;
 		}
 	}

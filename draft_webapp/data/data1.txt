@@ -18,8 +18,8 @@
             "Factor": 1,
             "Alias": "nMode.all_flags"
         },
-        "Art_signal": {
-            "VarName": "Art_signal",
+        "xData": {
+            "VarName": "xData",
             "Unit": "uV",
             "Offset": 134000000,
             "Factor": 5.0e-5,
@@ -162,8 +162,10 @@
             "Peek": false,
             "Poke": false
         },
-        "Art_signal": {
-            "VarName": "Art_signal",
+        "xData": {
+            "VarName": "xData",
+
+            "nIdx": 2,
             "Size": 100,
             "Vector": [
                 135380672,

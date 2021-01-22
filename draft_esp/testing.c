@@ -41,7 +41,8 @@ void mGenerateSignal(){
 
 }
 
-void mWaitCycleStart(void){						 	// Wait using the system clock 
+void mWaitCycleStart(void){						 	// Wait using the system clock
+  /* To implement
 	int i;
 	nTimerInMs[2]=60-(nTimerInMs[0]-nTimerInMs[1]);	//Time since epoch start = the spare CPU time
 	i=SysTimer();
@@ -53,4 +54,5 @@ void mWaitCycleStart(void){						 	// Wait using the system clock
 	}
 	LastSysTick=i;
 	nTimerInMs[1]=nTimerInMs[0];							//Start of cycle time nTimerInMs[1] is the current time in mS
+  */
 }
