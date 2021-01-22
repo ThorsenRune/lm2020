@@ -42,9 +42,12 @@ function mAppStart(){
       getDataIP();
       getStartWS();
       alert('Connect to your wifi internet '+ WiFiSSID);
-      var s="http://"+LM_ServerUrl+"?ws="+LM_Ip;
-      alert('Opening '+s);
-      location.href=s;
+      //var url="http://"+LM_ServerUrl+"?ws="+LM_Ip;
+      var url=LM_ServerUrl+"?ws="+LM_Ip;
+      alert('Opening '+url);
+      var win = window.open(url, '_blank');
+      win.focus();
+      //location.href=url;
 }
 function viewPassword() {
   var x = document.getElementById("myPass");
