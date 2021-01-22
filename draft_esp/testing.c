@@ -7,6 +7,7 @@
     kSend32Bit);
 */
 #include "inoProtocol.h"
+#include "publishvars.h"
 /*  TEsting forward backward declarations       */
 int testA(int i){
     return testB(i);
@@ -29,13 +30,13 @@ void mTesting2(){
   mPushRX2FIFO(kGetReq);		//Simulate kCommInit reception
   mPushRX2FIFO(64 );		//first variable
 }
-/*
+
 void mGenerateSignal(){
   int len=sizeof(Art_signal);
   int amplitude=1234;
   for (int i=0;i<len;i++){    //try until timeout
-    Art_signal[idx]=amplitude*sin(i/30);
+    //Art_signal[i]=amplitude*sin(i/30);
+    Art_signal[i]=amplitude+i;
   }
 
 }
-*/

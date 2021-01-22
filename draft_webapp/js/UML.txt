@@ -1,0 +1,83 @@
+
+
+Protocol Serial Swimlane diagram
+
++──────+             +────────+
+|Client|             |  |LM|  |
+++─────+             +───+────+
+ |   kHandshake          |
+ |──────────────────────>|
+ |  Firmware Version     |
+ |<──────────────────────+
+ :                       :
+ |   kCommInit           |
+ +───────────────────────>
+ |  FW Variable format   |
+ |<───────────────────── +
+ |  FW Variable format   |
+ |<──────────────────────+
+ |      1..n (Note201113)|
+ |                       |
+ :                       :
+ +  kGetReq = 111        +
+ |──────────────────────>|
+ |  k32Bit=232+data		 |
+ |<──────────────────────+
+
+ :                       :
+ |  kSetReq = 102 + data |
+ |──────────────────────>|
+ |  none				 |
+ |<──────────────────────+
+
+
+
+http://localhost/public/asciiflow/
+
+
+Note201113: The mRX_ProtInit will repeat for each element in the exposed protocol
+
+
+
+
+**************************************************
+Documentation of call chains
+
+
+Startup    |
+Button     |─>	main.Init	->	|	WebSocket_Init();
+								|	signal.init();
+                TODO
+
+
+
+*************+      initialization    FLOWCHART    FC&RT:201221   ******
+TODO: ref201221
+Power ON          +Check Connection--ok-->   	main.Init
+                          |no connection
+                          |
+	                        V
+First access  --->  page setup served by ESP via Soft AP (SETUP.HTML)
+                          |
+                          | Insert SSID of the WIFI & PASSWORD
+                                |->  add to list of network credentials
+                                |-> network credentials saved on SPIFF filesystem
+                                v
+Subsequent access --> Setup AP with saved LAST USED credentials    (Startup.HTML)
+                        |
+                        +-->SETUP.HTML    -->select wifi
+                        |
+                        V
+                        	main.Init
+
+
+SETUP.HTML is a page for selecting wifi network
+            selecting bluetooth or wifi communication with devices
+            TODO:
+            Question: can we use bluetooth when page is served by Server
+            Bluetooth from Soft AP is possible !
+
+
+
+
+Notes: Tabsize 4

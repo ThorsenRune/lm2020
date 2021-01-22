@@ -53,23 +53,7 @@ typedef union
 	} errbits;
 } EX_FLAGS;
 
-
-
-
-
-
-
-
-
-
-
 #ifdef __cplusplus // important- Tell the compiler that we have c has ended with a closing brace
 }
 #endif
-
-
-
-
-
-
 #endif  //___SYSTEM

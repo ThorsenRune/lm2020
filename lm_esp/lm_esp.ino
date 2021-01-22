@@ -11,26 +11,24 @@
 //  1- No wifi for quicker compile and test purpose
 int nDbgLvl=5;   //Verbosity level for debuggin messages
 int TimeoutWifi=20;  //Seconds of timeout to get wifi connection
-int TimeOutClient=60;//Seconds of timeout mWaitForWSClient, time for user to connect
+int TimeOutClient=20;//Seconds of timeout mWaitForWSClient, time for user to connect
 int TimeOutStaticIDFetch=5;//Seconds of timeout mGetMyStaticIP
 
 //  END OF DEBUGGING STuFF
 #include <stdint.h>           //Define standard types uint32_t etc
-#include "credentials.h"        //EDIT THE WIFI CREDENTIALS IN THIS FILE
 #include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
 #if (DEBUG_ON!=1)
   #include "SPIFFS.h"
   #include "WiFi.h"
   #include "ESPAsyncWebServer.h"
+
 #endif
 
 extern "C" {  //Note- neccessary to implement C files
   #include "system.h"
   #include "inoProtocol.h"      //Including h file allows you to access the functions
 }
-extern const int defaultStaticIP[4];
-extern const char* defAP_SSID ;
-extern const char* defAP_PASS;
+
 extern String AP_SSID;
 //Define the pins for  U2UXD
 #define RXD2 16
@@ -44,17 +42,23 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
   AsyncWebServer server(80);
   AsyncWebSocket ws("/ws");
   AsyncWebSocketClient * globalClient = NULL;
+
   void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
   		//AwsEventType describes what event has happened, like receive data or disconnetc
   	// data is the payload
+
     if(type == WS_EVT_CONNECT){
       Serial.println("Websocket client connection received");
+      Serial.println(client->remoteIP());
       globalClient = client;
     } else if(type == WS_EVT_DISCONNECT){
       Serial.println("Websocket client connection finished");
       globalClient = NULL;
     } else if(type == WS_EVT_DATA){  //Data was received from client
   	   mReceive(data,len);
+    } else {
+      Serial.println(client->remoteIP());
+      mDebugMsg("unhandled onWsEvent");
     }
   }
 #endif
@@ -65,10 +69,11 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
 void setup(){
   mESPSetup();
   mDebugMsg("-------------running Android setup ------------");
-  bool ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
+  bool ret;
+  ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
   if (ret) ret=mStartWebSocket1(); //Use credentials to attempt connection
   if (ret){ //Connection good wait for client to activate WS
-    Serial.printf("Connected to WiFi: %s pwd:%s \n",getAP_SSID().c_str(),getAP_PASS().c_str());
+    Serial.println(("Connected to WiFi |"+getAP_SSID() +"|"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
     ret=mWaitForWSClient(TimeOutClient);
   }
   if (!ret){
@@ -121,10 +126,9 @@ long rssi=0;	//signal strength
 bool mStartWebSocket1(){
   IPAddress staticIP=getIP();
   IPAddress gateway(192, 168, 1, 1);
-  IPAddress subnet(255, 255, 0, 0);
-  WiFi.config(staticIP, gateway, subnet);  // if using static IP, enter parameters at the top
-  if (nDbgLvl>2) Serial.printf("staticIP: %s \n", IpAddress2String(getIP()).c_str());
-  if (nDbgLvl>2) Serial.printf("Starting   WiFi: %s pwd:%s \n",getAP_SSID().c_str(),getAP_PASS().c_str());
+  IPAddress subnet(255, 255, 255, 0);
+  WiFi.config(staticIP,staticIP,subnet);  // if using static IP, enter parameters at the top
+  Serial.println(("Starting   WiFi|"+getAP_SSID() +"| , |"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
   WiFi.begin(getAP_SSID().c_str(),getAP_PASS().c_str());
   for (int i=0;i<TimeoutWifi;i++){ //Loop until timeout
     if (WiFi.status() == WL_CONNECTED) return true;   //Happily connected to wifi
@@ -140,14 +144,12 @@ bool mStartWebSocket1(){
 bool mWaitForWSClient(int TimeOutClient){
   Serial.print("WiFi.localIP() ");  Serial.println(WiFi.localIP());
   ws.onEvent(onWsEvent);
-  /*  Why is this neccessary???*/
   server.addHandler(&ws);
-  /*
+  /*  Why is this neccessary???*/
   server.on("/html", HTTP_GET, [](AsyncWebServerRequest *request){
     mDebugMsg("html served");
     request->send(SPIFFS, "/ws.html", "text/html");
   });
-  */
   server.begin();
   mDebugMsg("Waiting for client to connect");
   for (int i=0;i<TimeOutClient;i++){    //try until timeout

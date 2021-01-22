@@ -17,10 +17,10 @@ int nDbgLvel=5;   //Verbosity level for debuggin messages
 /*    MOVED TO creadentials.h:   */
 //String AP_SSID="";  // your internet wifi  SSID
 //String AP_PASS="";   // your internet wifi  password
-String AP_SSID = "networkname";  // your router's SSID here
-String AP_PASS = "password";     // your router's password here
+String AP_SSID = "Rune";  // your router's SSID here
+String AP_PASS = "telefon1";     // your router's password here
 String LM_URL = "url";
-String AP_StaticIP="192.168.1.101";
+String AP_StaticIP="192.168.1.238";
 const char* SoftAP_SSID = "Arduino_LM";  //Name of the SoftAP - Arduino gets nicely first in the network list
 //IPAddress MyStaticIP;  //The static IP address when using internet wifi router
 //  ******  Make public getter/setters       *****
@@ -44,8 +44,6 @@ const char* PARAM_INPUT_1 = "SSID";
 const char* PARAM_INPUT_2 = "Password";
 const char* PARAM_INPUT_3 = "LM_URL";
 //IP Address settings
-
-//AsyncWebServer gserver(80);
 
 //      Flags of statemachine. set by async calls  (see flowchart)
 bool InitSoftAPOk=false;  //Set true by InitSoftAP when user  has inserted SSID&PWD
@@ -124,6 +122,7 @@ bool mGetMyStaticIP(){//Get a free  IP address and make it static
   WiFi.disconnect();
   mDebugMsgcpp("WIFI_STA");delay(1000);
   WiFi.mode(WIFI_STA);
+  WiFi.config(0U, 0U, 0U);//rt210121 reset the configuration so a fresh IP can be obtained - https://stackoverflow.com/a/54470525/2582833
   mDebugMsgcpp("WiFi.begin(AP_SSID.c_str()");delay(1000);
   WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());delay(1000);
   mDebugMsgcpp("Connecting to internet WIFI to get IP");
