@@ -20,10 +20,10 @@
         },
         "Art_signal": {
             "VarName": "Art_signal",
-            "Unit": "uV",
-            "Offset": 134000000,
-            "Factor": 5.0e-5,
-            "Alias": "Raw EMG"
+            "Unit": "uVolt",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "Artificial Signal"
         },
         "yData": {
             "VarName": "yData",
