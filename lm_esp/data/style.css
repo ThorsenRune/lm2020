@@ -52,7 +52,7 @@ input[type=text], input[type=password], input[type=checkbox] {
   box-sizing: border-box;
   border-radius: 4px;
 }
-.button {
+button {
   text-align: center;
   border: none;
   color: black;
