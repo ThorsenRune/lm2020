@@ -27,12 +27,14 @@ const prot={		//Encapsulating communication protocol
     }
     var dst=this.oProtElemVar[varname]
 		this.oProtElemVar[varname]=Object.assign(dst,el)  //Overwrite or create
+    return this.oProtElemVar[varname];  //Return the element
 	}
 	,ElementByName(VarName){
 		return prot.oProtElemVar[VarName]
 	}
 	,ElementByVarId(varid){		//Return the element by its variable id
-		var aNames=Object.keys(prot.oProtElemVar)		for (var i=0;i<aNames.length;i++){
+		var aNames=Object.keys(prot.oProtElemVar)
+		for (var i=0;i<aNames.length;i++){
 			var el=prot.oProtElemVar[aNames[i]];
 			if (el.nVarId==varid) return el;
 		}
@@ -44,14 +46,20 @@ const prot={		//Encapsulating communication protocol
 	}
 
 }
-prot.state=function (setState){ //Returns the state of the protocol
+prot.state=function(setState){ //Returns the state of the protocol
   if(typeof(this._state)==='undefined') this._state=konst.kCommInit;
-  if(typeof(setState)!=='undefined') this._state=setState;
+  if(typeof(setState)!=='undefined')
+  {
+    if (setState==konst.kReady) mMessage("Changed protocol state to:READY")
+    else if (setState==konst.kCommInit) mMessage("Changed protocol state to:kCommInit")
+    else mMessage("Changed protocol state to: "+setState)
+    this._state=setState;
+  }
   if (this._state==konst.kReady) return this._state
   if (validate()) this._state=konst.kReady
   return this._state
 
-  function validate (){	//Check if protocol is received from device
+  function validate(){	//Check if protocol is received from device
   //						all elements have nVarId valid number in range 64--100
   //rev201125			todo:move into object
   	var aNames=Object.keys(prot.oProtElemVar)
@@ -66,15 +74,24 @@ prot.state=function (setState){ //Returns the state of the protocol
   	return true;
   }
 }
-
+prot.CleanUp=function(){  //Remove unregistered variables from protocol
+//						all elements have nVarId valid number in range 64--100
+  var aNames=Object.keys(prot.oProtElemVar)
+  for (var i=0;i<aNames.length;i++){
+    var el=prot.oProtElemVar[aNames[i]];
+    if (!el.nVarId)delete(prot.oProtElemVar[aNames[i]]); 		//Undefined id remove it
+  }
+}
 
 //Higher level functions
 
 
 prot.mTX_ProtReset=function(){		//Resettig the communicato protocol with kCommInit
 	if (debug) mMessage('Resetting protocol',true);
+  serial.send(konst.kHandshake);  //Send the reset request to device (There is some bug so resend the request)
 	serial.send(konst.kCommInit);  //Send the reset request to device (There is some bug so resend the request)
   prot.state('initializing');  //Set protocol as invalid until validated
+  //Will be altered in mRX_ProtInit
 }
 prot.oaProtElem=[];		//Array of elements in the protocol
 						//Set at ,get oProtElemVar (){return oWatch.oProtElemVar;}
@@ -95,9 +112,8 @@ prot.TXDispatch=function(){	//mTXDispatch - the response will be mRXDispatch
 		var aNames=Object.keys(prot.oProtElemVar)
 		for (var i=0;i<aNames.length;i++){
 			var VarData=prot.oProtElemVar[aNames[i]];
-      if (!VarData.nVarId){
-          mMessage("Unregistered variable "+aNames[i]);
-          debugger
+      if (!VarData.nVarId){//          mMessage("Unregistered variable "+aNames[i]);
+//          debugger
       }else if (VarData.pokedata){
 				mTX_SetReq(VarData);
 				VarData.pokedata=false;	//Clear write request flag
@@ -117,15 +133,15 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		return mRX_Handshake(RXFiFo);
 	} else if (konst.kCommInit==RXFiFo[0]){
 		mFromDevice(serial.RXFiFo)		//Testing
-    var ret=mRX_ProtInit();
+    var ret=mRX_ProtInit();       //Initialize an element of the protocol
 		return ret
 	} else if (konst.k32Bit==RXFiFo[0]){
 		var ret= mRXGetReq(RXFiFo);
-    if (debug) mMessage(JSON.stringify(debug.ReceivedElement));
-    if (debug) mDebugShowInput(debug.ReceivedElement);
+    if (debug) mShowDropDownValue();
     return ret
 	} else {	//This should not happen but if data gets scrambled it does
-		//Todo: make some error handeling - show user that there is a problem
+		mDebugMsg('mRXDispatch:Error in protocol, flushing protocol');
+    serial.RXFiFo=[]
 		debugger
 	}
 	function mRX_Handshake(){	//Return the handshake
@@ -141,23 +157,32 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		return true
 	}
 
-	function mRX_ProtInit(){	//Return next element from the protocol
+	function mRX_ProtInit(){	//Register element in protocol
 	//Rev 2020
 	// Todo: determine when the protocol has been completed
 	//cmd,bStringLength,sElementName,bVarId,bDataLength,bVarType
 	//Requires stringlength+4 bytes
 		if (serial.RXFiFo[1]+5>serial.RXFiFo.length) return false; //Pack not ready yet
-		var el={}
+		var el={}     //Create an empty element
 		var idx=1;
 		var nBytes=serial.RXFiFo[idx]; //Length of element name
 		el.VarName=''
 		for ( idx=2;idx<nBytes+2;idx++) {
 			el.VarName=el.VarName+ String.fromCharCode(serial.RXFiFo[idx])
         }
-		el.nVarId=serial.RXFiFo[idx++]
+		el.nVarId=serial.RXFiFo[idx++]  //Todo:9 refactor all to be zVarId like in FW code
 		el.nDataLength=serial.RXFiFo[idx++];//Length of data array
 		el.nVarType=serial.RXFiFo[idx++];//Length of data array
-		prot.SetElement(el);	//Register the element in the protocol
+		el=prot.SetElement(el);	//Register the element in the protocol and get a refernce to the protocol element
+    //Bugfix: rt210125
+    if (!el.Vector) el.Vector=Array(el.nDataLength).fill(0);      //Create vector it not preinitialized in setup sFileName
+    //Otherwise use default values
+    else if (el.Vector.length!=el.nDataLength) el.Vector=Array(el.nDataLength).fill(0); //Be sure the length is correct
+    if (typeof el.pokedata=='undefined') el.pokedata=false;   //Initialize pokedata flag
+    if (typeof el.peekdata=='undefined') el.peekdata=false;   //Initialize peekdata flag
+    if (prot.ListVarNames().indexOf(el.VarName)>(prot.ListVarNames().length-2)) {  //Assume the protocol is ready when last var has been received
+      prot.state(konst.kReady); //Assume that prot is ready
+    }
 		serial.RXFiFo=serial.RXFiFo.slice(idx);	//Remove cmd & payload
 		if (debug) mMessage(JSON.stringify(el));
 		display.doRedraw=true;	//request to redraw the display
@@ -182,12 +207,16 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		}
 		serial.RXFiFo=serial.RXFiFo.slice(idx);	//Remove cmd & payload
 		var el=prot.ElementByVarId(nId)
-		if (el.pokedata) debugger; //Todo: write before read (call mTX_SetReq(oElem);
-		el.Vector=data
+    if (!el) return;
+		if (el.pokedata) {
+      debug //Don't read if you are writing
+    }else{
+      el.Vector=data
+    }
 		if (debug) debug.ReceivedElement=el
-
 		return true
 	}
+
 }
 
 
@@ -201,10 +230,8 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 *	201111 refact java -> javascript
 */
 function mTX_GetReq(oProtElem){        //TX Get request - use mRXGetReq to receive the response
-	  mMessage("Requesting data",true);  //debug msg
     if (!oProtElem.nVarId){
-        mMessage("Unregistered variable: "+oProtElem.VarName);
-        debugger
+        mDebugMsg("mTX_GetReq:Unregistered variable: "+oProtElem.VarName);        debugger
         return;
     }
     serial.send(konst.kGetReq);
@@ -215,10 +242,11 @@ function mTX_SetReq(oProtElem){      /* Change data in device memory          Wr
 //Sending: Cmd,Varid,addressoffset,4databytes
     var offs;
     if (!oProtElem.nVarId){
-        mMessage("Unregistered variable: "+oProtElem.VarName);
+        mDebugMsg("mTX_SetReq Unregistered variable: "+oProtElem.VarName);
         debugger
         return;
     }
+    if (!oProtElem.Vector) return false;
 	//Loop through object data elements
     for(offs=0; offs<oProtElem.nDataLength; offs++)
 	{
@@ -367,11 +395,11 @@ prot.mVarValue=function(sVarName,idx,val){		// Rev 191107
 		var oDesc=prot.oVarDesc[sVarName]
 		if (val!=undefined){
 			var raw=(val/oDesc.Factor)+Number(oDesc.Offset);
-      if (oData.Vector)			oData.Vector[idx]=raw;    //RT210121  guard void
+		    if (oData.Vector)			oData.Vector[idx]=raw;    //RT210121  guard void
 			oData.pokedata=true;	//Request a write to device
 			oData.peekdata=true;	//Request a readback from device
 		} else {
-      if (undefined ===oData.Vector ) return undefined
+      if (undefined ===oData.Vector) return undefined
 			if (undefined ===oData.Vector[idx]) return undefined
 			var val=oData.Vector[idx]
 			if (val===undefined) debugger;	//Error you probably missed the index
@@ -392,12 +420,14 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
 			prot.pokedata(oProtElemVar );
 		} else {
 //			if (undefined ===oProtElemVar .Vector) return undefined
-			var vector=oProtElemVar .Vector
-			var vY=Array(vector.length);
-			for (var idx=0;idx<vector.length;idx++){//Scale raw data to units
-				 vY[idx]=(vector[idx]-oDesc.Offset)*oDesc.Factor;
-			}
-			oProtElemVar .peekdata=true;
+			var vector=oProtElemVar.Vector       //The data array
+      if (vector){
+  			var vY=Array(vector.length);
+  			for (var idx=0;idx<vector.length;idx++){//Scale raw data to units
+  				 vY[idx]=(vector[idx]-oDesc.Offset)*oDesc.Factor;
+  			}
+      }
+			oProtElemVar.peekdata=true;           //Request a new read from LM device
 			return vY;
 		}
 	}

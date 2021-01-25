@@ -18,12 +18,12 @@
             "Factor": 1,
             "Alias": "nMode.all_flags"
         },
-        "Art_signal": {
-            "VarName": "Art_signal",
-            "Unit": "uVolt",
-            "Offset": 0,
-            "Factor": 1,
-            "Alias": "Artificial Signal"
+        "xData": {
+            "VarName": "xData",
+            "Unit": "uV",
+            "Offset": 134000000,
+            "Factor": 5.0e-5,
+            "Alias": "Raw EMG"
         },
         "yData": {
             "VarName": "yData",
@@ -162,8 +162,10 @@
             "Peek": false,
             "Poke": false
         },
-        "Art_signal": {
-            "VarName": "Art_signal",
+        "xData": {
+            "VarName": "xData",
+
+            "nIdx": 2,
             "Size": 100,
             "Vector": [
                 135380672,
@@ -461,6 +463,7 @@
         "Gain": {
             "VarName": "Gain",
 
+            "nIdx": 9,
             "Size": 2,
             "Vector": [
                 0,
@@ -632,7 +635,7 @@
             "Index": 0,
             "Range": [
                 0,
-                500
+                100
             ]
         }
     },

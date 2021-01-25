@@ -19,9 +19,7 @@ document.addEventListener("DOMContentLoaded", Main_Init);
 /***********************	INITIALIZATION		***********************************/
 function  Main_Init(){
 	//Change the default filename for dataexchange
-	
-	var datafile=location.hash.replace('#','')
-	if (datafile.length>2) prot.sFileName=datafile+'.txt';
+	prot.sFileName=mDataFile();		//Get the settings file e.g. data.txt
 	display.init()
 	display.idVarName1.onchange=mDDSetVarName;
 	mWebSocket_InitAsync();			//Setup the websocket
@@ -34,6 +32,17 @@ function  Main_Init(){
 }
 
 /***********************	MAIN PROCESSING		***********************************/
+function mDataFile(newfile){
+	var datafile=location.hash.replace('#','').replaceAll('.txt','');
+	if (newfile){
+		datafile=newfile.replaceAll('.txt','');;
+	}else{
+		if (datafile.length<3) datafile='data';
+	}
+	datafile=datafile.replaceAll('.txt','');
+	location.hash=datafile
+	return datafile+'.txt';
+}
 
 
 function Main_Loop(){		//This is the refresh loop of the program
@@ -46,7 +55,9 @@ function Main_Loop(){		//This is the refresh loop of the program
 	prot.TXDispatch();	//Exchange RX/TX of data from the protocol
 	while (prot.mRXDispatch(serial.RXFiFo));	//Empty the queue from device
 	if (oWatch.nPeriod>60)
-		setTimeout(function(){ Main_Loop()	 },oWatch.nPeriod); 	//Loop peridoically
+		setTimeout(function(){ 
+			Main_Loop()
+		},oWatch.nPeriod); 	//Loop peridoically
 	//Though setTimeout is not precise it allows easily to change the period
 	Main_Loop.running=false
 }
@@ -64,7 +75,7 @@ var init_SetupFromServer=function(dataurl){ //
 		if (oRetData.data){
 			oWatch=oRetData.data;
 		} else {
-			alert (oRetData.errors)
+			alert ("File not found" );//oRetData.errors
 			return;
 		}
 		oWatch.cmd=prot.kCommInit;

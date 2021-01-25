@@ -26,14 +26,19 @@ var mMessage=function(txt,clear){
 	if (clear) el.value='';
 	el.value=el.value+txt+"\n";
 }
+var mDebugMsg=function(txt,clear){
+	var el=idDebugText;
+	if (clear) el.value='';
+	el.value=el.value+txt+"\n";
+	debugger
+}
 var mShowDropDownValue=function(){	//Show data in input
 	if (debug.ReceivedElement)
-		idInput.value=(''+oElem.Vector).replaceAll(',',' , ')
+		idInput.value=(''+debug.ReceivedElement.Vector).replaceAll(',',' , ')
 	else {
 		idInput.value='Select in dropdown'
 	}
 }
-
 
 var mIsVisible=function(el){
 	var vis=el.clientHeight>100

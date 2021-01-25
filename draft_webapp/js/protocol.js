@@ -47,7 +47,13 @@ const prot={		//Encapsulating communication protocol
 }
 prot.state=function(setState){ //Returns the state of the protocol
   if(typeof(this._state)==='undefined') this._state=konst.kCommInit;
-  if(typeof(setState)!=='undefined') this._state=setState;
+  if(typeof(setState)!=='undefined')
+  {
+    if (setState==konst.kReady) mMessage("Changed protocol state to:READY")
+    else if (setState==konst.kCommInit) mMessage("Changed protocol state to:kCommInit")
+    else mMessage("Changed protocol state to: "+setState)
+    this._state=setState;
+  }
   if (this._state==konst.kReady) return this._state
   if (validate()) this._state=konst.kReady
   return this._state

@@ -5,7 +5,7 @@
 */
 
 #include "inoProtocol.h"
-
+#include "publishvars.h"
 
 uint8_t aTX[kTXBufferSize];		// Transmit array
 uint8_t aRX[kTXBufferSize];		//Receive array
@@ -23,12 +23,12 @@ volatile    uint8_t*			 elems;  /* vector of elements                   */
 } *tFIFO1;
 
 void mCommInitialize(void){
-  mDebugMsg("mCommInitialize");
+  if (nDbgLvl>6) mDebugMsg("mCommInitialize");
  //Initialize the communication protocol allocating memory for buffers
 
  oTX=mFIFO_new(aTX,sizeof(aTX)); // get a new object
  oRX=mFIFO_new(aRX,sizeof(aRX)); // get a new object
- mDebugInt("oRX Free",mFIFO_Free(oRX));
+ if (nDbgLvl>6) mDebugInt("oRX Free",mFIFO_Free(oRX));
 }
 
 void mTX_PushTxt(const char* PushTxt) {
@@ -104,9 +104,7 @@ void Ucom_Send32bit(tFIFO oTX,int VarId, int *  Data2Send, int Count){
  int i;
 
   if  (mFIFO_Free(oTX)<3) mDebugHalt("oTX fifo overflow");
-//			{UART_TX_Trigger();}mDebugHalt
        mFIFO_push(oTX,kSend32Bit);	// xmit header
-//				UART_TX_Trigger();			// Start transmission
        mFIFO_push(oTX,VarId);			// xmit VarId
        mFIFO_push(oTX,Count);			// xmit Count
        for (i=0; i< Count; i++){		//!!!implement overflow check
@@ -193,9 +191,9 @@ Revisions:
   static uint8_t zState;				// State machine indicator
   static int *  DestData;
   while (!mFIFO_isEmpty(oRX)) {     // Char in buffer, go read and process it
-    mDebugInt("Available",mFIFO_available(oRX));
+    if (nDbgLvl>3) mDebugInt("Available",mFIFO_available(oRX));
     rcv1=mFIFO_pop(oRX);       //Get new data
-    mDebugInt("popped",rcv1);
+    if (nDbgLvl>6)mDebugInt("popped",rcv1);
     if (0==rxCmd) 			//Set command as receive data
       {
         rxCmd=(tUartCmd) rcv1;
@@ -203,14 +201,15 @@ Revisions:
         // Process single command procedures
          if  (kCommInit ==rxCmd)				// Reset the protocol by sending exposed variables
          {
-           mDebugMsg("dbExpose2Protocol");
+           if (nDbgLvl>6) mDebugMsg("dbExpose2Protocol");
            Expose2Protocol();
            rxCmd=kReady;											//Command is processed
          } else if (kHandshake==rxCmd)
          {
-           mDebugMsg("dbmSendVersionInfo");
+           if (nDbgLvl>6) mDebugMsg("dbmSendVersionInfo");
            mSendVersionInfo();
            bErrFlags.all_flags[0] = 0U	;		//Reset error flags
+            rxCmd=kReady;											//Command is processed  RT210121  (Forgot this)
          }
       }
      //Longer messages will be processed here
@@ -252,7 +251,7 @@ Revisions:
        oTXProt.TXCount[idx]++; //Make it send
        zState=0;				//End  statemachine
        rxCmd=kReady;
-        mDebugInt("kGetReq for ",idx);
+        if (nDbgLvl>6) mDebugInt("kGetReq for ",idx);
        //todo: enable mPowerWatchDogReset();		//R180920 Reset the watchdog for power timeout
      }
      else {

@@ -1,4 +1,4 @@
-//file: publish.h
+//file: publishvars.h
 //gdoc:  url
 //same as mdataexch.c in LM firmware
 #ifndef __GLOBALDATA__    // only once guard
@@ -8,9 +8,13 @@ extern "C" {
 #endif
 extern int nTimerInMs[3];     //GLOBAL VARIABLES for the Protocol
 extern int nTestVar[3];
+extern int Art_signal[120];
+extern int Gain[2];
+extern int nDbgLvl;
 
-
-
+/*        GLOBAL METHODS        */
+void mGenerateSignal();
+void mWaitCycleStart(void);
 
 typedef union {			//Flags for the operation modes
 int     all_flags[1];      				/* Allows us to refer to the flags 'en masse' */

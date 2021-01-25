@@ -12,7 +12,7 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
 <body>
   <h2>Configurazione WiFi</h2>
   <p>Inserisci per favore i credenziali della rete WiFi che si desirera utilizzare</p>
-<!--  <p>Please insert the credentals for the Internet WiFi you want to use<p>-->
+  <p>Please insert the credentals for the Internet WiFi you want to use<p>
 <!--
   the action="/get" is misleading
 -->
@@ -27,26 +27,27 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
     <br>
     Server : <input type="text" name="LM_URL" id="idLM_URL" value="URL OF THE SERVER">
     <br>
-    <input type="submit" value="Accetta Valori" onclick="refreshmessage()">
+    <input type="submit" value="Accetta Valori">
   </form>
     <hr>
+    <p><button id='idgetDataIP' onclick='getDataIP();'>Get static IP</button></a></p>
     IP : <input type="text" name="LM_URL" id="idIP" value="196.168.1.1">
-    <p><button id='idAppStartBtn' onclick='mAppStart();'>AVVIA APP</button></a></p>
+    <p><button id='idAppStartBtn' onclick='mAppStart();'>Start</button></a></p>
 <script>
     var LM_ServerUrl;
     var WiFiSSID;
     var LM_Ip;
-function refreshmessage(){
-      alert('Wait for 5s, reconnect to Arduino_LM and refresh the page! Now you can press AVVIA APP button!');
-    }
 function mAppStart(){
       getDataURL();
       getDataIP();
       getStartWS();
-      alert('Connect to your wifi internet '+ WiFiSSID + ' and reset the board before proceeding.');
-      var s="http://"+LM_ServerUrl+"?ws="+LM_Ip;
-      alert('Opening '+s);
-      location.href=s;
+      alert('Connect to your wifi internet '+ WiFiSSID);
+      //var url="http://"+LM_ServerUrl+"?ws="+LM_Ip;
+      var url=LM_ServerUrl+"?ws="+LM_Ip;
+      alert('Opening '+url);
+      var win = window.open(url, '_blank');
+      win.focus();
+      //location.href=url;
 }
 function viewPassword() {
   var x = document.getElementById("myPass");

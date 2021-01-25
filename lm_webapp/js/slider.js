@@ -41,7 +41,7 @@ let slider = (() => {
 		element.max= range[1]
 		updateSlider(element)
 	}
-// 
+//
   function updateSlider(element,bUserInput) {
     if (element) {
 		let parent = element.parentElement;
@@ -50,7 +50,7 @@ let slider = (() => {
 		var relval=Number(element.value).norm([element.min,element.max]);
 	if (bUserInput)	{
 		element.rawval=Number(element.value).unnorm(element.range)
-		 
+
 	}
       //parent.setAttribute('data-slider-value', element.value);
 	  parent.setAttribute('data-slider-value', element.label);
@@ -61,7 +61,9 @@ let slider = (() => {
       $thumb.style.bottom = `${pct}%`;  //Backticks   literals allowing embedded expressions. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
       $bar.style.height = `calc(${pct}% + ${$thumb.clientHeight / 2}px)`;
       $thumb.textContent = `${element.value}${element.unit}`;
-		if (bUserInput) element.bPokeValue=true;
+		if (bUserInput) {				//Set flag that this new value is to be written to device
+			element.bPokeValue=true;
+		}
     }
   }
   return {			//Export the variables
@@ -83,8 +85,8 @@ function initAndSetupTheSliders(){
    // Cross-browser support where value changes instantly as you drag the handle, therefore two event types.
   inputs.forEach(input => input.addEventListener('input', element => slider.updateSlider(input,true)));
   inputs.forEach(input => input.addEventListener('change', element => slider.updateSlider(input,true)));
-  inputs.forEach(input => input.addEventListener('touchstart',  function(){mFocus(this)})); 
-  inputs.forEach(input => input.addEventListener('focus',  function(){mFocus(this)})); 
+  inputs.forEach(input => input.addEventListener('touchstart',  function(){mFocus(this)}));
+  inputs.forEach(input => input.addEventListener('focus',  function(){mFocus(this)}));
   for (var i = 0; i < slider.inputs.length; i++) {
 	  slider.inputs[i].value=(i+1)*10;
 	  slider.inputs[i].range=[	0,100];  	//Default range
@@ -92,7 +94,7 @@ function initAndSetupTheSliders(){
 	  slider.inputs[i].label='name';
 	  slider.inputs[i].myIndex=i;
 	  slider.updateSlider(slider.inputs[i]);
-  }	
+  }
 }
 (function () {		//Run automatically
 	initAndSetupTheSliders();

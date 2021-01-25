@@ -1,7 +1,6 @@
 /*POPUP */
 .cOverlay { position: fixed; /* Sit on top of the page content */
  /* display: none; /* Hidden by default */
-  border: solid;/* Show outline of popup */
   width: 80%; /* Full width (cover the whole page) */
   height: 80%; /* Full height (cover the whole page) */
   top:10%;
@@ -14,7 +13,7 @@
   text-align: center;
  }
 #idText{
-	height:50%;
+	height:100%;
 	width:100%;
 	color:white;
   background-color: rgba(0,0,0,0.5); /* Black background with opacity */
@@ -28,19 +27,19 @@
   margin-right: auto;
       display: grid;
     grid-template-columns: 1fr 1fr;
-
+  
 }
 .cOverlay input {
   margin-bottom: 1rem;
- 
+  background: #fff;
   border: 1px solid #9c9c9c;
 }
 .form1 button {
-
+  
   padding: 0.7em;
   border: 0;
 }
-
+ 
 small {
     display: block
 }
