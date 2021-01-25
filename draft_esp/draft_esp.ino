@@ -166,6 +166,7 @@ void mTransmit(){   //Transmit internal protocol data to client
     if (nDbgLvl>5) mDebugInt("sending",sendbyte);
   }
 }
+
 void mReceive(uint8_t *data, size_t len){ //Get data from client
 	sRcvdData="";
 	int i=0;
@@ -265,7 +266,7 @@ void mDebugHalt(char msg[]){
 void  mDebugMsgcpp(char msg[]){
       Serial.print("Debugger says: \t ");
       Serial.printf("%s\n",msg );
-      delay(100);
+    //  delay(100);
   }
   void mDebugHaltcpp(char msg[]){
       Serial.print("\n------------HALT  ------\n");
@@ -275,7 +276,7 @@ void  mDebugMsgcpp(char msg[]){
     }
   }
   void mPrint(String msg){
-      delay(100);
+      //delay(100);
       Serial.printf("%s\n",msg.c_str() );
-      delay(100);
+      //delay(100);
   }
