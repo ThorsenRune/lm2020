@@ -97,17 +97,15 @@ void loop(){		//The main loop of the
     mSerialReceive();
 	//delay(1);
 
+  //+  if ( nMode.bits.SINEGENERATOR) mOutputSineWave();
   mGenerateSignal();
 /*************      BUSINESS LOGIC FOR THE SIGNAL PROCESSING AND COMMUNICATION  *****/
-//  TODO5 : enable / implement following calls
-//+  mADCAux_Start();				//Todo1 maybe this corrupts EMG?
-//+  if ( nMode.bits.SINEGENERATOR) mOutputSineWave();
 //    mADCRestart(bFlip);
-//    mOutputStimFSM_Debug(kReset);					//2. Reset statemachine for stimulaion and signals timing
 //  mSignalProcessing();					//3. Signal Processing
 //  mSystemActions();						//4.System management
     mTransmit();  //send data to client. Corresponding  mReceive is interrupt handled
     mTesting2();
+    mChangeDebugLevel();
 }
 /******************************* END MAIN WHILE(1) *******************************/
 
@@ -227,7 +225,15 @@ void serialEvent2() {  //automatic event
 	No overflow, no serial data interrupt has been found, therefore the loop cant be
 	delayed but the mSerialReceive must be polled frequently
 */
-
+void mChangeDebugLevel(){ //Takes a number from the arduino console and set the nDbgLvl accordingly
+  if (Serial.available()>0){
+    int debuglevel = Serial.parseInt();
+    if (debuglevel>0){
+      Serial.printf("Changed debugging level to : %i",debuglevel);
+      nDbgLvl=debuglevel;
+    }
+  }
+}
 void mCheckSpiffs(){
 }
 void mESPSetup(){
@@ -244,13 +250,7 @@ void mESPSetup(){
   void mDebugMsg(char msg[]){
       Serial.print("Debugger says: \t ");
       Serial.printf("%s\n",msg );
-      if (Serial.available()>0){
-        int debuglevel = Serial.parseInt();
-        if (debuglevel>0){
-          Serial.printf("Changed debugging level to : %i",debuglevel);
-          nDbgLvl=debuglevel;
-        }
-      }
+
   }
   void mDebugInt(char msg[],int data){
     Serial.printf("%s  \t:\t %i\t %c\n",msg,data,(char)data);

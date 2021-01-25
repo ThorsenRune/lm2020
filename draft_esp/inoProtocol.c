@@ -23,12 +23,12 @@ volatile    uint8_t*			 elems;  /* vector of elements                   */
 } *tFIFO1;
 
 void mCommInitialize(void){
-  mDebugMsg("mCommInitialize");
+  if (nDbgLvl>6) mDebugMsg("mCommInitialize");
  //Initialize the communication protocol allocating memory for buffers
 
  oTX=mFIFO_new(aTX,sizeof(aTX)); // get a new object
  oRX=mFIFO_new(aRX,sizeof(aRX)); // get a new object
- mDebugInt("oRX Free",mFIFO_Free(oRX));
+ if (nDbgLvl>6) mDebugInt("oRX Free",mFIFO_Free(oRX));
 }
 
 void mTX_PushTxt(const char* PushTxt) {
@@ -104,9 +104,7 @@ void Ucom_Send32bit(tFIFO oTX,int VarId, int *  Data2Send, int Count){
  int i;
 
   if  (mFIFO_Free(oTX)<3) mDebugHalt("oTX fifo overflow");
-//			{UART_TX_Trigger();}mDebugHalt
        mFIFO_push(oTX,kSend32Bit);	// xmit header
-//				UART_TX_Trigger();			// Start transmission
        mFIFO_push(oTX,VarId);			// xmit VarId
        mFIFO_push(oTX,Count);			// xmit Count
        for (i=0; i< Count; i++){		//!!!implement overflow check
@@ -203,12 +201,12 @@ Revisions:
         // Process single command procedures
          if  (kCommInit ==rxCmd)				// Reset the protocol by sending exposed variables
          {
-           mDebugMsg("dbExpose2Protocol");
+           if (nDbgLvl>6) mDebugMsg("dbExpose2Protocol");
            Expose2Protocol();
            rxCmd=kReady;											//Command is processed
          } else if (kHandshake==rxCmd)
          {
-           mDebugMsg("dbmSendVersionInfo");
+           if (nDbgLvl>6) mDebugMsg("dbmSendVersionInfo");
            mSendVersionInfo();
            bErrFlags.all_flags[0] = 0U	;		//Reset error flags
             rxCmd=kReady;											//Command is processed  RT210121  (Forgot this)
