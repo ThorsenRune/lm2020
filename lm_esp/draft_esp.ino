@@ -1,3 +1,8 @@
+/*  Unit testing for lm_esp
+    This is our playground where we test new functionality
+
+*/
+
 //#include lm_esp.ino
 /*
     COMMUNICATION
@@ -79,33 +84,27 @@ void setup(){
   MainSetup();		//Setup the system, protocol & .. (rt210107)
   mDebugMsg("calling main loop in LM_ESP.ino");
 #if ( DEBUG_ON==1)
-  mTesting();
+  mTesting1();
 #endif
 //- Serial.printf("Receive buffer reset. Free: %i ",mFIFO_Free(oRX));
-
+  mTesting1();
 }// This returns to an intrinsic call to loop()
 
 /*******************ARDUINO MAIN WHILE LOOP *******************************/
 //      AUTOMATICALLTY CALLED BT ARDUINO IDE
 void loop(){		//The main loop of the
     mWaitCycleStart();							// 1.  Wait for a block start using system clocks
-    mSerialReceive();
-	//delay(1);
-
-  //+  if ( nMode.bits.SINEGENERATOR) mOutputSineWave();
-  mGenerateSignal();
+   if (nDbgLvl>0) mGenerateSignal();
 /*************      BUSINESS LOGIC FOR THE SIGNAL PROCESSING AND COMMUNICATION  *****/
-//    mADCRestart(bFlip);
 //  mSignalProcessing();					//3. Signal Processing
 //  mSystemActions();						//4.System management
-    mTransmit();  //send data to client. Corresponding  mReceive is interrupt handled
+    mTransmit();                //send data to client. Corresponding  mReceive is interrupt handled
     mTesting2();
     mChangeDebugLevel();
 }
 /******************************* END MAIN WHILE(1) *******************************/
 
 
-String sRcvdData;
 long rssi=0;	//signal strength
 
 bool mStartWebSocket1(){
@@ -149,25 +148,38 @@ bool mWaitForWSClient(int TimeOutClient){
 /*************INTERFACE FOR SEND AND RECEIVE FROM CLIENT*************************/
 // Get and Send data to client (the browser)
 
+#define MAXL 800
+char mSendData[MAXL] ;	//'efg
+int SendDataBuf=0;
 void mTransmit(){   //Transmit internal protocol data to client
   //todo0:   oTX&RX are initialized in setup-->---->	MainSetup --->mCommInitialize
-  mCommunication();						//Process RX/TX buffers
+    mProtocolProcess();						//Process RX/TX buffers
   if (nDbgLvl>6)  if (!mFIFO_isEmpty(oTX)) mDebugMsg("mTransmit to client");
   while (!mFIFO_isEmpty(oTX)){
     uint8_t sendbyte=mPopTXFIFO();    //Get byte from  protocol
-    mSendToClient(sendbyte);
+    mSendData[SendDataBuf]=sendbyte;    //Get a byte from serial port
+    SendDataBuf++;
     if (nDbgLvl>5) mDebugInt("sending",sendbyte);
   }
+  //This is where  the data exchange with the client happenes
+   if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+     if (SendDataBuf>0){
+         globalClient->binary(mSendData,SendDataBuf );
+         if (nDbgLvl&&0x3)  Serial.printf("TX2 -> Client %d data\n ",SendDataBuf);
+         nTestVar[3]=SendDataBuf;
+         SendDataBuf=0;
+     }
+    }
+    delay(1); //Max messages per second =15 dont go below 100    	//note 201111
 }
 
+
 void mReceive(uint8_t *data, size_t len){ //Get data from client
-	sRcvdData="";
 	int i=0;
   if (nDbgLvl>6) mDebugInt("mReceive",len);
     for( i=0; i < len; i++) {
         if (nDbgLvl>7) mDebugInt("data",data[i]);
         if (bRelayLM2018){  //Pass through to subdevice (LM)
-          sRcvdData=sRcvdData+(char) data[i];	//Fill up a buffer from RX0
           Serial2.write(data[i]);		//Send incoming data  to LM
         } else {  //push the data onto buffer
           mPushRX2FIFO((char) data[i]);
@@ -175,51 +187,25 @@ void mReceive(uint8_t *data, size_t len){ //Get data from client
     }
 	//if (i>0)Serial.printf("  Received data- pack length : %s \n" ,i);
 //	Serial.print("RSSI:");	Serial.println(rssi);
-    //Serial.println(sRcvdData);		//onWsEvent read end
 }
+
 /*END ************INTERFACE FOR SEND AND RECEIVE FROM CLIENT*************************/
 //	rssi = WiFi.RSSI();
-#define MAXL 500
-char mSendData[MAXL] ;	//'efg
-int SendDataBuf=0;
-void mSendToClient(uint8_t sendbyte ){
-  //Todo:merge 201222
-  //Put a byte on the queue to send to the client (wifi/bluetooth)
-  mSendData[SendDataBuf]=sendbyte;    //Get a byte from serial port
-  //Serial.print(SendDataBuf,DEC) ;Serial.print(": ");
-  //Serial.print(mSendData[SendDataBuf],DEC)  ;Serial.print(" \t ");
-  SendDataBuf++;
-}
-void mSerialReceive(){    //This is where  the data exchange with the client happenes
-  if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
-    if (SendDataBuf>0){
-        globalClient->binary(mSendData,SendDataBuf );
-        Serial.printf("TX2 -> Client %d data\n ",SendDataBuf);
-        SendDataBuf=0;
-        delay(1); //Max messages per second =15 dont go below 100    	//note 201111
-    }
-   }
-	while (Serial2.available()&&(SendDataBuf<MAXL)) {
+
+
+void serialEvent2() {  //automatic event from LM serial connection
+  //Figure another way to relay to client
+/*  while (Serial2.available()&&(SendDataBuf<MAXL)) {
     int sendbyte=Serial2.read();
-    mSendToClient(sendbyte);
-	}
+    mSendData[SendDataBuf]=sendbyte;    //Get a byte from serial port
+    SendDataBuf++;
+  }
+  */
 }
 
 
-void serialEvent2() {  //automatic event
-	mSerialReceive();
-}
 
 
-
-
-/*
-	note 201111
-	Experimental findings:
-	The serial port overflows at 256 received data . A 100 element vectorpack is 403 bytes
-	No overflow, no serial data interrupt has been found, therefore the loop cant be
-	delayed but the mSerialReceive must be polled frequently
-*/
 void mChangeDebugLevel(){ //Takes a number from the arduino console and set the nDbgLvl accordingly
   if (Serial.available()>0){
     int debuglevel = Serial.parseInt();
@@ -229,8 +215,7 @@ void mChangeDebugLevel(){ //Takes a number from the arduino console and set the 
     }
   }
 }
-void mCheckSpiffs(){
-}
+
 void mESPSetup(){
   Serial.begin(115200);
   Serial.println("Serial Txd is on pin: "+String(TX));
