@@ -55,7 +55,7 @@ function Main_Loop(){		//This is the refresh loop of the program
 	 //Commuication requesting data from device (FSM)
 	prot.TXDispatch();	//Exchange RX/TX of data from the protocol
 	while (prot.mRXDispatch(serial.RXFiFo)){};	//Empty the queue from device
-	if (prot.refreshRate>60)
+	if (prot.refreshRate>30)
 		setTimeout(function(){
 			Main_Loop()
 		},prot.refreshRate); 	//Loop peridoically
