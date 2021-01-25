@@ -8,9 +8,12 @@
 */
 #include "inoProtocol.h"
 #include "publishvars.h"
+#include <Arduino.h>
+#include <stdint.h>           //Define standard types uint32_t etc
+#include <stdbool.h>				//Boolan types rt210107
 /*  TEsting forward backward declarations       */
 int testA(int i){
-    return testB(i);
+  return 0;//  return testB(i);
 }
 void testB(){
   int i;
@@ -21,8 +24,8 @@ void mTesting(){
 //  mPushRX2FIFO(kHandshake);		//Simulate handshake reception
 //  mPushRX2FIFO(kCommInit);		//Simulate kCommInit reception
   //Todo. why do you need to double send?
-
-
+#include "publishvars.h"
+ 
 
 }
 void mTesting2(){
@@ -30,12 +33,15 @@ void mTesting2(){
 }
 #define ARRAYLENGTH(x)     (sizeof(x)/sizeof(x[0]))
 
+int togglephase=1;   //Example of static variable. is only initialized once
 void mGenerateSignal(){
+   static int phaseshift=1;   //Example of static variable. is only initialized once
+  phaseshift=phaseshift+1;;
+  if (nDbgLvl>1) Serial.printf("phaseshift  %i\r\n", phaseshift);
   int len=sizeof(Art_signal)/sizeof(Art_signal[0]);
   for (int i=0;i<len ;i++){    //try until timeout
-    float arg=((float)i)/10;
+    float arg=((float)i+phaseshift)/5;
     Art_signal[i]=(int)(sin(arg)*(float)Gain[0]);
-    Art_signal[i]=Art_signal[i]+(nTimerInMs[0]%100);
   }
 }
 

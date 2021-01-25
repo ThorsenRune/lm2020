@@ -55,7 +55,9 @@ function Main_Loop(){		//This is the refresh loop of the program
 	prot.TXDispatch();	//Exchange RX/TX of data from the protocol
 	while (prot.mRXDispatch(serial.RXFiFo));	//Empty the queue from device
 	if (oWatch.nPeriod>60)
-		setTimeout(function(){ Main_Loop()	 },oWatch.nPeriod); 	//Loop peridoically
+		setTimeout(function(){
+			Main_Loop()
+		},oWatch.nPeriod); 	//Loop peridoically
 	//Though setTimeout is not precise it allows easily to change the period
 	Main_Loop.running=false
 }

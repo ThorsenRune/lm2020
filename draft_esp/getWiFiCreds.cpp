@@ -1,5 +1,6 @@
 #include "getWiFiCreds.h"
 //#include "credentials.h"        //Default WIFI CREDENTIALS IN THIS FILE
+#include "publishvars.h"
 
   /*
     This module establish connection to the  wifi accesspoint (WAP or internet WiFi router)
@@ -7,7 +8,6 @@
     soft accesspoint (SoftAP or Direct WiFi)
  */
 
-int nDbgLvel=5;   //Verbosity level for debuggin messages
 //--------      Global VARIABLES
 // Configure SoftAP (direct wifi ESP-client) characteristics
 
@@ -62,7 +62,7 @@ bool mWIFISetup(AsyncWebServer & gserver){//Setup SOFT AP FOR CONFIGURING WIFI
       mDebugMsgcpp("Calling mGetMyStaticIP ");
     if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
     if (ret){ //We got our credentials, save and restart
-      if (nDbgLvel>2) Serial.printf("MyStaticIP  %s\r\n", AP_StaticIP);
+      if (nDbgLvl>2) Serial.printf("MyStaticIP  %s\r\n", AP_StaticIP);
       mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
       mDebugMsgcpp("Calling: InitSoftAP second time");
         //Setup the SoftAP from before, refresh client with full credentials
@@ -103,7 +103,7 @@ bool mWIFIConnect(){//Main entry point - a blocking call
           mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
         }
         return mWIFIConnect(); //If credentials have been saved now the recursive call should end width
-          //  --->mStartWebSocket
+          //  --->mStart#include
     } else {  //Fail in getting credentials
         mDebugMsgcpp("Fail in getting credentials, retry");
         return false;
@@ -175,13 +175,13 @@ void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress 
 bool mGetCredentials(){//Blocking. Will return true if credentials are in FLASH
   //RT210112: Moved code into method
   AP_SSID=readFile(SPIFFS, "/SSID.txt");
-  if (nDbgLvel>4){ Serial.print("Saved ssid (AP_SSID): ");  Serial.println(AP_SSID);}
+  if (nDbgLvl>4){ Serial.print("Saved ssid (AP_SSID): ");  Serial.println(AP_SSID);}
   AP_PASS=readFile(SPIFFS, "/Password.txt");
-  if (nDbgLvel>4){ Serial.print("Password (AP_PASS): ");  Serial.println(AP_PASS);}
+  if (nDbgLvl>4){ Serial.print("Password (AP_PASS): ");  Serial.println(AP_PASS);}
   LM_URL=readFile(SPIFFS, "/Url.txt");
-  if (nDbgLvel>4){ Serial.print("server (LM_URL): ");  Serial.println(LM_URL);}
+  if (nDbgLvl>4){ Serial.print("server (LM_URL): ");  Serial.println(LM_URL);}
   AP_StaticIP=readFile(SPIFFS, "/IP.txt");
-  if (nDbgLvel>4){ Serial.print("IP.txt (AP_StaticIP): ");  Serial.println(AP_StaticIP);}
+  if (nDbgLvl>4){ Serial.print("IP.txt (AP_StaticIP): ");  Serial.println(AP_StaticIP);}
   const String bEmptyString=String();
   if ((bEmptyString==AP_SSID)||(bEmptyString==AP_PASS)) {
     mDebugMsgcpp("Missing credentals files");
@@ -301,31 +301,31 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
 
 //Read credentials from files (SSID.txt,Password.txt and IP.txt)
 String readFile(fs::FS &fs, const char * path){
-  if (nDbgLvel==6) Serial.printf("Reading file: %s\r\n", path);
+  if (nDbgLvl==6) Serial.printf("Reading file: %s\r\n", path);
   File file = fs.open(path, "r");
     if(!file || file.isDirectory()){
             Serial.println("- empty file or failed to open file");
             return String();
   }
-if (nDbgLvel==6)  Serial.println("- read from file:");
+if (nDbgLvl==6)  Serial.println("- read from file:");
   String fileContent;
   while(file.available()){
     fileContent+=String((char)file.read());
   }
-if (nDbgLvel==6)  Serial.println(fileContent);
+if (nDbgLvl==6)  Serial.println(fileContent);
   return fileContent;
 }
 
 //Write credentials from files (SSID.txt,Password.txt and IP.txt)
 void writeFile(fs::FS &fs, const char * path, const char * message){
-    if (nDbgLvel>2) Serial.printf("Writing file: %s\r\n", path);
+    if (nDbgLvl>2) Serial.printf("Writing file: %s\r\n", path);
   File file = fs.open(path, "w");
   if(!file){
     Serial.println("- failed to open file for writing");
   return;
   }
   if(file.print(message)){
-  if (nDbgLvel>7)  Serial.println("- file written");
+  if (nDbgLvl>7)  Serial.println("- file written");
   } else {
   Serial.println("- write failed");
   }
