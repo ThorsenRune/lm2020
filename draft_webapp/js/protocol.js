@@ -130,11 +130,10 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		return ret
 	} else if (konst.k32Bit==RXFiFo[0]){
 		var ret= mRXGetReq(RXFiFo);
-    if (debug) mMessage(JSON.stringify(debug.ReceivedElement));
     if (debug) mShowDropDownValue();
     return ret
 	} else {	//This should not happen but if data gets scrambled it does
-		mMessage('Error in protocol, flushing protocol');
+		mDebugMsg('mRXDispatch:Error in protocol, flushing protocol');
     serial.RXFiFo=[]
 		debugger
 	}
@@ -224,10 +223,8 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 *	201111 refact java -> javascript
 */
 function mTX_GetReq(oProtElem){        //TX Get request - use mRXGetReq to receive the response
-	  mMessage("Requesting data",true);  //debug msg
     if (!oProtElem.nVarId){
-        mMessage("Unregistered variable: "+oProtElem.VarName);
-        debugger
+        mDebugMsg("mTX_GetReq:Unregistered variable: "+oProtElem.VarName);        debugger
         return;
     }
     serial.send(konst.kGetReq);
@@ -238,7 +235,7 @@ function mTX_SetReq(oProtElem){      /* Change data in device memory          Wr
 //Sending: Cmd,Varid,addressoffset,4databytes
     var offs;
     if (!oProtElem.nVarId){
-        mMessage("Unregistered variable: "+oProtElem.VarName);
+        mDebugMsg("mTX_SetReq Unregistered variable: "+oProtElem.VarName);
         debugger
         return;
     }
