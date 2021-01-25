@@ -11,7 +11,7 @@ extern "C" {
 #include <stdbool.h>				//Boolan types rt210107
 #include <stdint.h>           //Define standard types uint32_t etc
 //  GLOBALS					**************************************************** 21017
-void mTesting();						//Declare your functions here for ino to recognize it
+void mTesting1();						//Declare your functions here for ino to recognize it
 void mTesting2();						//test functions
 //Interface methods
 int mPopTXFIFO();		//Send to client

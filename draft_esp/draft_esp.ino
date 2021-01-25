@@ -84,10 +84,10 @@ void setup(){
   MainSetup();		//Setup the system, protocol & .. (rt210107)
   mDebugMsg("calling main loop in LM_ESP.ino");
 #if ( DEBUG_ON==1)
-  mTesting();
+  mTesting1();
 #endif
 //- Serial.printf("Receive buffer reset. Free: %i ",mFIFO_Free(oRX));
-
+  mTesting1();
 }// This returns to an intrinsic call to loop()
 
 /*******************ARDUINO MAIN WHILE LOOP *******************************/
@@ -165,7 +165,8 @@ void mTransmit(){   //Transmit internal protocol data to client
    if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
      if (SendDataBuf>0){
          globalClient->binary(mSendData,SendDataBuf );
-         Serial.printf("TX2 -> Client %d data\n ",SendDataBuf);
+         if (nDbgLvl&&0x3)  Serial.printf("TX2 -> Client %d data\n ",SendDataBuf);
+         nTestVar[3]=SendDataBuf;
          SendDataBuf=0;
      }
     }

@@ -16,7 +16,7 @@
 /*********GLOBAL VARIABLES**************/
 ModeType nMode;
 int nTimerInMs[3]={};							// Milliseconds 1= T0 start of cycle 2=actual ms, 3How many clockcycles are available as resource
-int nTestVar[4]={};							// a test variable
+int nTestVar[5]={};							// a test variable
 int Art_signal[120]={};                      //Artificial signal
 int Gain[2]={100,10};								// Stimulation level gain
 int nDbgLvl=1;   //Verbosity level for debuggin messages
