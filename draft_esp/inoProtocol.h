@@ -17,7 +17,7 @@ void mTesting2();						//test functions
 int mPopTXFIFO();		//Send to client
 void mPushRX2FIFO(int var);   //Receive from client
 
-void mCommunication(void);
+void mProtocolProcess(void);
 // A MACRO THAT DEFINE EXPOSE TO PROTOCOL for vectors
 #define EXPOSEARRAY(obj,arg1) mTXExposeArray(obj,#arg1,arg1,sizeof(arg1)/sizeof(arg1[0]),kSend32Bit);
 /* Expands to something like

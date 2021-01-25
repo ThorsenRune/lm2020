@@ -138,16 +138,21 @@ int8_t mTXVarId_Find(tTXProt* obj, char zVarId)   //return index of varid
      return -1;
 };
 
+//Handshake
+void mSendVersionInfo(){//Send information about the firmware
+   mFIFO_push(oTX,kHandshake);				    // Header
+   mTX_PushTxt((char*) FWversion);				//Send Firmware information
+}
+
 
 
 ////////////////////////////	RX TX Dispatcher	////////////////////////////
 
-
-void mDispatchTX(tTXProt*  obj)   //Run though object and send data witch have TXCount>0
+//todo7: refactor mDispatchTX /mDispatchRX to mEncodeRFTX /mDecodeRFRX
+void mDispatchTX(tTXProt*  obj){   //Run though object and send data witch have TXCount>0
 /* 	@obj: 		the protocol object
 using:void Ucom_Send32bit(tFIFO oTX,int VarId, int *  Data2Send, int Count)
 */
-{
    char i;
    for (i=0; i<obj->VarCount ; i++ )
      {  if (0< obj->TXCount[i])
@@ -168,24 +173,12 @@ using:void Ucom_Send32bit(tFIFO oTX,int VarId, int *  Data2Send, int Count)
      }	*/
 }
 
-
-
-
-//Handshake
-void mSendVersionInfo(){//Send information about the firmware
-   mFIFO_push(oTX,kHandshake);				    // Header
-   mTX_PushTxt((char*) FWversion);				//Send Firmware information
-}
-
-
-
-void mDispatchRX( )   //Receiving data and dispatch commands
+void mDispatchRX( ){   //Receiving data and dispatch commands
 /* 	@obj: 		the protocol object
   //Processing the serial receive data and
    // puts them in the protocol buffer
 Revisions:
 */
-{
   static uint8_t rcv1,idx;			//Data received
   static tUartCmd rxCmd=kReady;     // Current cmd state
   static uint8_t zState;				// State machine indicator
@@ -283,7 +276,7 @@ void mPushRX2FIFO(int var){   //Push data from client to the FIFO
 int mPopTXFIFO(){
   return mFIFO_pop(oTX);
 }
-void mCommunication(void){
+void mProtocolProcess(void){
    mDispatchTX(&oTXProt);
    mDispatchRX( );
 }

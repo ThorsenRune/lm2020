@@ -25,18 +25,21 @@ void mTesting(){
 //  mPushRX2FIFO(kCommInit);		//Simulate kCommInit reception
   //Todo. why do you need to double send?
 #include "publishvars.h"
- 
+
 
 }
 void mTesting2(){
-   mGenerateSignal();
+  nTestVar[1]=nTestVar[0];
+  nTestVar[0]= millis();
+  nTestVar[2]=nTestVar[0]-nTestVar[1];
 }
 #define ARRAYLENGTH(x)     (sizeof(x)/sizeof(x[0]))
 
-int togglephase=1;   //Example of static variable. is only initialized once
+
 void mGenerateSignal(){
    static int phaseshift=1;   //Example of static variable. is only initialized once
   phaseshift=phaseshift+1;;
+  nTestVar[3]=phaseshift;
   if (nDbgLvl>1) Serial.printf("phaseshift  %i\r\n", phaseshift);
   int len=sizeof(Art_signal)/sizeof(Art_signal[0]);
   for (int i=0;i<len ;i++){    //try until timeout

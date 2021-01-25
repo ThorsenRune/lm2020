@@ -45,23 +45,24 @@ function mDataFile(newfile){
 }
 
 
+var Main_Loop_running=false;
 function Main_Loop(){		//This is the refresh loop of the program
 	//Called peridoically
-	if (Main_Loop.running) return;
-	Main_Loop.running=true
+	if (Main_Loop_running) return;
+	Main_Loop_running=true
 	if (display.doRedraw) display.redraw();
 	display.refresh()		;//Update screen widgets and get userinput
 	 //Commuication requesting data from device (FSM)
 	prot.TXDispatch();	//Exchange RX/TX of data from the protocol
-	while (prot.mRXDispatch(serial.RXFiFo));	//Empty the queue from device
+	while (prot.mRXDispatch(serial.RXFiFo)){};	//Empty the queue from device
 	if (prot.refreshRate>60)
 		setTimeout(function(){
 			Main_Loop()
 		},prot.refreshRate); 	//Loop peridoically
 	//Though setTimeout is not precise it allows easily to change the period
-	Main_Loop.running=false
+	Main_Loop_running=false
 }
-Main_Loop.running=false;
+
 
 
 
