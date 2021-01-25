@@ -26,10 +26,13 @@ var mMessage=function(txt,clear){
 	if (clear) el.value='';
 	el.value=el.value+txt+"\n";
 }
-var mDebugSetInput=function(oElem){	//Show data in input
-	idInput.value=(''+oElem.Vector).replaceAll(',',' , ')
+var mShowDropDownValue=function(){	//Show data in input
+	if (debug.ReceivedElement)
+		idInput.value=(''+debug.ReceivedElement.Vector).replaceAll(',',' , ')
+	else {
+		idInput.value='Select in dropdown'
+	}
 }
-
 
 var mIsVisible=function(el){
 	var vis=el.clientHeight>100

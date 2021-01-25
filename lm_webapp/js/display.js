@@ -56,7 +56,7 @@ display.refresh=	function(){			//Will refresh controls in the display
 				var X=oWX.VectorUnits()
 				var r=oWX.Range()
 				signal.mPlotVector(X,r[0],r[1],oWX.Unit())
-				oWX.oProtElemVar.PeekValue=true;			//Read value from device
+				oWX.oProtElemVar.peekdata=true;			//Read value from device
 			}
 		} else {  //Slider
 			var el=window[oWX.id].querySelector('input')
@@ -159,7 +159,7 @@ function mVarName(ctrl,newname){
 				,Number(display.idDispMax.value)]
 		oWX.Range(r);
 		mWidgetSet(oWX);//Refresh the widget
-		prot.Poke();
+		prot.pokedata();
 	}
 	
 

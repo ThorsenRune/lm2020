@@ -30,5 +30,5 @@ Object.defineProperty(myvar,'bar',{
 			if( oWX.range) oWX.Range= oWX.range;
 			if( oWX.range) delete(oWX.range)		
 			delete(oWX.oVar)
-			prot.Poke()
+			prot.pokedata()
 		}

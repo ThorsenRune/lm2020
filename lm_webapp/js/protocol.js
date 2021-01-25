@@ -98,12 +98,12 @@ prot.TXDispatch=function(){	//mTXDispatch - the response will be mRXDispatch
       if (!VarData.nVarId){
           mMessage("Unregistered variable "+aNames[i]);
           debugger
-      }else if (VarData.Poke){
+      }else if (VarData.pokedata){
 				mTX_SetReq(VarData);
-				VarData.Poke=false;	//Clear write request flag
-			} else if (VarData.PeekValue)
+				VarData.pokedata=false;	//Clear write request flag
+			} else if (VarData.peekdata)
 				mTX_GetReq(VarData);
-				VarData.PeekValue=false;//Clear read request flag
+				VarData.peekdata=false;//Clear read request flag
 		}
 	} else if (prot.state()==prot.kError){
 		debugger //todo some action on protocol error
@@ -122,7 +122,7 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 	} else if (konst.k32Bit==RXFiFo[0]){
 		var ret= mRXGetReq(RXFiFo);
     if (debug) mMessage(JSON.stringify(debug.ReceivedElement));
-    if (debug) mDebugSetInput(debug.ReceivedElement);
+    if (debug) mDebugShowInput(debug.ReceivedElement);
     return ret
 	} else {	//This should not happen but if data gets scrambled it does
 		//Todo: make some error handeling - show user that there is a problem
@@ -182,7 +182,7 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		}
 		serial.RXFiFo=serial.RXFiFo.slice(idx);	//Remove cmd & payload
 		var el=prot.ElementByVarId(nId)
-		if (el.Poke) debugger; //Todo: write before read (call mTX_SetReq(oElem);
+		if (el.pokedata) debugger; //Todo: write before read (call mTX_SetReq(oElem);
 		el.Vector=data
 		if (debug) debug.ReceivedElement=el
 
@@ -255,8 +255,8 @@ prot.info=function(){
 		return oWatch.status;
 	}
 
-prot.Poke=function(oProtElemVar ){		//Set a flag to poke to device
-		oWatch.Poke=true;
+prot.pokedata=function(oProtElemVar ){		//Set a flag to poke to device
+		oWatch.pokedata=true;
 		if (oProtElemVar )
 			oProtElemVar .Poke=true;
 	}
@@ -368,15 +368,15 @@ prot.mVarValue=function(sVarName,idx,val){		// Rev 191107
 		if (val!=undefined){
 			var raw=(val/oDesc.Factor)+Number(oDesc.Offset);
       if (oData.Vector)			oData.Vector[idx]=raw;    //RT210121  guard void
-			oData.Poke=true;	//Request a write to device
-			oData.PeekValue=true;	//Request a readback from device
+			oData.pokedata=true;	//Request a write to device
+			oData.peekdata=true;	//Request a readback from device
 		} else {
       if (undefined ===oData.Vector ) return undefined
 			if (undefined ===oData.Vector[idx]) return undefined
 			var val=oData.Vector[idx]
 			if (val===undefined) debugger;	//Error you probably missed the index
 			var u=(val-oDesc.Offset)*oDesc.Factor;
-			oData.PeekValue=true;
+			oData.peekdata=true;
 			return u;
 		}
 	}
@@ -389,7 +389,7 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
 			for (var idx=0;idx<vector.length;idx++){//Scale units 2 raw data
 				oProtElemVar .Vector[idx]=(vector[idx]/oDesc.Factor)+Number(oDesc.Offset);
 			}
-			prot.Poke(oProtElemVar );
+			prot.pokedata(oProtElemVar );
 		} else {
 //			if (undefined ===oProtElemVar .Vector) return undefined
 			var vector=oProtElemVar .Vector
@@ -397,7 +397,7 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
 			for (var idx=0;idx<vector.length;idx++){//Scale raw data to units
 				 vY[idx]=(vector[idx]-oDesc.Offset)*oDesc.Factor;
 			}
-			oProtElemVar .PeekValue=true;
+			oProtElemVar .peekdata=true;
 			return vY;
 		}
 	}

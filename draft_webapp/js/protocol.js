@@ -27,6 +27,7 @@ const prot={		//Encapsulating communication protocol
     }
     var dst=this.oProtElemVar[varname]
 		this.oProtElemVar[varname]=Object.assign(dst,el)  //Overwrite or create
+    return this.oProtElemVar[varname];  //Return the element
 	}
 	,ElementByName(VarName){
 		return prot.oProtElemVar[VarName]
@@ -106,12 +107,12 @@ prot.TXDispatch=function(){	//mTXDispatch - the response will be mRXDispatch
 			var VarData=prot.oProtElemVar[aNames[i]];
       if (!VarData.nVarId){//          mMessage("Unregistered variable "+aNames[i]);
 //          debugger
-      }else if (VarData.Poke){
+      }else if (VarData.pokedata){
 				mTX_SetReq(VarData);
-				VarData.Poke=false;	//Clear write request flag
-			} else if (VarData.PeekValue)
+				VarData.pokedata=false;	//Clear write request flag
+			} else if (VarData.peekdata)
 				mTX_GetReq(VarData);
-				VarData.PeekValue=false;//Clear read request flag
+				VarData.peekdata=false;//Clear read request flag
 		}
 	} else if (prot.state()==prot.kError){
 		debugger //todo some action on protocol error
@@ -130,10 +131,11 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 	} else if (konst.k32Bit==RXFiFo[0]){
 		var ret= mRXGetReq(RXFiFo);
     if (debug) mMessage(JSON.stringify(debug.ReceivedElement));
-    if (debug) mDebugSetInput(debug.ReceivedElement);
+    if (debug) mShowDropDownValue();
     return ret
 	} else {	//This should not happen but if data gets scrambled it does
-		//Todo: make some error handeling - show user that there is a problem
+		mMessage('Error in protocol, flushing protocol');
+    serial.RXFiFo=[]
 		debugger
 	}
 	function mRX_Handshake(){	//Return the handshake
@@ -149,23 +151,29 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		return true
 	}
 
-	function mRX_ProtInit(){	//Return next element from the protocol
+	function mRX_ProtInit(){	//Register element in protocol
 	//Rev 2020
 	// Todo: determine when the protocol has been completed
 	//cmd,bStringLength,sElementName,bVarId,bDataLength,bVarType
 	//Requires stringlength+4 bytes
 		if (serial.RXFiFo[1]+5>serial.RXFiFo.length) return false; //Pack not ready yet
-		var el={}
+		var el={}     //Create an empty element
 		var idx=1;
 		var nBytes=serial.RXFiFo[idx]; //Length of element name
 		el.VarName=''
 		for ( idx=2;idx<nBytes+2;idx++) {
 			el.VarName=el.VarName+ String.fromCharCode(serial.RXFiFo[idx])
         }
-		el.nVarId=serial.RXFiFo[idx++]
+		el.nVarId=serial.RXFiFo[idx++]  //Todo:9 refactor all to be zVarId like in FW code
 		el.nDataLength=serial.RXFiFo[idx++];//Length of data array
 		el.nVarType=serial.RXFiFo[idx++];//Length of data array
-		prot.SetElement(el);	//Register the element in the protocol
+		el=prot.SetElement(el);	//Register the element in the protocol and get a refernce to the protocol element
+    //Bugfix: rt210125
+    if (!el.Vector) el.Vector=Array(el.nDataLength).fill(0);      //Create vector it not preinitialized in setup sFileName
+    //Otherwise use default values
+    else if (el.Vector.length!=el.nDataLength) el.Vector=Array(el.nDataLength).fill(0); //Be sure the length is correct
+    if (typeof el.pokedata=='undefined') el.pokedata=false;   //Initialize pokedata flag
+    if (typeof el.peekdata=='undefined') el.peekdata=false;   //Initialize peekdata flag
     if (prot.ListVarNames().indexOf(el.VarName)>(prot.ListVarNames().length-2)) {  //Assume the protocol is ready when last var has been received
       prot.state(konst.kReady); //Assume that prot is ready
     }
@@ -194,7 +202,11 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		serial.RXFiFo=serial.RXFiFo.slice(idx);	//Remove cmd & payload
 		var el=prot.ElementByVarId(nId)
     if (!el) return;
-		if (!el.Poke)  	el.Vector=data  //Don't read if you are writing
+		if (el.pokedata) {
+      debug //Don't read if you are writing
+    }else{
+      el.Vector=data
+    }
 		if (debug) debug.ReceivedElement=el
 		return true
 	}
@@ -267,8 +279,8 @@ prot.info=function(){
 		return oWatch.status;
 	}
 
-prot.Poke=function(oProtElemVar ){		//Set a flag to poke to device
-		oWatch.Poke=true;
+prot.pokedata=function(oProtElemVar ){		//Set a flag to poke to device
+		oWatch.pokedata=true;
 		if (oProtElemVar )
 			oProtElemVar .Poke=true;
 	}
@@ -380,15 +392,15 @@ prot.mVarValue=function(sVarName,idx,val){		// Rev 191107
 		if (val!=undefined){
 			var raw=(val/oDesc.Factor)+Number(oDesc.Offset);
 		    if (oData.Vector)			oData.Vector[idx]=raw;    //RT210121  guard void
-			oData.Poke=true;	//Request a write to device
-			oData.PeekValue=true;	//Request a readback from device
+			oData.pokedata=true;	//Request a write to device
+			oData.peekdata=true;	//Request a readback from device
 		} else {
       if (undefined ===oData.Vector) return undefined
 			if (undefined ===oData.Vector[idx]) return undefined
 			var val=oData.Vector[idx]
 			if (val===undefined) debugger;	//Error you probably missed the index
 			var u=(val-oDesc.Offset)*oDesc.Factor;
-			oData.PeekValue=true;
+			oData.peekdata=true;
 			return u;
 		}
 	}
@@ -401,7 +413,7 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
 			for (var idx=0;idx<vector.length;idx++){//Scale units 2 raw data
 				oProtElemVar .Vector[idx]=(vector[idx]/oDesc.Factor)+Number(oDesc.Offset);
 			}
-			prot.Poke(oProtElemVar );
+			prot.pokedata(oProtElemVar );
 		} else {
 //			if (undefined ===oProtElemVar .Vector) return undefined
 			var vector=oProtElemVar.Vector       //The data array
@@ -411,7 +423,7 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
   				 vY[idx]=(vector[idx]-oDesc.Offset)*oDesc.Factor;
   			}
       }
-			oProtElemVar.PeekValue=true;           //Request a new read from LM device
+			oProtElemVar.peekdata=true;           //Request a new read from LM device
 			return vY;
 		}
 	}

@@ -17,9 +17,9 @@ var mAndExchange=function(){	//Write old data and get new from server
 		for (var sName in prot.oProtElemVar){
 			var obj=prot.oProtElemVar[sName];
 			if (obj){
-			if (obj.Poke){
+			if (obj.pokedata){
 				mPokeData(obj)
-				obj.Poke=false;
+				obj.pokedata=false;
 			} else if (obj.Peek){
 				mPeekData(obj)
 				obj.Peek=false;
