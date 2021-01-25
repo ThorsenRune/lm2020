@@ -39,9 +39,9 @@ display.redraw=function(){	//Redraw the display
 	prot.CleanUp();
 	lib.mFillDataList(display.idVarName1,Object.keys(prot.oProtElemVar));	// To gui
 	display.doRedraw=false;
+	devpanel.redraw();	//Redraw development panel
 }
 display.refresh=	function(){			//Will refresh controls in the display
-
 	if (!prot.oWidgets)return
  	var oWXs=prot.oWidgets;
 	var aIDs=Object.keys(oWXs)
@@ -75,6 +75,7 @@ display.refresh=	function(){			//Will refresh controls in the display
 			}
 		}
 	}
+	testGetData();			//Refresh the test widget
 }
 
 function mWidgetSet(oWX){

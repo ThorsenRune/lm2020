@@ -1,9 +1,9 @@
 /*
 	Watches are referring protocol eleemts and updating widgets
-		the widget is the visual gadget 
+		the widget is the visual gadget
 		A Watch point to
 			|--->		Protocol Dataelement (prot.elem[])  //TODO: unify prot.elem as the datacarrying element
-		
+
 
 */
 "use strict";	//Require variable declarations
@@ -14,7 +14,12 @@ var oWatch={	//Object holding data for exchanging
 	,sFileName:'data.txt'	//Filename on the server
 	,prot:{}		//protocol description from android
 	,oVarDesc:{}	//{varname: _VarDescObj }Containing variable names
-	,oProtElemVar :{}	//{varname: _VarDataObj	} holding volatile data
+	,oProtElemVar :{
+		setVector:function() {
+			alert ('Implement setVector');
+		}
+
+	}	//{varname: _VarDataObj	} holding volatile data
 	,wx:{}			//{window[id]:_WXObj	}Object of control settings wx.[id].[param]=
 }
 
@@ -28,7 +33,7 @@ var _VarDescObj={	//Information about the dataobject protocol
 	,oData	:_VarDataObj	//access to the data
 }
 var _VarDataObj={
- 
+
 	//	held by oWatch.data[idWX]
 	VarName	:'FW varname'	//this object name
 	,nVarId: -1			//Valid range [64-128]Id  for cSerial protocol (reserved)
@@ -44,4 +49,3 @@ var _WXObj={			//Widget descriptor
 	,Index	: 0				//Index for scalar in data vector
 	,Range	: [0,100]		//Visible range
 }
-

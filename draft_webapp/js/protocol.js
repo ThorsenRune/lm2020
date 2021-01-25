@@ -43,7 +43,14 @@ const prot={		//Encapsulating communication protocol
 		var lst=Object.keys(els)
 		return lst;
 	}
-
+  ,setVector(el,vector){    //Sets the dataarray of the element
+    el.pokedata=true;       //Sets the flag requesting to set data on device
+    el.Vector=vector;
+  }
+  ,getVector(el){    //Sets the dataarray of the element
+    oData.peekdata=true;	//Request a readback from device
+    return vector
+  }
 }
 prot.state=function(setState){ //Returns the state of the protocol
   if(typeof(this._state)==='undefined') this._state=konst.kCommInit;
@@ -57,7 +64,6 @@ prot.state=function(setState){ //Returns the state of the protocol
   if (this._state==konst.kReady) return this._state
   if (validate()) this._state=konst.kReady
   return this._state
-
   function validate(){	//Check if protocol is received from device
   //						all elements have nVarId valid number in range 64--100
   //rev201125			todo:move into object
@@ -92,11 +98,9 @@ prot.mTX_ProtReset=function(){		//Resettig the communicato protocol with kCommIn
   prot.state('initializing');  //Set protocol as invalid until validated
   //Will be altered in mRX_ProtInit
 }
-prot.oaProtElem=[];		//Array of elements in the protocol
-						//Set at ,get oProtElemVar (){return oWatch.oProtElemVar;}
 
 
-prot.TXDispatch=function(){	//mTXDispatch - the response will be mRXDispatch
+prot.TXDispatch=function(){	//mTXDispnDataLengthatch - the response will be mRXDispatch
 	//Using the statpointer prot.State
 	//The reinitialization is in case of device beenig reset
 	//Chaining the events according to the prot.State FSM pointer
@@ -123,6 +127,38 @@ prot.TXDispatch=function(){	//mTXDispatch - the response will be mRXDispatch
 	} else if (prot.state()==prot.kError){
 		debugger //todo some action on protocol error
 	}
+  function mTX_SetReq(oProtElem){      /* Change data in device memory          Write data to device memory*/
+  //Sending: Cmd,Varid,addressoffset,4databytes
+      var offs;
+      if (!oProtElem.nVarId){
+          mDebugMsg("mTX_SetReq Unregistered variable: "+oProtElem.VarName);
+          debugger
+          return;
+      }
+      if (!oProtElem.Vector) return false;
+  	//Loop through object data elements
+      for(offs=0; offs<oProtElem.nDataLength; offs++)
+  	{
+  		serial.send(konst.kSetReq);                      //command
+  		serial.send(oProtElem.nVarId);             //array identifier
+  		serial.send(offs);                         //offset in array
+  		var b = utils.mInt2ByteArray(oProtElem.Vector[offs]);
+  		serial.send(b[0]);        //value of the array[offset]
+  		serial.send(b[1]);        //value of the array[offset]
+  		serial.send(b[2]);        //value of the array[offset]
+  		serial.send(b[3]);        //value of the array[offset]
+  	}
+  }
+  function mTX_GetReq(oProtElem){        //TX Get request - use mRXGetReq to receive the response
+      if (!oProtElem.nVarId){
+          mDebugMsg("mTX_GetReq:Unregistered variable: "+oProtElem.VarName);        debugger
+          return;
+      }
+      serial.send(konst.kGetReq);
+      serial.send(oProtElem.nVarId);
+  }
+
+
 }
 prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 	if (!serial.isReady()) return	//Return serial channel is not open
@@ -228,65 +264,18 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 *   +170601  returns true if data are sent and some response is expected
 *	201111 refact java -> javascript
 */
-function mTX_GetReq(oProtElem){        //TX Get request - use mRXGetReq to receive the response
-    if (!oProtElem.nVarId){
-        mDebugMsg("mTX_GetReq:Unregistered variable: "+oProtElem.VarName);        debugger
-        return;
-    }
-    serial.send(konst.kGetReq);
-    serial.send(oProtElem.nVarId);
-}
-
-function mTX_SetReq(oProtElem){      /* Change data in device memory          Write data to device memory*/
-//Sending: Cmd,Varid,addressoffset,4databytes
-    var offs;
-    if (!oProtElem.nVarId){
-        mDebugMsg("mTX_SetReq Unregistered variable: "+oProtElem.VarName);
-        debugger
-        return;
-    }
-    if (!oProtElem.Vector) return false;
-	//Loop through object data elements
-    for(offs=0; offs<oProtElem.nDataLength; offs++)
-	{
-		serial.send(konst.kSetReq);                      //command
-		serial.send(oProtElem.nVarId);             //array identifier
-		serial.send(offs);                         //offset in array
-		var b = utils.mInt2ByteArray(oProtElem.Vector[offs]);
-		serial.send(b[0]);        //value of the array[offset]
-		serial.send(b[1]);        //value of the array[offset]
-		serial.send(b[2]);        //value of the array[offset]
-		serial.send(b[3]);        //value of the array[offset]
-	}
-}
 
 /*					Prot specific helper functions				*/
 prot.lib={}
 
-
-
-
-
-
-
 /**********************************/
-
 //*******************  HELPERS
-
-
-
-
 
 prot.info=function(){
 		if (!oWatch.status) oWatch.status={ProtState:0}
 		return oWatch.status;
 	}
 
-prot.pokedata=function(oProtElemVar ){		//Set a flag to poke to device
-		oWatch.pokedata=true;
-		if (oProtElemVar )
-			oProtElemVar .Poke=true;
-	}
 prot.aVarNames=function(){	//Get list of exposed variables
 		return Object.keys(oWatch.prot);
 	}
@@ -385,7 +374,7 @@ prot.mWX=function(idWX){		//contains Index, min,max
 		}
 		return myVar;
 	}
-prot.mVarValue=function(sVarName,idx,val){		// Rev 191107
+prot.mVarValue=function(sVarName,idx,val){		// Rev 191107 todo: replace by prot.getVector
 		//Get/Set value with digital conversion
 		//in: name of the element, idx= the index in the data array , val-if given will set the new value
 		if (!idx==undefined) debugger;
@@ -401,7 +390,8 @@ prot.mVarValue=function(sVarName,idx,val){		// Rev 191107
       if (undefined ===oData.Vector) return undefined
 			if (undefined ===oData.Vector[idx]) return undefined
 			var val=oData.Vector[idx]
-			if (val===undefined) debugger;	//Error you probably missed the index
+			if (typeof val==='undefined') debugger;	//Error you probably missed the index
+      if (typeof oDesc.Offset==='undefined') debugger;//todo fix potential errors
 			var u=(val-oDesc.Offset)*oDesc.Factor;
 			oData.peekdata=true;
 			return u;

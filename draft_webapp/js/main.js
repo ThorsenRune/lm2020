@@ -73,7 +73,7 @@ var init_SetupFromServer=function(dataurl){ //
 		//Start by loading the protocol from server
 	mPHPCall(dataurl,'load',oWatch,function(){
 		if (oRetData.data){
-			oWatch=oRetData.data;
+			oWatch=oRetData.data;		//TODO refactor oWatch with protocol
 		} else {
 			alert ("File not found" );//oRetData.errors
 			return;

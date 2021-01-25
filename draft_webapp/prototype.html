@@ -37,7 +37,8 @@
 	<details open > <!-- During development for testing purpose -->
 		<summary> Testing & Development </summary>
 
-		<input id='idInput' type="text" style="width: 25%;" value="101">
+		<input type="text" id="idVarName2"  placeholder="VarName"  onclick='this.focus();this.select()'>
+    <input id='idInput' type="text" style="width: 25%;" value="101">
 		<button onclick='writeButton()'>Send</button>
 		<button onclick='serial.send(konst.kHandshake)';>Handshake</button>
 		<button onclick='prot.state(prot.kCommInit)';>Init Protocol</button>
