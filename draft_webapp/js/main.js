@@ -54,10 +54,10 @@ function Main_Loop(){		//This is the refresh loop of the program
 	 //Commuication requesting data from device (FSM)
 	prot.TXDispatch();	//Exchange RX/TX of data from the protocol
 	while (prot.mRXDispatch(serial.RXFiFo));	//Empty the queue from device
-	if (oWatch.nPeriod>60)
+	if (prot.refreshRate>60)
 		setTimeout(function(){
 			Main_Loop()
-		},oWatch.nPeriod); 	//Loop peridoically
+		},prot.refreshRate); 	//Loop peridoically
 	//Though setTimeout is not precise it allows easily to change the period
 	Main_Loop.running=false
 }
@@ -69,16 +69,17 @@ Main_Loop.running=false;
 
 
 
-var init_SetupFromServer=function(dataurl){ //
-		//Start by loading the protocol from server
-	mPHPCall(dataurl,'load',oWatch,function(){
+var init_SetupFromServer=function(dataurl){ //Load the protocol from server
+	var data=prot.oData;
+	mPHPCall(dataurl,'load',data,function(){
 		if (oRetData.data){
-			oWatch=oRetData.data;		//TODO refactor oWatch with protocol
+			data=oRetData.data;		//TODO refactor   with protocol
 		} else {
 			alert ("File not found" );//oRetData.errors
 			return;
 		}
-		oWatch.cmd=prot.kCommInit;
+		data.cmd=prot.kCommInit;
+		prot.oData=data;
 	});
 }
 

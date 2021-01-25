@@ -7,7 +7,7 @@ devpanel.redraw=function(){
 	if (konst.kReady==prot.state()){
 		lib.mFillDataList(idVarName2,Object.keys(prot.oProtElemVar));	// To gui
 	}
-
+	mShowRefreshRate();
 }
 
 function testGetData(){
@@ -32,10 +32,7 @@ function writeButton() {
 		serial.send(senddata);
 	}
 }
-function mFromDevice(aRXData){
-	var elRes=document.getElementById("idData");
-	elRes.innerHTML  = aRXData ;
-}
+
 var mMessage=function(txt,clear){
 	var el=idDebugText;
 	if (clear) el.value='';

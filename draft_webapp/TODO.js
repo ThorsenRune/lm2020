@@ -31,7 +31,7 @@ note: bitfields - a 32 bit word is used for flags.
 nMode.all_flags see GlobalData.h in firmware:https://docs.google.com/document/d/1afB7kv-D1lDcdTOnBufZNtuWIsrhLKDh6-ncjtmigwg/edit#bookmark=id.ezryzccd8h0u
 
 =========== REFACTORING ===============
-oWatch<===Widget
+prot.oData<===Widget
 
 Refactoring ideas:{
 	Modularity or Keeping functionalities separate.

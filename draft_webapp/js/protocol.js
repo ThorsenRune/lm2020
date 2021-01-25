@@ -17,9 +17,18 @@ const prot={		//Encapsulating communication protocol
 	,kGetReq 		: konst.kGetReq
 	,kSetReq 		: konst.kSetReq
 	,sFirmwareInfo	:''						//Firmware information returned by the kHandshake
-	,get oProtElemVar (){return oWatch.oProtElemVar;} //Protocol element (alias: oProtElemVar =oWatch.oProtElemVar;  //Todo untangle
-	,get oVarDesc(){return oWatch.oVarDesc;} //Description
-	,get oWidgets(){return oWatch.wx;} 		 //Widgets
+  ,oData:            //New JSON ready object for the protocol definition (ex. oWatch)
+  {	//Object holding data for exchanging
+  	'Title':'Application name and version'	//Default string overwritten by JSON data in setup file
+  	,nPeriod:2000		//Refresh period in ms
+  	,sFileName:'data.txt'	//Filename on the server
+  	,oVarDesc:{}	//{varname: _VarDescObj }Containing variable names
+  	,oProtElemVar :{}	//{varname: _VarDataObj	} holding volatile data
+  	,wx:{}			//{window[id]:_WXObj	}Object of control settings wx.[id].[param]=
+  }
+	,get oProtElemVar (){return prot.oData.oProtElemVar;} //Protocol element (alias: oProtElemVar =prot.oData.oProtElemVar;  //Todo untangle
+	,get oVarDesc(){return prot.oData.oVarDesc;} //Description
+	,get oWidgets(){return prot.oData.wx;} 		 //Widgets
 	,SetElement(el){	//Copy or create FW specific protocol element
 		var varname=el.VarName
     if (!this.oProtElemVar[varname]) {//Element is Undefined
@@ -51,7 +60,14 @@ const prot={		//Encapsulating communication protocol
     oData.peekdata=true;	//Request a readback from device
     return vector
   }
+  ,get refreshRate(){return this.oData.nPeriod;}
+  ,set refreshRate(newvalue){ this.oData.nPeriod=newvalue;}
 }
+/* pattern example
+prot.oProtElemVar.__proto__.setVector=function() {
+	alert ('Implement setVector');
+}
+*/
 prot.state=function(setState){ //Returns the state of the protocol
   if(typeof(this._state)==='undefined') this._state=konst.kCommInit;
   if(typeof(setState)!=='undefined')
@@ -164,10 +180,8 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 	if (!serial.isReady()) return	//Return serial channel is not open
 	if (serial.RXFiFo.length<3) return false;//No package is shorter than 3 bytes
 	if (konst.kHandshake==RXFiFo[0]){
-		mFromDevice(serial.RXFiFo)		//Testing
 		return mRX_Handshake(RXFiFo);
 	} else if (konst.kCommInit==RXFiFo[0]){
-		mFromDevice(serial.RXFiFo)		//Testing
     var ret=mRX_ProtInit();
 		return ret
 	} else if (konst.k32Bit==RXFiFo[0]){
@@ -272,12 +286,12 @@ prot.lib={}
 //*******************  HELPERS
 
 prot.info=function(){
-		if (!oWatch.status) oWatch.status={ProtState:0}
-		return oWatch.status;
+		if (!prot.oData.status) prot.oData.status={ProtState:0}
+		return prot.oData.status;
 	}
 
 prot.aVarNames=function(){	//Get list of exposed variables
-		return Object.keys(oWatch.prot);
+		return Object.keys(prot.oData.prot);
 	}
 
 

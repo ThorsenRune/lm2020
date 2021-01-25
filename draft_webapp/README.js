@@ -77,7 +77,7 @@ OBJECTS{
 	prot.oWX[]	//Array of elements
 		|-->protocol.js
 		|-->display.js
-	oWatch		//Dataelements being exchanged over the protocol
+	prot.oData		//Dataelements being exchanged over the protocol
 		|-->	oProtElemVar {		}
 		|-->	oVarDescr
 		|-->	wx{}		Array pointers to  widgets
@@ -116,7 +116,7 @@ mExchange	where the communication happens
 communication protocol see uml.txt
 ===	GLOBAL	====
 [
-oWatch object
+prot.oData object
 Prot					//Exposed variables
 Variables
 	sName
