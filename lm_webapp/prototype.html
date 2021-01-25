@@ -34,19 +34,8 @@
     <br>
 		<button onclick='Main_Loop()'>Step Processing</button>
 	</div>
-	<details open > <!-- During development for testing purpose -->
-		<summary> Testing & Development </summary>
+  <?PHP include 'testing.html' ?>
 
-		<input id='idInput' type="text" style="width: 25%;" value="101">
-		<button onclick='writeButton()'>Send</button>
-		<button onclick='serial.send(konst.kHandshake)';>Handshake</button>
-		<button onclick='prot.state(prot.kCommInit)';>Init Protocol</button>
-		<button onclick='testGetData()'>Get data</button>
-		<button onclick='testSetData()'>Set data</button>
-		<br>
-		Received data <span id="idData">.....</span><br>
-		<textarea id="idDebugText" title="idText"  style="height: 150px;width: 100%;" ></textarea>
-	</details>
 	<div id='idPopUp' 	class='cOverlay' hidden>  <!--Popup window for messages -->
 		<div id='idSettings'>
 			<?PHP include 'settings.html' ?>
