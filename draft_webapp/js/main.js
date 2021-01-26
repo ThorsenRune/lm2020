@@ -28,7 +28,7 @@ function  Main_Init(){
 	signal.init();
 	display.redraw();					//Redraw the display
 	prot.state(prot.kCommInit);		//Start the statemachine for initializing communciation
-	Main_Loop();					//Goto the main requesting data from device and polling answers periodically
+	Main_Loop_test();					//Goto the main requesting data from device and polling answers periodically
 }
 
 /***********************	MAIN PROCESSING		***********************************/
@@ -62,6 +62,20 @@ function Main_Loop(){		//This is the refresh loop of the program
 	//Though setTimeout is not precise it allows easily to change the period
 	Main_Loop_running=false
 }
+
+function Main_Loop_test(){		//This is the refresh loop of the program
+	//Called peridoically
+	if (display.doRedraw) display.redraw();
+        if (prot.refreshRate>30)
+		setInterval(function(){
+			display.refresh();      //Update screen widgets and get userinput
+			 //Commuication requesting data from device (FSM)
+			prot.TXDispatch();	//Exchange RX/TX of data from the protocol
+			while (prot.mRXDispatch(serial.RXFiFo)){};	//Empty the queue from device
+		},60); 	//Loop peridoically
+}
+
+
 
 
 
