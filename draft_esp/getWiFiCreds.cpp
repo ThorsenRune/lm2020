@@ -1,7 +1,5 @@
 #include "getWiFiCreds.h"
-//#include "credentials.h"        //Default WIFI CREDENTIALS IN THIS FILE
 #include "publishvars.h"
-
   /*
     This module establish connection to the  wifi accesspoint (WAP or internet WiFi router)
     If no connection is made it will enter a mode for setting up WAP credentials using a temporary

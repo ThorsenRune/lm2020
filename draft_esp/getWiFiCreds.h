@@ -48,7 +48,8 @@ proceed to main
 String getAP_SSID();
 String getAP_PASS();
 IPAddress getIP();
-
+extern int TimeoutWifi;
+extern int TimeOutClient;
 /***************PROTOTYPES ***sigh*********************/
 void mDebugMsgcpp(char msg[]);        //Debugging messages
 void mDebugHaltcpp(char msg[]);

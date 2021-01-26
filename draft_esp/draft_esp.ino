@@ -13,7 +13,8 @@
 //    SETTINGS
 int TimeoutWifi   =20;  //Seconds of timeout to get wifi connection
 int TimeOutClient =120;//Seconds of timeout mWaitForWSClient, time for user to connect
-
+#define RXD2 16       //Define the pins for  U2UXD
+#define TXD2 17
 
 
 //Libraries
@@ -29,11 +30,9 @@ extern "C" {  //Note- neccessary to implement C files
   #include "inoProtocol.h"      //Including h file allows you to access the functions
   #include "publishvars.h"
 }
-
+#include "transmit.h";          //Where websocket and Bluetooth calls reside
 extern String AP_SSID;
-//Define the pins for  U2UXD
-#define RXD2 16
-#define TXD2 17
+
 
 
 bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
@@ -70,7 +69,7 @@ void setup(){
 
   bool ret;
   ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
-  if (ret) ret=mStartWebSocket1(); //Use credentials to attempt connection
+  if (ret) ret=mStartWebSocket2(); //Use credentials to attempt connection
   if (ret){ //Connection good wait for client to activate WS
     Serial.println(("Connected to WiFi |"+getAP_SSID() +"|"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
     ret=mWaitForWSClient(TimeOutClient);
