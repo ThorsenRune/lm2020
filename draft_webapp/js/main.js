@@ -74,7 +74,7 @@ function Main_Loop_test(){		//This is the refresh loop of the program
 			 //Commuication requesting data from device (FSM)
 			prot.TXDispatch();	//Exchange RX/TX of data from the protocol
 			while (prot.mRXDispatch(serial.RXFiFo)){};	//Empty the queue from device
-		},60); 	//Loop peridoically
+		},prot.refreshRate); 	//Loop peridoically
 }
 
 
