@@ -154,12 +154,12 @@ int SendDataBuf=0;
 void mTransmit(){   //Transmit internal protocol data to client
   //todo0:   oTX&RX are initialized in setup-->---->	MainSetup --->mCommInitialize
     mProtocolProcess();						//Process RX/TX buffers
-  if (nDbgLvl>6)  if (!mFIFO_isEmpty(oTX)) mDebugMsg("mTransmit to client");
+  if (nDbgLvl&(2<<6))   if (!mFIFO_isEmpty(oTX)) mDebugMsg("mTransmit to client");
   while (!mFIFO_isEmpty(oTX)){
     uint8_t sendbyte=mPopTXFIFO();    //Get byte from  protocol
     mSendData[SendDataBuf]=sendbyte;    //Get a byte from serial port
     SendDataBuf++;
-    if (nDbgLvl>5) mDebugInt("sending",sendbyte);
+    if (nDbgLvl&(2<<5))  mDebugInt("sending",sendbyte);
   }
   //This is where  the data exchange with the client happenes
    if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
@@ -176,7 +176,7 @@ void mTransmit(){   //Transmit internal protocol data to client
 
 void mReceive(uint8_t *data, size_t len){ //Get data from client
 	int i=0;
-  if (nDbgLvl>6) mDebugInt("mReceive",len);
+  if (nDbgLvl&(2<<6))  mDebugInt("mReceive",len);
     for( i=0; i < len; i++) {
         if (nDbgLvl>7) mDebugInt("data",data[i]);
         if (bRelayLM2018){  //Pass through to subdevice (LM)
