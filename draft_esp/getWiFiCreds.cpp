@@ -40,9 +40,9 @@ IPAddress getIP(){    //I think IPAddress is just an array
 
 
 //    Params from HTML pages
-const char* PARAM_INPUT_1 = "SSID";
+const char* PARAM_INPUT_1 = "idSSID";
 const char* PARAM_INPUT_2 = "Password";
-const char* PARAM_INPUT_3 = "LM_URL";
+const char* PARAM_INPUT_3 = "idLM_URL";
 //IP Address settings
 
 //      Flags of statemachine. set by async calls  (see flowchart)
