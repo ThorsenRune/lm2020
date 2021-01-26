@@ -3,7 +3,12 @@
 // MIT License
 //
 // A simple tracing macro to debug you program.
-//
+/*  For example:
+  int someValue = 42;
+  DUMP(someValue);
+  TRACE();
+
+*/
 // Recipe to find where the code crashes:
 //  1. sprinkle your code with TRACE()
 //  2. run the program

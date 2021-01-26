@@ -10,12 +10,10 @@
       mTransmit: inverse of mReceive, sends to client
       use : publishvars.c to expose variables to the client
 */
-#define DEBUG_ON   0          //Conditional compilation for DEBUGGING
-//  0-  release
-//  1- No wifi for quicker compile and test purpose
+//    SETTINGS
 int TimeoutWifi   =20;  //Seconds of timeout to get wifi connection
 int TimeOutClient =120;//Seconds of timeout mWaitForWSClient, time for user to connect
-//  END OF DEBUGGING STuFF
+
 
 
 //Libraries
@@ -39,7 +37,7 @@ extern String AP_SSID;
 
 
 bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
-#if  ( DEBUG_ON!=1)
+
 //todo replace  with the call to mStartWebSocket in draft_esp.ino
   AsyncWebServer server(80);
   AsyncWebSocket ws("/ws");
@@ -60,7 +58,7 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
       mDebugMsg("unhandled onWsEvent");
     }
   }
-#endif
+
 
 /*******   The two STANDARD ARDUINO functions (setup and loop)   **********/
 /*  ----------   ARDUINO ENTRY POINT  ---------------------*/
@@ -68,11 +66,9 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
 void setup(){
   mESPSetup();
   mDebugMsg("-------------running Android setup ------------");
-  int someValue = 42;
-  DUMP(someValue);
+
 
   bool ret;
-  TRACE();
   ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
   if (ret) ret=mStartWebSocket1(); //Use credentials to attempt connection
   if (ret){ //Connection good wait for client to activate WS
@@ -86,9 +82,6 @@ void setup(){
   //Websocket running ok
   MainSetup();		//Setup the system, protocol & .. (rt210107)
   mDebugMsg("calling main loop in LM_ESP.ino");
-#if ( DEBUG_ON==1)
-  mTesting1();
-#endif
 //- Serial.printf("Receive buffer reset. Free: %i ",mFIFO_Free(oRX));
   mTesting1();
 }// This returns to an intrinsic call to loop()
