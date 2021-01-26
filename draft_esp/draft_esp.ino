@@ -15,18 +15,17 @@
 //  1- No wifi for quicker compile and test purpose
 int TimeoutWifi   =20;  //Seconds of timeout to get wifi connection
 int TimeOutClient =120;//Seconds of timeout mWaitForWSClient, time for user to connect
-
-
 //  END OF DEBUGGING STuFF
+
+
+//Libraries
 #include <stdint.h>           //Define standard types uint32_t etc
+#include "SPIFFS.h"
+#include "WiFi.h"
+#include "ESPAsyncWebServer.h"
+#include "ArduinoTrace.h"   //Enables debugging with   DUMP(someValue);  TRACE();
+//    LM setup
 #include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
-#if (DEBUG_ON!=1)
-  #include "SPIFFS.h"
-  #include "WiFi.h"
-  #include "ESPAsyncWebServer.h"
-
-#endif
-
 extern "C" {  //Note- neccessary to implement C files
   #include "system.h"
   #include "inoProtocol.h"      //Including h file allows you to access the functions
@@ -69,7 +68,11 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
 void setup(){
   mESPSetup();
   mDebugMsg("-------------running Android setup ------------");
+  int someValue = 42;
+  DUMP(someValue);
+
   bool ret;
+  TRACE();
   ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
   if (ret) ret=mStartWebSocket1(); //Use credentials to attempt connection
   if (ret){ //Connection good wait for client to activate WS
