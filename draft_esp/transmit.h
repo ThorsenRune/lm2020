@@ -12,6 +12,9 @@
 #include "ESPAsyncWebServer.h"
 #include "getWiFiCreds.h"
 bool mStartWebSocket2();
+bool mWaitForWSClient2(int TimeOutClient);
+void mTransmit();
+void mReceive(uint8_t *data, size_t len);
 
 
 
