@@ -27,6 +27,7 @@ p, label    {
 font-family: big caslon;
 padding: 10px;
 text-align: center;
+margin: 0px 0px;
 }
 form
 {
@@ -60,7 +61,7 @@ input[type=checkbox] {
   border-radius: 4px;
 }
 button {
-  text-align: center;
+  align: center;
   border: none;
   color: black;
   padding: 12px 22px;
