@@ -28,7 +28,7 @@ function  Main_Init(){
 	signal.init();
 	display.redraw();					//Redraw the display
 	prot.state(prot.kCommInit);		//Start the statemachine for initializing communciation
-	Main_Loop_test();					//Goto the main requesting data from device and polling answers periodically
+	Main_Loop();					//Goto the main requesting data from device and polling answers periodically
 }
 
 /***********************	MAIN PROCESSING		***********************************/
@@ -47,6 +47,8 @@ function mDataFile(newfile){
 
 var Main_Loop_running=false;
 function Main_Loop(){		//This is the refresh loop of the program
+	Main_Loop_test();
+	return;
 	//Called peridoically
 	if (Main_Loop_running) return;
 	Main_Loop_running=true
