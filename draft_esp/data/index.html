@@ -22,18 +22,19 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
     <label>Password: </label><input type="password" name="Password" id="myPass">
     <!-- An element to toggle between password visibility -->
     <div>
-      <label for="password">  Mostra Password</label>
         <input type="checkbox" onclick="viewPassword()" id="password" name="password">
+        <label for="password">  Mostra Password</label>
     </div>
     </div>
+      <br>
     Server : <input type="text" name="LM_URL" id="idLM_URL" value="URL OF THE SERVER">
     <br>
     <input type="submit" value="Accetta Valori">
   </form>
     <hr>
-    <p><button id='idgetDataIP' onclick='getDataIP();'>Get static IP</button></a></p>
-    IP : <input type="text" name="LM_URL" id="idIP" value="196.168.1.1">
-    <p><button id='idAppStartBtn' onclick='mAppStart();'>Start</button></a></p>
+    <p><button id='idgetDataIP' onclick='getDataIP();'>Get static IP</button></p>
+    <label>IP : </label><input type="text" name="LM_URL" id="idIP" value="196.168.1.1">
+    <p><button id='idAppStartBtn' onclick='mAppStart();'>Start</button></p>
 <script>
     var LM_ServerUrl;
     var WiFiSSID;
