@@ -11,6 +11,7 @@
 	<button onclick='testGetData()'>Get data</button>
 	<button onclick='testSetData()'>Set data</button>
 	Refresh Rate (ms)<input id="idRefreshRate" type="number" value="600"  step='60' onchange="mAcceptRefreshRate()">
+		<button onclick='Main_Loop()'>Step Processing</button>
 	<br>
 	Debug messages
 	<textarea id="idDebugText" title="idText"  style="height: 150px;width: 100%;" ></textarea>
@@ -19,6 +20,7 @@
 
 	function mAcceptRefreshRate(){
 		prot.refreshRate=idRefreshRate.value;
+		Main_Loop();//Make sure the mainloop is running
 	}
 	function mShowRefreshRate(newrate){idRefreshRate.value=prot.refreshRate;}
 </script>
