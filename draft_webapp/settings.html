@@ -1,9 +1,18 @@
 <!-- Prototype of a FORM FOR EDITING VARIABLE INFORMATION  -->
 
 <div class='cLeft'>	<!-- Command buttons   -->
-	<input type="button" class='cLeft'   value="Set IP address" onclick="oWS.EditIP()"			><br>
-	<input type="button"  class='cLeft' value="WiFi Setup" onclick="location.href='devicesetup.html'"			>
+	<input type="button" class='cLeft'   value="Set IP address" onclick="oWS.EditIP()"			><hr>
+	<input type="button"  class='cLeft' value="WiFi Setup" onclick="location.href='devicesetup.html'"			><br>
 	<input type="button"  class='cLeft' value="Reset" onClick="Main_Init();" /><br>
+
+
+	<input type="button"  class='cLeft' value="BlueTooth" onClick="alert('TODO: Implement');" /><br>
+	(A button that toggles between bluetoot and WiFi connection)
+	<p>First of all the bluetooth API must be enabled.
+	<p>“For Chrome goto locationbar and insert:  chrome://flags/#enable-experimental-web-platform-features”
+
+
+
 	<br>
 </div>
 <div  class="form1" action="">
