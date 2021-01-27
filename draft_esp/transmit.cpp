@@ -99,7 +99,11 @@ void mTransmit(){   //Transmit internal protocol data to client
     SendDataBuf++;
   }
   //This is where  the data exchange with the client happenes
-   if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+   if (isBTConnected) {
+      bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
+      nTestVar[3]=SendDataBuf;
+      SendDataBuf=0;
+   } if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
      if (SendDataBuf>0){
          globalClient->binary(mSendData,SendDataBuf ); //Todo4: bypass th txfifo
          DEBUG(4,"TX2 -> Client %d data\n ",SendDataBuf);
