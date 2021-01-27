@@ -1,8 +1,3 @@
-/*  Unit testing for lm_esp
-    This is our playground where we test new functionality
-
-*/
-
 //#include lm_esp.ino
 /*
     COMMUNICATION
@@ -33,7 +28,7 @@ extern "C" {  //Note- neccessary to implement C files
   #include "publishvars.h"
 }
 #include "transmit.h";          //Where websocket and Bluetooth calls reside
-
+void(* ReBoot)(void) = 0;   //Reboot the chip using ReBoot();
 
 /*******   The two STANDARD ARDUINO functions (setup and loop)   **********/
 /*  ----------   ARDUINO ENTRY POINT  -------------mProtocolProcess--------*/
@@ -42,7 +37,8 @@ void setup(){
   mESPSetup();
   DEBUG(1,"-------------running Android setup ------------");
   MainSetup();		//Setup the system, protocol & pointers.. (rt210107)
-  mWifiSetupMain();
+  int ret=mWifiSetupMain();
+  if (!ret) {DEBUG(1,"REBOOT");delay(2000);ReBoot();}
   //Websocket running okmProtocolProcess
   mDebugMsg("calling main loop in LM_ESP.ino");
   mTesting1();
@@ -70,15 +66,29 @@ void serialEvent2() {  //automatic event from LM serial connection
   }
   */
 }
-
-void mChangeDebugLevel(){ //Takes a number from the arduino console and set the nDbgLvl accordingly
+void serialEvent(){
+  mChangeDebugLevel();
+}
+String printBinary(int inByte)     //Convert byte to bitstring
+{
+  String s="B";
+  for (int b = 15; b >= 0; b--)
+  {
+    s=s+bitRead(inByte, b);
+  }
+  return s;
+}
+bool mChangeDebugLevel(){ //Takes a number from the arduino console and set the nDbgLvl accordingly
   if (Serial.available()>0){
     int debuglevel = Serial.parseInt();
     if (debuglevel>0){
-      Serial.printf("Changed debugging level to : %i",debuglevel);
+      Serial.printf("\nChanged debugging bitpattern to : %s\n",printBinary(debuglevel).c_str());
+    //  printBinary(debuglevel);
       nDbgLvl=debuglevel;
+      return true;
     }
   }
+  return false;
 }
 
 void mESPSetup(){

@@ -18,7 +18,7 @@ bool mStartWebSocket2();
 bool mWaitForWSClient(int TimeOutClient);
 void mTransmit();
 void mReceive2(uint8_t *data, size_t len);
-void mWifiSetupMain();
+bool mWifiSetupMain();
 void _WsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len);
 bool mStartWebSocket3();
 

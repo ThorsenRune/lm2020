@@ -40,12 +40,11 @@ void mWifiSetupMain(){      //Setup wifi
 }
 //-----------------------PRIVATE STUFF --------------------
 bool mStartWebSocket3(){  //Returns true when connection is established
-	DEBUG(1,"Starting Websocket \n");
+	DEBUG(1,()"Starting Websocket \n|"+getAP_SSID() +"| , |"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
   IPAddress staticIP=getIP();
   IPAddress gateway(192, 168, 1, 1);
   IPAddress subnet(255, 255, 255, 0);
   WiFi.config(staticIP,staticIP,subnet);  // if using static IP, enter parameters at the top
-  Serial.println(("Starting   WiFi|"+getAP_SSID() +"| , |"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
   WiFi.begin(getAP_SSID().c_str(),getAP_PASS().c_str());
   for (int i=0;i<TimeoutWifi;i++){ //Loop until timeout
     if (WiFi.status() == WL_CONNECTED) return true;   //Happily connected to wifi

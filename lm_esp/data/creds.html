@@ -34,25 +34,24 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
     <hr>
   <div id="idAcceptIP">
     <p><button id='idgetDataIP' onclick='getDataIP();'style="align:center;"">Get static IP</button></p>
-
+    <p><button id='idAppStartBtn' onclick='getStartWS();' style="align:center;">Restart device</button></p>
+    <p><button id='idAppStartBtn' onclick='mAppStart();' style="align:center;">visita sito LM</button></p>
     <label>IP : </label><input type="text" name="IPname" id="idIP" value="196.168.1.1">
-    <p><button id='idAppStartBtn' onclick='mAppStart();' style="align:center;">Start</button></p>
+    <p>2- Visita il <a href="#" id="idURL">sito</a> dedicato a MeCFES.</p>
+    <H2>Visita il <a href="#" id="idURL1">sito</a> dedicato a MeCFES.</h2>
   </div>
 <script>
     var LM_ServerUrl;
     var WiFiSSID;
     var LM_Ip;
 function mAppStart(){
-      getDataURL();
-      getDataIP();
-      getStartWS();
+      getStartWS();     //RESTART LM
       alert('Connect to your wifi internet '+ WiFiSSID);
-      //var url="http://"+LM_ServerUrl+"?ws="+LM_Ip;
-      var url=LM_ServerUrl+"?ws="+LM_Ip;
+      var url="http://"+LM_ServerUrl+"?ws="+LM_Ip;
       alert('Opening '+url);
+      location.href=url;
       var win = window.open(url, '_blank');
       win.focus();
-      //location.href=url;
 }
 function viewPassword() {
   var x = document.getElementById("myPass");
@@ -72,18 +71,26 @@ function getStartWS() {
   xhttp.open("GET", "startapp", true);
   xhttp.send();
 }
-function getDataIP() {
+function getDataIP(value) {
+    getDataURL();
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       LM_Ip=this.responseText;
       document.getElementById("idIP").value = LM_Ip;
+      var url="http://"+LM_ServerUrl+"?ws="+LM_Ip;
+      document.getElementById("idURL").href = url;
+      document.getElementById("idURL1").setAttribute('href',url);
     }
   };
-  xhttp.open("GET", "ip", true);
+  var param='ip'
+  if (value)
+    xhttp.open("GET",param+ "?value="+value, true);
+  else
+    xhttp.open("GET", param, true);
   xhttp.send();
 }
-function getDataURL() {
+function getDataURL(value) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -91,10 +98,14 @@ function getDataURL() {
     idLM_URL.value=LM_ServerUrl;
     }
   };
-  xhttp.open("GET", "url", true);
+  var param='url'
+  if (value)
+    xhttp.open("GET",param+ "?value="+value, true);
+  else
+    xhttp.open("GET", param, true);
   xhttp.send();
 }
-function getDataSSID() {
+function getDataSSID(value) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -102,23 +113,35 @@ function getDataSSID() {
       document.getElementById("idSSID").value= WiFiSSID;
     }
   };
-  xhttp.open("GET", "ssid", true);
+  var param='ssid'
+  if (value)
+    xhttp.open("GET",param+ "?value="+value, true);
+  else
+    xhttp.open("GET", param, true);
   xhttp.send();
 }
-function getDataPWD() {
+function getDataPWD(value) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
        document.getElementById("myPass").value= this.responseText;
     }
   };
-  xhttp.open("GET", "pass", true);
+  var param='pass'
+  if (value)
+    xhttp.open("GET",param+ "?value="+value, true);
+  else
+    xhttp.open("GET", param, true);
   xhttp.send();
 }
-getDataIP();
-getDataSSID();
-getDataURL();
-getDataPWD();
+document.addEventListener("DOMContentLoaded", Main_Init);
+function Main_Init(){
+  getDataIP();
+  getDataSSID();
+  getDataURL();
+  getDataPWD();
+  viewPassword();
+}
 </script>
 </body>
 </html>

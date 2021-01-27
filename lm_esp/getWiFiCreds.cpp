@@ -63,7 +63,7 @@ bool mWIFISetup(AsyncWebServer & gserver){//Setup SOFT AP FOR CONFIGURING WIFI
     DEBUG(2,"Calling mGetMyStaticIP ");
     if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
     if (ret){ //We got our credentials, save and restart
-      if (nDbgLvl>2) Serial.printf("MyStaticIP  %s\r\n", AP_StaticIP);
+      DEBUG(1,"*********MyStaticIP  |%s| *******\r\n", AP_StaticIP.c_str());
       mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
       mDebugMsgcpp("Calling: InitSoftAP second time");
         //Setup the SoftAP from before, refresh client with full credentials
@@ -145,7 +145,7 @@ bool mGetMyStaticIP(){//Get a free  IP address and make it static
 bool mWaitUntilTrueOrTimeout(bool &bFlag){
   for (int i=0;i<100000;i++){    //try until timeout
     if (bFlag) return true;
-
+    mChangeDebugLevel();
     delay(100);
   }
   mDebugMsgcpp("Timeout mWaitUntilTrueOrTimeout");
@@ -203,7 +203,8 @@ void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info){
 
 //Page not found
 void notFound(AsyncWebServerRequest *request) {
-  request->send(404, "text/plain", "Pagina non trovata");
+      request->send(SPIFFS, "/creds.html", "text/html");
+//  request->send(404, "text/plain", "Pagina non trovata");
 }
 bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
   //Params are byref (will return new values)
@@ -226,41 +227,51 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
   DEBUG(2,"Soft-AP available on IP address = %s\n",WiFi.softAPIP().toString().c_str());
   DEBUG(2,"Waiting. Do connect to direct wifi\n");
   mWaitUntilTrueOrTimeout(isWiFiStationConnected);
-  DEBUG(2,"Waiting for user to open %s\n",WiFi.localIP().toString().c_str());
-  TRACE();delay(4000);
-
+  DEBUG(2,"Waiting for user to open %s\n",WiFi.softAPIP().toString().c_str());
    // Send web page with input fields to client
   gserver.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     mDebugMsgcpp("serving creds.html");
     request->send(SPIFFS, "/creds.html", "text/html");
   });
-  gserver.on("/get", HTTP_GET, [](AsyncWebServerRequest *request){
-    DEBUG(1,"serving getip.html  \n");
-    request->send(SPIFFS, "/getip.html", "text/html");
-  });
   // Serve style.css file
-  gserver.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
-      TRACE();delay(4000);
-    mDebugMsgcpp("serving style.css");
+    gserver.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    DEBUG(4,"serving style.css\n");
     request->send(SPIFFS, "/style.css", "text/css");
   });
     //  AJAX Responses:
     gserver.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
-      mDebugMsgcpp("Sending AP_SSID to client");
+      String PARAM1="value";
+      DEBUG(1,"serving ssid\n");TRACE();
+      if (request->hasParam(PARAM1)) {
+        String s=request->getParam(PARAM1)->value();
+        AP_SSID=s;
+        DEBUG(3,"Getting GET data :%s\n",s)
+      }
+      DEBUG(4,"Sending AP_SSID to client\n");
       request->send(200, "text/plain", AP_SSID.c_str());
     });
     gserver.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
       DEBUG(2,"Sending sMyStaticIP %s to client\n",AP_StaticIP.c_str());
+      String PARAM1="value";
+      if (request->hasParam(PARAM1)) {
+        AP_StaticIP=request->getParam(PARAM1)->value();
+      }
       request->send(200, "text/plain",AP_StaticIP.c_str());
-
     });
     gserver.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
        mDebugMsgcpp("Sending url to client\n");
+       String PARAM1="value";
+       if (request->hasParam(PARAM1)) {
+         LM_URL=request->getParam(PARAM1)->value();
+       }
        request->send(200, "text/plain", LM_URL.c_str());
     });
     gserver.on("/pass", HTTP_GET, [](AsyncWebServerRequest *request){
-         mDebugMsgcpp("index.html Sending AP_PASS to client\n");
-        request->send(200, "text/plain",AP_PASS.c_str());
+      String PARAM1="value";
+      if (request->hasParam(PARAM1)) {
+        AP_PASS=request->getParam(PARAM1)->value();
+      }
+      request->send(200, "text/plain",AP_PASS.c_str());
     });
     gserver.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Ready to goto server page
@@ -277,10 +288,11 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
         AP_SSID.trim();   //Remove spaces
         AP_PASS.trim();
         LM_URL.trim();
-        DEBUG(1,"Credentials received: |%s|%s|\n",AP_SSID.c_str() , AP_PASS.c_str());
+        DEBUG(1,"Credentials received: |%s|%s|%s|\n",AP_SSID.c_str() , AP_PASS.c_str(),LM_URL.c_str());
         InitSoftAPOk=true;
-        request->send(SPIFFS, "/index.html", "text/html");
-      }
+        request->send(SPIFFS, "/creds.html", "text/html");
+        //request->send(SPIFFS, "/getip.html", "text/html");
+      }    request->send(SPIFFS, "/creds.html", "text/html");
     });
   gserver.onNotFound(notFound);
   gserver.begin();
