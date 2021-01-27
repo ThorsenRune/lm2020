@@ -74,7 +74,7 @@ function readBT() {
 	 return bluetoothDeviceDetected.gatt.connect()
 	 .then(server => {
 		 console.log('Getting GATT Service...')
-		 return server.getPrimaryService(bleService)
+		 return server.getPrimaryService(bleService)atom://teletype/portal/b2792472-99f5-4597-b9b8-bc689b02a31f
 	 })
 	 .then(service => {
 		 console.log('Getting GATT Characteristic...')
@@ -85,7 +85,7 @@ function readBT() {
 		 gattCharacteristic.addEventListener('characteristicvaluechanged',
 				 handleChangedValue) //Like serial.onReceive
 		 document.getElementById( "idStatus").innerHTML="CONNECTED";
-		 isConnected = true;
+		 isBTConnected = true;
 	 })
 
  }
@@ -97,10 +97,11 @@ function readBT() {
  	 let value = event.target.value
  	 var now = new Date()
  	 console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) )
- 	 receivedValue=decoder.decode(value);
+ 	 receivedValue=value;
+	 serial.onReceive(receivedValue);
  //	 MessageReceived = receivedValue;
    document.getElementById( "idStatus").innerHTML="CONNECTED, Acquiring data";
- 	 isConnected = true;
+ 	 isBTConnected = true;
   }
 
 /////////////////// WEB BT
@@ -112,7 +113,7 @@ var bleCharacteristicWrite = 'bb99a060-6fa8-4bba-9ef0-731634e96e88' //UUID for t
 var bluetoothDeviceDetected //Characteristics of the connected BT device
 var gattCharacteristic //Generic ATTribute (GATT) characteristic
 let receivedValue = "";
-let isConnected = false;
+let isBTConnected = false;
 var MessageReceived = "";
 
 //VERIFY WEB BT COMPATIBILITY FOR THE BROWSER
@@ -147,13 +148,12 @@ var MessageReceived = "";
 
  //SEND A MESSAGE TO THE ESP32
  //Todo: pass data as parameter writeBT(data)
-  function writeBT() {
-  const name = input.value();
-  let encoder = new TextEncoder('utf-8');
+  function writeBT(value) {   //value is an arry of bytes
+  //let encoder = new TextEncoder('utf-8');
   log('Setting Characteristic User Description...');
-  gattCharacteristic.writeValue(encoder.encode(name))
+  gattCharacteristic.writeValue(value)
   .then(_ => {
- 	 log('> Characteristic User Description changed ttodo1o: ' + name);
+ 	 log('> Characteristic User Description changed to: ' + value);
   })
   .catch(error => {
 		//todo9: userfriendly message
@@ -195,11 +195,16 @@ serial.isReady=function (){
 		return (ws.readyState==ws.OPEN);
 	}
 serial.RXFiFo=[];	//Consume data by data= serial.RXFiFo.shift
-serial.send=function(nByte){		//Calling the websocket
+serial.send=function(nByte){		//Calling the websocket nByte =[1,2,3,4,] di dati
 	var buffer=new ArrayBuffer(1)
 	var view=new Int8Array(buffer)
 	view[0]=nByte
-	ws.send(buffer)
+	if(isBTConnected){
+		writeBT(buffer)			//todo : if buffer.length > 20 loop split
+	} else {
+		ws.send(buffer)
+
+	}
 }
 serial.onReceive=function(data){		//Called from the websockt
 	for (var i=0;i<data.length;i++){
