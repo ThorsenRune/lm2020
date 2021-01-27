@@ -52,7 +52,9 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 
 // initialize bluetooth and  setup an event listener
 //todo: refactor name mWebSocket_InitAsync
-function readBT() {	//returns data from BT as Uint8Array [1..20]
+function readBT() {
+	document.getElementById( "idStatus").innerHTML="Connecting via BT";
+	//returns data from BT as Uint8Array [1..20]
 	//Todo: write what this does in a comment is this the Ternary Operator? (variable = (condition) ? expressionTrue : expressionFalse)
 	return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo() && isWebBluetoothEnabled())
 	.then(connectGATT)
