@@ -52,7 +52,7 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 
 // initialize bluetooth and  setup an event listener
 //todo: refactor name mWebSocket_InitAsync
-function read() {	//returns data from BT as Uint8Array [1..20]
+function readBT() {	//returns data from BT as Uint8Array [1..20]
 	//Todo: write what this does in a comment is this the Ternary Operator? (variable = (condition) ? expressionTrue : expressionFalse)
 	return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo() && isWebBluetoothEnabled())
 	.then(connectGATT)
@@ -82,6 +82,7 @@ function read() {	//returns data from BT as Uint8Array [1..20]
 		 gattCharacteristic = characteristic
 		 gattCharacteristic.addEventListener('characteristicvaluechanged',
 				 handleChangedValue) //Like serial.onReceive
+		 document.getElementById( "idStatus").innerHTML="CONNECTED";
 		 isConnected = true;
 	 })
 
@@ -96,6 +97,7 @@ function read() {	//returns data from BT as Uint8Array [1..20]
  	 console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) )
  	 receivedValue=decoder.decode(value);
  //	 MessageReceived = receivedValue;
+ document.getElementById( "idStatus").innerHTML="CONNECTED";
  	 isConnected = true;
   }
 
@@ -164,7 +166,7 @@ var MessageReceived = "";
 
 //??NOW TO UPDATE DATA??//
 //START NOTIFICATIONS
- function start() {
+ function startBT() {
 	 gattCharacteristic.startNotifications()
 	 .then(_ => {
 		 console.log('Start reading...')
@@ -174,7 +176,7 @@ var MessageReceived = "";
 	 })
  }
 //STOP NOTIFICATIONS
- function stop() {
+ function stopBT() {
 	 gattCharacteristic.stopNotifications()
 	 .then(_ => {
 		 console.log('Stop reading...')
