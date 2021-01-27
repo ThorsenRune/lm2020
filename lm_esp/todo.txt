@@ -1,8 +1,12 @@
 /*
+ToDo list
+see also:https://docs.google.com/document/d/1asDIyJUQyjWTWjn_OsVVbzIX3uRCjsKy1ccvBksbU9g/edit#heading=h.qsk0jinrkh64
 
-
-Refactoring:
-mFIFO_push(oTX,   ->    mSendToClient(       |    bytetosend
+BT integration
+in transmit.cpp
+if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+add a similar structure in case of BT transfer
+mReceive2
 
 
 

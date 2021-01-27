@@ -10,6 +10,7 @@ extern "C" {
 #endif
 #include <stdbool.h>				//Boolan types rt210107
 #include <stdint.h>           //Define standard types uint32_t etc
+#include "debug.h"
 //  GLOBALS					**************************************************** 21017
 void mTesting1();						//Declare your functions here for ino to recognize it
 void mTesting2();						//test functions

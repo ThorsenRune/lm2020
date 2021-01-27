@@ -1,1 +1,1 @@
-localhost/public/lm2020/lm_webapp/index.php
+localhost/public/lm2020/lm_webapp
