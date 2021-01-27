@@ -99,7 +99,7 @@ function readBT() {
  	 console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) )
  	 receivedValue=decoder.decode(value);
  //	 MessageReceived = receivedValue;
- document.getElementById( "idStatus").innerHTML="CONNECTED";
+   document.getElementById( "idStatus").innerHTML="CONNECTED, Acquiring data";
  	 isConnected = true;
   }
 
