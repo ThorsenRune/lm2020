@@ -22,7 +22,7 @@ AsyncWebServer *_server;
 AsyncWebSocket *_ws;
 
 
-void mWifiSetupMain(){      //Setup wifi
+bool mWifiSetupMain(){      //Setup wifi
     bool ret;
     if (_server==NULL)_server = new AsyncWebServer(80);
     ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
@@ -32,15 +32,15 @@ void mWifiSetupMain(){      //Setup wifi
       ret=mWaitForWSClient(TimeOutClient);
     }
     if (!ret){
-      mWIFISetup(*_server);
+      ret=mWIFISetup(*_server);
       TimeOutClient=200;
       DEBUG(1,"WIFI SETUP AND READY\n\n");
-      mWifiSetupMain();  //Repeat until wifi & WS is working
+      return ret;
     }
 }
 //-----------------------PRIVATE STUFF --------------------
 bool mStartWebSocket3(){  //Returns true when connection is established
-	DEBUG(1,()"Starting Websocket \n|"+getAP_SSID() +"| , |"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
+	DEBUG(1,("Starting Websocket \n|"+getAP_SSID() +"| , |"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
   IPAddress staticIP=getIP();
   IPAddress gateway(192, 168, 1, 1);
   IPAddress subnet(255, 255, 255, 0);
@@ -48,11 +48,11 @@ bool mStartWebSocket3(){  //Returns true when connection is established
   WiFi.begin(getAP_SSID().c_str(),getAP_PASS().c_str());
   for (int i=0;i<TimeoutWifi;i++){ //Loop until timeout
     if (WiFi.status() == WL_CONNECTED) return true;   //Happily connected to wifi
+    if (mChangeDebugLevel()) break;
     delay(1000); //Sleep to let connect
     Serial.print("."); //Make some waiting dots
   }
   DEBUG(1,"WiFi is not available, check credentials\n");
-
   WiFi.disconnect();
   return false;   //WiFi not available maybe creaden
 }
