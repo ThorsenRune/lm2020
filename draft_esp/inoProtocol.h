@@ -51,7 +51,7 @@ extern tFIFO  oRX;
 void Expose2Protocol(void);					//+ A method that initializes the protocol by sending all variable names to host
 void mSendVersionInfo(void);
 // Communication constants
-typedef enum commHeaders {
+typedef enum commHeaders {		//These are magic constants for the packets in the protocol
 	kReady=0,
 	kUartErrMsg=13,
   kCommInit = 101 ,//      '"Initialize Protocol request to DSP and preample for returned data [SymbolicVarName, VarId,ArraySize and Type]

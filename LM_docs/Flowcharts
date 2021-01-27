@@ -32,8 +32,6 @@ Protocol Serial Swimlane diagram
 
 
 
-http://localhost/public/asciiflow/
-
 
 Note201113: The mRX_ProtInit will repeat for each element in the exposed protocol
 
