@@ -35,7 +35,7 @@ void mGenerateSignal(){
    static int phaseshift=1;   //Example of static variable. is only initialized once
   phaseshift=phaseshift+1;;
   nTestVar[4]=phaseshift;
-  if (nDbgLvl>1) Serial.printf("phaseshift  %i\r\n", phaseshift);
+  DEBUG(5,"phaseshift  %i\r\n", phaseshift);
   int len=sizeof(Art_signal)/sizeof(Art_signal[0]);
   for (int i=0;i<len ;i++){    //try until timeout
     float arg=((float)i+phaseshift)/5;

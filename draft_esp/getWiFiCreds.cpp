@@ -1,6 +1,7 @@
 #include "getWiFiCreds.h"
 #include "publishvars.h"
 #include "debug.h"
+#include "ArduinoTrace.h"  //	DUMP(nDbgLvl);TRACE();
   /*
     This module establish connection to the  wifi accesspoint (WAP or internet WiFi router)
     If no connection is made it will enter a mode for setting up WAP credentials using a temporary
@@ -20,6 +21,7 @@ String AP_SSID = "Rune";  // your router's SSID here
 String AP_PASS = "telefon1";     // your router's password here
 String LM_URL = "url";
 String AP_StaticIP="192.168.1.238";
+
 const char* SoftAP_SSID = "Arduino_LM";  //Name of the SoftAP - Arduino gets nicely first in the network list
 //IPAddress MyStaticIP;  //The static IP address when using internet wifi router
 //  ******  Make public getter/setters       *****
@@ -58,7 +60,7 @@ bool mWIFISetup(AsyncWebServer & gserver){//Setup SOFT AP FOR CONFIGURING WIFI
     ret=InitSoftAP(gserver);//Sets AP_SSID, AP_PASS by Setup a soft accesspoint   and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
-      mDebugMsgcpp("Calling mGetMyStaticIP ");
+    DEBUG(2,"Calling mGetMyStaticIP ");
     if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
     if (ret){ //We got our credentials, save and restart
       if (nDbgLvl>2) Serial.printf("MyStaticIP  %s\r\n", AP_StaticIP);
@@ -66,11 +68,11 @@ bool mWIFISetup(AsyncWebServer & gserver){//Setup SOFT AP FOR CONFIGURING WIFI
       mDebugMsgcpp("Calling: InitSoftAP second time");
         //Setup the SoftAP from before, refresh client with full credentials
       ret=InitSoftAP(gserver);//Second call to update IP and allow to proceed to server
-        //ret=mUserFeedbackViaSoftAP(); //Arguments AP_SSID, AP_PASS,MyStaticIP as globals
+      if (startAPP)
         return ret ; //If credentials have been saved now the recursive call should end width
           //  --->mStartWebSocket
     } else {  //Fail in getting credentials
-        mDebugMsgcpp("Fail in getting credentials, retry");
+        DEBUG(1,"Fail in getting credentials, retry\n");
     }
     return false;
 }
@@ -117,18 +119,13 @@ bool mGetMyStaticIP(){//Get a free  IP address and make it static
   //Flowchart: connect to network and get the IP
   //TODO0 DEBUG
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
-  mDebugMsgcpp("mGetMyStaticIP");delay(1000);
-  WiFi.disconnect();
-  mDebugMsgcpp("WIFI_STA");delay(1000);
+  WiFi.disconnect();delay(100);
   WiFi.mode(WIFI_STA);
   WiFi.config(0U, 0U, 0U);//rt210121 reset the configuration so a fresh IP can be obtained - https://stackoverflow.com/a/54470525/2582833
-  mDebugMsgcpp("WiFi.begin(AP_SSID.c_str()");delay(1000);
-  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());delay(1000);
-  mDebugMsgcpp("Connecting to internet WIFI to get IP");
-  Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
+  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());delay(100);
+  DEBUG(2,"Connecting to internet WIFI to get IP");
+  DEBUG(2,("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
   for (int i=0;i<20;i++){ //Loop until timeout
-    delay(500);
-    Serial.print(".");
     if (WiFi.status() == WL_CONNECTED) { //Wifi connection good
       // get the IP
       //Serial.printf("IP address obtained: %s",WiFi.localIP());
@@ -138,6 +135,7 @@ bool mGetMyStaticIP(){//Get a free  IP address and make it static
       WiFi.disconnect();
       return true;
     }
+    Serial.print(".");  delay(500);
   }
   //We have a timeout
     mDebugHaltcpp("Can not get AP_StaticIP in mGetMyStaticIP");
@@ -194,7 +192,7 @@ bool mGetCredentials(){//Blocking. Will return true if credentials are in FLASH
 
 //  ***   WIFI EVENTS
 void WiFiStationConnected(WiFiEvent_t event, WiFiEventInfo_t info){
-  Serial.println("Station connected ");
+  DEBUG(1,"Station connected \n");
   isWiFiStationConnected=true;
 }
 
@@ -225,74 +223,74 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
 
    //Setting Wifi specifications
   //Verify MeCFES IP Address
-  Serial.print("Soft-AP available on IP address = ");
-  Serial.println(WiFi.softAPIP());
-  mDebugMsgcpp("Waiting for user to connect to direct wifi");
+  DEBUG(2,"Soft-AP available on IP address = %s\n",WiFi.softAPIP().toString().c_str());
+  DEBUG(2,"Waiting. Do connect to direct wifi\n");
   mWaitUntilTrueOrTimeout(isWiFiStationConnected);
-  mDebugMsgcpp("Waiting for user to open page");
+  DEBUG(2,"Waiting for user to open %s\n",WiFi.localIP().toString().c_str());
+  TRACE();delay(4000);
+
    // Send web page with input fields to client
   gserver.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    mDebugMsgcpp("serving index.html");
-    request->send(SPIFFS, "/index.html", "text/html");
+    mDebugMsgcpp("serving creds.html");
+    request->send(SPIFFS, "/creds.html", "text/html");
   });
   gserver.on("/get", HTTP_GET, [](AsyncWebServerRequest *request){
-    mDebugMsgcpp("serving index.html second time");
-    request->send(SPIFFS, "/index.html", "text/html");
+    DEBUG(1,"serving getip.html  \n");
+    request->send(SPIFFS, "/getip.html", "text/html");
   });
   // Serve style.css file
   gserver.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+      TRACE();delay(4000);
     mDebugMsgcpp("serving style.css");
     request->send(SPIFFS, "/style.css", "text/css");
   });
+    //  AJAX Responses:
     gserver.on("/ssid", HTTP_GET, [](AsyncWebServerRequest *request){
       mDebugMsgcpp("Sending AP_SSID to client");
       request->send(200, "text/plain", AP_SSID.c_str());
     });
     gserver.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
-      mDebugMsgcpp("Sending sMyStaticIP to client");
+      DEBUG(2,"Sending sMyStaticIP %s to client\n",AP_StaticIP.c_str());
       request->send(200, "text/plain",AP_StaticIP.c_str());
+
     });
     gserver.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
-       mDebugMsgcpp("Sending url to client");
+       mDebugMsgcpp("Sending url to client\n");
        request->send(200, "text/plain", LM_URL.c_str());
     });
     gserver.on("/pass", HTTP_GET, [](AsyncWebServerRequest *request){
-         mDebugMsgcpp("index.html Sending AP_PASS to client");
+         mDebugMsgcpp("index.html Sending AP_PASS to client\n");
         request->send(200, "text/plain",AP_PASS.c_str());
     });
     gserver.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
-           //Send MeCFES bridgeapp
+           //Ready to goto server page
           request->send(200, "text/plain", LM_URL.c_str());
-          // request->send(SPIFFS, "/bridgeAPP.html", "text/html");
-          InitSoftAPOk=true;
-          startAPP=true;
+          InitSoftAPOk=true;    //Flag to exit INIT softAP
+          startAPP=true;      //Flag to start application and close softAP
     });
+    //User accepted values
     gserver.on("/get", HTTP_POST, [] (AsyncWebServerRequest *request) {
       if (request->hasParam(PARAM_INPUT_1,true)) {
-        mDebugMsgcpp("Credentials received:");
         AP_SSID = request->getParam(PARAM_INPUT_1,true)->value();
         AP_PASS = request->getParam(PARAM_INPUT_2,true)->value();
         LM_URL = request->getParam(PARAM_INPUT_3,true)->value();
         AP_SSID.trim();   //Remove spaces
         AP_PASS.trim();
         LM_URL.trim();
-        Serial.println(("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
+        DEBUG(1,"Credentials received: |%s|%s|\n",AP_SSID.c_str() , AP_PASS.c_str());
         InitSoftAPOk=true;
         request->send(SPIFFS, "/index.html", "text/html");
-        //request->send(SPIFFS, "/onConnection.html", "text/html");
       }
     });
   gserver.onNotFound(notFound);
   gserver.begin();
-  Serial.println("HTTP server started");
-  mDebugMsgcpp("Waiting for user to insert credentials");
+  DEBUG(1,"Waiting for user to insert credentials\n");
   //"Continue if good. else if Failed to get credentials, abort");
   ret= mWaitUntilTrueOrTimeout(InitSoftAPOk);
-  mDebugMsgcpp("InitSoftAP Done");
-  delay(5000);  //Wait for transactions to finish before closing?
+  DEBUG(2,"InitSoftAP, Disconnecting Soft AP\n");
+  delay(2000);  //Wait for transactions to finish before closing?
   WiFi.disconnect();
   WiFi.softAPdisconnect (true);
-  delay(1000);  //Wait for server to close?
   return ret;
 }
 

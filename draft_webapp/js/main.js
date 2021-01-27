@@ -45,42 +45,23 @@ function mDataFile(newfile){
 }
 
 
-var Main_Loop_running=false;
+
+
+var hInterval=0;
 function Main_Loop(){		//This is the refresh loop of the program
-	Main_Loop_test();
-	return;
+		var reentries=0;
 	//Called peridoically
-	if (Main_Loop_running) return;
-	Main_Loop_running=true
-	if (display.doRedraw) display.redraw();
-	display.refresh()		;//Update screen widgets and get userinput
-	 //Commuication requesting data from device (FSM)
-	prot.TXDispatch();	//Exchange RX/TX of data from the protocol
-	while (prot.mRXDispatch(serial.RXFiFo)){};	//Empty the queue from device
-	if (prot.refreshRate>30)
-		setTimeout(function(){
-			Main_Loop()
-		},prot.refreshRate); 	//Loop peridoically
-	//Though setTimeout is not precise it allows easily to change the period
-	Main_Loop_running=false
-}
-
-function Main_Loop_test(){		//This is the refresh loop of the program
-	//Called peridoically
-	if (display.doRedraw) display.redraw();
-        if (prot.refreshRate>30)
-		setInterval(function(){
+		if (hInterval) clearInterval(hInterval);
+    if (prot.refreshRate<30) return;
+		hInterval=setInterval(function(){
+			if (reentries>0) return;
+			reentries++;
+			if (display.doRedraw) display.redraw();
 			display.refresh();      //Update screen widgets and get userinput
-			 //Commuication requesting data from device (FSM)
-			prot.TXDispatch();	//Exchange RX/TX of data from the protocol
-			while (prot.mRXDispatch(serial.RXFiFo)){};	//Empty the queue from device
+			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
+			reentries--;
 		},prot.refreshRate); 	//Loop peridoically
 }
-
-
-
-
-
 
 
 

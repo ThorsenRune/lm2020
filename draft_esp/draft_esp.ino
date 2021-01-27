@@ -24,6 +24,7 @@ bool bRelayLM2018 = false;    //Apply protocol to arduino FW or relay to LM_FW
 #include "WiFi.h"
 #include "ESPAsyncWebServer.h"
 #include "debug.h"   //Enables debugging with   DUMP(someValue);  TRACE();
+#include "ArduinoTrace.h"  //	DUMP(nDbgLvl);TRACE();
 //    LM setup
 #include "getWiFiCreds.h" //establish connection to the  wifi accesspoint (WAP or internet WiFi router)
 extern "C" {  //Note- neccessary to implement C files
@@ -32,13 +33,6 @@ extern "C" {  //Note- neccessary to implement C files
   #include "publishvars.h"
 }
 #include "transmit.h";          //Where websocket and Bluetooth calls reside
-extern String AP_SSID;
-
-
-
-
-//todo replace  with the call to mStartWebSocket in draft_esp.ino
-extern AsyncWebServer server2;
 
 
 /*******   The two STANDARD ARDUINO functions (setup and loop)   **********/
@@ -46,24 +40,11 @@ extern AsyncWebServer server2;
 
 void setup(){
   mESPSetup();
-  mDebugMsg("-------------running Android setup ------------");
-
-
-  bool ret;
-  ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
-  if (ret) ret=mStartWebSocket2(); //Use credentials to attempt connection
-  if (ret){ //Connection good wait for client to activate WS
-    Serial.println(("Connected to WiFi |"+getAP_SSID() +"|"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
-    ret=mWaitForWSClient2(TimeOutClient);
-  }
-  if (!ret){
-    mWIFISetup(server2);
-    setup();  //Repeat until wifi & WS is working
-  }
+  DEBUG(1,"-------------running Android setup ------------");
+  MainSetup();		//Setup the system, protocol & pointers.. (rt210107)
+  mWifiSetupMain();
   //Websocket running okmProtocolProcess
-  MainSetup();		//Setup the system, protocol & .. (rt210107)
   mDebugMsg("calling main loop in LM_ESP.ino");
-//- Serial.printf("Receive buffer reset. Free: %i ",mFIFO_Free(oRX));
   mTesting1();
 }// This returns to an intrinsic call to loop()
 
@@ -80,15 +61,6 @@ void loop(){		//The main loop of the
     mChangeDebugLevel();
 }
 /******************************* END MAIN WHILE(1) *******************************/
-
-
-long rssi=0;	//signal strength
-
-
-
-//	rssi = WiFi.RSSI();
-
-
 void serialEvent2() {  //automatic event from LM serial connection
   //Figure another way to relay to client
 /*  while (Serial2.available()&&(SendDataBuf<MAXL)) {
@@ -98,9 +70,6 @@ void serialEvent2() {  //automatic event from LM serial connection
   }
   */
 }
-
-
-
 
 void mChangeDebugLevel(){ //Takes a number from the arduino console and set the nDbgLvl accordingly
   if (Serial.available()>0){
@@ -123,12 +92,12 @@ void mESPSetup(){
   }
 }
 //  Debugging  message and continue
-  void mDebugMsg(char msg[]){
+void mDebugMsg(char msg[]){
       Serial.print("Debugger says: \t ");
       Serial.printf("%s\n",msg );
 
   }
-  void mDebugInt(char msg[],int data){
+void mDebugInt(char msg[],int data){
     Serial.printf("%s  \t:\t %i\t %c\n",msg,data,(char)data);
   }
 //  Stop and do endless loop
@@ -144,14 +113,14 @@ void  mDebugMsgcpp(char msg[]){
       Serial.printf("%s\n",msg );
     //  delay(100);
   }
-  void mDebugHaltcpp(char msg[]){
+void mDebugHaltcpp(char msg[]){
       Serial.print("\n------------HALT  ------\n");
       Serial.println(msg );
     while (1){
       delay(300000);
     }
   }
-  void mPrint(String msg){
+void mPrint(String msg){
       //delay(100);
       Serial.printf("%s\n",msg.c_str() );
       //delay(100);
