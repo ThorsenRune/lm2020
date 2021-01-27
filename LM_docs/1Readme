@@ -1,0 +1,5 @@
+Documentation folder for the LM project
+	Folders:
+		'draft_xx'   =   development code  (testing and prototyping goes here)
+		'LM_xxx'		 =		functional code
+		'LM_doc'		=	This folder with documentation, todo lists etc.
