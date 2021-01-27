@@ -7,7 +7,7 @@
   let receivedValue = "";
   let splitString;
   let isConnected = false;
-    
+
 
   function isWebBluetoothEnabled() {
     if (!navigator.bluetooth) {
@@ -38,7 +38,7 @@
     return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo())
     .then(connectGATT)
     .then(_ => {
-      console.log('Valutando la forza misurata...')
+      console.log('Reading data...')
       return gattCharacteristic.readValue()
     })
     .catch(error => {
@@ -67,11 +67,11 @@
 //        var value=event.target.value.getUint16(0);
 //        $("#Notified Value").text(""+value);
       isConnected = true;
-        
-    })   
+
+    })
   }
 
- 
+
  function handleChangedValue(event) {
     let decoder = new TextDecoder('utf-8');
     let value = event.target.value
@@ -79,7 +79,7 @@
     console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) )
     receivedValue=decoder.decode(value);
     MessageReceived = receivedValue;
-    isConnected = true;     
+    isConnected = true;
   }
 
   function startBT() {
@@ -101,7 +101,7 @@
       console.log('[ERROR] Stop: ' + error)
     })
   }
-    
+
 //Define the operation to send the message to the ESP32
     function writeButtonBT() {
   const name = input.value();
@@ -113,5 +113,5 @@
   })
   .catch(error => {
     log('Argh! ' + error);
-  });       
+  });
 }
