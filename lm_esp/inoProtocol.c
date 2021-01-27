@@ -23,9 +23,7 @@ volatile    uint8_t*			 elems;  /* vector of elements                   */
 } *tFIFO1;
 
 void mCommInitialize(void){
-  if (nDbgLvl&(2<<6))  mDebugMsg("mCommInitialize");
  //Initialize the communication protocol allocating memory for buffers
-
  oTX=mFIFO_new(aTX,sizeof(aTX)); // get a new object
  oRX=mFIFO_new(aRX,sizeof(aRX)); // get a new object
  if (nDbgLvl&(2<<6))  mDebugInt("oRX Free",mFIFO_Free(oRX));
@@ -184,7 +182,7 @@ Revisions:
   static uint8_t zState;				// State machine indicator
   static int *  DestData;
   while (!mFIFO_isEmpty(oRX)) {     // Char in buffer, go read and process it
-    if (nDbgLvl>3) mDebugInt("Available",mFIFO_available(oRX));
+    //-if (nDbgLvl>3) mDebugInt("Available",mFIFO_available(oRX));
     rcv1=mFIFO_pop(oRX);       //Get new data
     if (nDbgLvl&(2<<6)) mDebugInt("popped",rcv1);
     if (0==rxCmd) 			//Set command as receive data

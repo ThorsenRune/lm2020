@@ -20,7 +20,7 @@ const prot={		//Encapsulating communication protocol
   ,oData:            //New JSON ready object for the protocol definition (ex. oWatch)
   {	//Object holding data for exchanging
   	'Title':'Application name and version'	//Default string overwritten by JSON data in setup file
-  	,nPeriod:2000		//Refresh period in ms
+  	,nPeriod:200		//Refresh period in ms
   	,sFileName:'data.txt'	//Filename on the server
   	,oVarDesc:{}	//{varname: _VarDescObj }Containing variable names
   	,oProtElemVar :{}	//{varname: _VarDataObj	} holding volatile data
@@ -115,7 +115,10 @@ prot.mTX_ProtReset=function(){		//Resettig the communicato protocol with kCommIn
   //Will be altered in mRX_ProtInit
 }
 
-
+prot.DoTransmissions=function(){
+  prot.TXDispatch();
+  while (prot.mRXDispatch(serial.RXFiFo)){};	//Empty the queue from device
+}
 prot.TXDispatch=function(){	//mTXDispnDataLengthatch - the response will be mRXDispatch
 	//Using the statpointer prot.State
 	//The reinitialization is in case of device beenig reset

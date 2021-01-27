@@ -16,7 +16,7 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
 <!--
   the action="/get" is misleading
 -->
-  <form action="/get"  method="POST" enctype="application/x-www-form-urlencoded" accept-charset="UTF-8">
+  <form id="idCredentials" action="/get"  method="POST" enctype="application/x-www-form-urlencoded" accept-charset="UTF-8">
     SSID rete Wifi: <input type="text" name="SSID" id='idSSID'>
     <div>
     <label>Password: </label><input type="password" name="Password" id="myPass">
@@ -32,10 +32,12 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
     <input type="submit" value="Accetta Valori">
   </form>
     <hr>
+  <div id="idAcceptIP">
     <p><button id='idgetDataIP' onclick='getDataIP();'style="align:center;"">Get static IP</button></p>
 
     <label>IP : </label><input type="text" name="IPname" id="idIP" value="196.168.1.1">
     <p><button id='idAppStartBtn' onclick='mAppStart();' style="align:center;">Start</button></p>
+  </div>
 <script>
     var LM_ServerUrl;
     var WiFiSSID;

@@ -10,7 +10,7 @@ extern int nTimerInMs[3];     //GLOBAL VARIABLES for the Protocol
 extern int nTestVar[];
 extern int Art_signal[120];
 extern int Gain[2];
-extern int nDbgLvl;
+
 
 /*        GLOBAL METHODS        */
 void mGenerateSignal();
