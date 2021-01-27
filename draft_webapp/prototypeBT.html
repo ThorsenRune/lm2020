@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<!--		Websocket can be served from anywhere  -->
+   <head>
+		<title>Proto WS uRehApp LM</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="./js/main.js">	/*Main programe and entry*/		</script>
+		<script src="./js/websocket.js"></script>
+		<script src="./js/testing.js"></script>
+
+		<script src="./js/utils.js"></script>
+		<script src="./js/display.js"></script>		<script src="./js/utils.js">	/*	math etc*/</script>
+		<script src="./js/interface.js" 	>	/*	GUI related*/	</script>
+		<script src="./js/protocol.js" 	>/* variables */</script>		<script src="./js/slider.js"></script>
+		<script src="./js/signal.js"></script>
+		<script src="./js/watches.js"></script>
+		<script src="./js/index.js"></script>
+    <script src="./js/BT.js"></script>
+		<script src="./js/debug.js">/* debugging only*/</script>
+		<link rel="stylesheet" href="/css/dark.css">
+    <link rel="stylesheet" href="./css/style.css">
+		<link rel="stylesheet" href="./css/slider.css">
+		<link rel="stylesheet" href="./css/popup.css">
+   </head>
+   <body>
+
+	<div>
+		<label id='idStatus' >Unconnected</label>
+    <button id='connectviaBT' onclick='readBT();'> Connect via BT</button>
+    <button id='startBTacq' onclick='startBT();'> Start </button>
+    <button id='stopBTacq' onclick='stopBT();'> Stop </button>
+    <br>
+		<input type="text" id="idVarName1"  placeholder="VarName"  onclick='this.focus();this.select()'>
+    <input type="button"  class='cRight' value="Settings" onclick="idPopUp.hidden=!idPopUp.hidden;"			>
+
+		<input type="button" class='cRight' value="Reset" onClick="Main_Init();" />
+		<input type="button" class='cRight' value="Edit" onClick="popup.mSettings();" />
+    <br>
+
+	</div>
+  <?PHP include 'testing.html' ?>
+
+	<div id='idPopUp' 	class='cOverlay' hidden>  <!--Popup window for messages -->
+		<div id='idSettings'>
+			<?PHP include 'settings.html' ?>
+		</div>
+		<textarea id="idText" title="idText"  >	</textarea>
+		<button id="idTextClose" >OK </button>
+		<button id="idSettingsCancel" onclick="idPopUp.hidden=true" >CANCEL </button>
+	</div>
+	<details  <!-- Sliders -->
+		<summary> Slider controls </summary>
+		<?PHP include 'sliders_vert.html' ?>
+	</details>
+	<hr>
+	<!-- todo: refactor to a separate view or pane ?-->
+	<details  > <!-- Signal panel -->
+		<summary> Signals  </summary>
+		<?PHP include 'signal.html' ?>
+	</details>
+
+	<div class="clsBottom">
+	</div>
+	</body>
+</html>
