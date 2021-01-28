@@ -1,5 +1,7 @@
 /*POPUP */
-.cOverlay { position: fixed; /* Sit on top of the page content */
+.cOverlay {
+
+  position: fixed; /* Sit on top of the page content */
  /* display: none; /* Hidden by default */
   border: solid;/* Show outline of popup */
   border-radius: 4px;
@@ -28,14 +30,33 @@
   margin-left: auto;
   margin-right: auto;
       display: grid;
-    grid-template-columns: 1fr 1fr;
-    color: black;
+
+    color: white;
     text-decoration: none;
     font-family: big caslon;
     border-radius: 4px;
     cursor: pointer;
-    background: white;
+    background: black;
 
+}
+.item-a{
+    background:black;
+    color: white;
+    float:left;
+    text-align: center;
+    border: none;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    font-family: big caslon;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.item-b{
+  grid-area:main;
+}
+.item-c{
+  grid-area: footer;
 }
 .cOverlay input {
   margin-bottom: 1rem;
@@ -94,84 +115,3 @@ small {
   }
 }
 */
-
-h2  {
-
-  font-family: cabin;
-  padding: 10px;
-  text-align: center;
-  }
-
-h1  {
-
-  font-family: cabin;
-  padding: 10px;
-  text-align: center;
-  }
-
-h3  {
-
-  font-family: cabin;
-  padding: 10px;
-  text-align: center;
-  }
-p, label    {
-font-family: big caslon;
-padding: 10px;
-text-align: center;
-margin: 0px 0px;
-}
-form
-{
-  text-align: center;
-  font-family: big caslon;
-}
-input[type=submit] {
-  text-align: center;
-  border: none;
-  color: black;
-  padding: 16px 32px;
-  text-decoration: none;
-  margin: 4px 2px;
-  font-family: big caslon;
-  border-radius: 4px;
-  cursor: pointer;
-}
-input[type=text], input[type=password] {
-  font-family: big caslon;
-  width: 10%;
-  padding: 12px 20px;
-  margin: 2px 2px;
-  box-sizing: border-box;
-  border-radius: 4px;
-}
-input[type=checkbox] {
-  font-family: big caslon;
-  padding: 12px 20px;
-  margin: 2px 2px;
-  box-sizing: border-box;
-  border-radius: 4px;
-}
-input [type=button]{
-  align: center;
-  border: none;
-  color: black;
-  padding: 12px 22px;
-  text-decoration: none;
-  margin: 0px 0px;
-  font-family: big caslon;
-  border-radius: 4px;
-  cursor: pointer;
-
-}
-button {
-  align: center;
-  border: none;
-  color: black;
-  padding: 12px 22px;
-  text-decoration: none;
-  margin: 0px 0px;
-  font-family: big caslon;
-  border-radius: 4px;
-  cursor: pointer;
-}
