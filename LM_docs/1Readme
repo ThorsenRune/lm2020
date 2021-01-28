@@ -3,3 +3,6 @@ Documentation folder for the LM project
 		'draft_xx'   =   development code  (testing and prototyping goes here)
 		'LM_xxx'		 =		functional code
 		'LM_doc'		=	This folder with documentation, todo lists etc.
+
+
+Coding style - see https://docs.google.com/document/d/1D1KMGvOP9Qnw67Gu55Kmd1BUy42NN0EjFfKc5rkeJU8
