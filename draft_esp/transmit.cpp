@@ -20,7 +20,7 @@ AsyncWebServer server2(80);
 
 AsyncWebServer *_server;
 AsyncWebSocket *_ws;
-
+bool isBTConnected=false; //todo1 - flag using BT/WiFi
 
 bool mWifiSetupMain(){      //Setup wifi
     bool ret;
@@ -100,7 +100,8 @@ void mTransmit(){   //Transmit internal protocol data to client
   }
   //This is where  the data exchange with the client happenes
    if (isBTConnected) {
-      bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
+      //Todo: BT210126 complete code:
+      //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
       nTestVar[3]=SendDataBuf;
       SendDataBuf=0;
    } if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
