@@ -1,5 +1,7 @@
 <!-- Prototype of a FORM FOR EDITING VARIABLE INFORMATION  -->
 
+<details  <!-- Sliders -->
+	<summary> Control buttons </summary>
 <div class='item-a'>	<!-- Command buttons   TODO:21styling-->
 	<input type="button" class='cLeft'   value="Set IP address" onclick="oWS.EditIP()"style="width: 25%"><br></br> <br></br>
 	<input type="button"  class='cLeft' value="WiFi Setup" onclick="location.href='devicesetup.html'"style="width: 25%"><br></br><br></br>
@@ -12,6 +14,9 @@
 	<p>“For Chrome goto locationbar and insert:  chrome://flags/#enable-experimental-web-platform-features”
 	<br>
 </div>
+</details>
+<details>
+		<summary> Device Specifications </summary>
 <div  class="form1" action="">
 	<label>Firmware name</label>
 	<pre id='idVarName'>Title</pre><br>
@@ -49,3 +54,4 @@
 	<label >	Display min			</label>
 	<input id="idDispMin" type="number" type="number">
 </div>
+</details>
