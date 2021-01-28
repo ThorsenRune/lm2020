@@ -232,3 +232,10 @@ h3 {
 .cOverlay {
 	  background-color: rgba(0,0,0,0.8); /* Black background with opacity */
 }
+.container {
+    height: 45%;
+    text-align: center;
+    background: blue;
+    border: 1px solid black;
+    border-style: solid;
+}
