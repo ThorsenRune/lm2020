@@ -1,0 +1,231 @@
+	/*	 A DARK THEME*/
+html  {
+	color:#eeeeee;
+	background-color:#111111;
+}
+body {
+ 	    caret-color: orangered;
+}
+details {
+    border: fuchsia;
+    border-style: solid ;
+    border-width: thin;
+}
+input, textarea {
+	    background: inherit;
+    color: yellow;
+}
+summary {
+    border: darkslategrey;
+    border-style: dashed;
+    border-width: thin;
+}
+header {
+   position:  absolute;
+   background-color: darkblue;
+   top: 0;
+   width: 90%;
+   border-bottom: 1px solid gray;
+   color: inherit;
+   opacity: 75%;
+}
+footer {
+   position: absolute;
+   bottom: 0;
+   width: 90%;
+   background-color: darkblue;
+   color: inherit;
+   opacity: 75%;
+}
+th {background: #373e46;}
+//th {background: lightsteelblue;}
+
+button {
+	color: yellow;
+	background: darkblue;
+}
+@keyframes blink {
+   50% { border-color: #ff0000; }
+}
+caret,
+.caret {       //As a span class='caret'
+	width: 6px;
+	height: 6px;
+	display: inline;
+    border: 3px solid blue;
+	animation: blink .5s step-end infinite alternate;
+}
+.highlight {
+  animation: highlight linear 3s;
+}
+
+@keyframes highlight {
+  from { outline: 1px solid #ff0f; }
+  to   { outline: 1px solid #f000; }
+}
+	.highlight2 { background-color: yellow; color: red;}
+	.titlespan {
+		float:left;
+		display: block;
+
+	}
+	textarea,pre {
+	    -moz-tab-size : 4;
+	      -o-tab-size : 4;
+		tab-size : 4;
+	}
+	a {    color: cyan;}
+	#title_bar{
+		float: left;
+	    width:100%;
+
+	}
+	#idCmdBar  *{/*The command bar*/
+		z-index: 10;/*Atitle bar above anythign*/
+	}
+	#idMessage{
+		color: white;
+		background: darkblue;
+	}
+	code {
+		word-break: break-all;
+	}
+ 	.observe{
+		  text-decoration: underline;
+  		text-decoration-color: red;
+	}
+    .hidden{
+	    display:none;
+	}
+	.listing {
+
+		height: 90%;
+	}
+	.idFilepathcontainer {
+		display: flex;
+		float: none;
+		background-color: darkblue;skyblue
+	}
+	.idFilepathcontainer>label{
+		font-size: 1.3em;
+		width: 100%;
+		text-align: center;
+	}
+	#idRTFEdit{
+		    white-space: normal;
+	}
+	#idFilepath{
+		width: 100%;
+	}
+	#unsaved_tag{
+			background:yellow
+	}
+	.edit {
+		height:98%;
+		width:100%;
+
+		line-height: 1 ;
+		font-size:16px;
+		padding:1px;
+		margin: 1px;
+		box-sizing: border-box;
+		left:60px;
+		color:#eeeeee;
+		resize : none;
+		float:left;
+	}
+	#edit_div{
+		white-space: nowrap;
+		position: relative;
+		width: calc(100%);
+		 height: calc(100% - 	40px);
+	    display: flex;									/*Share the space*/
+
+
+	}
+    #editor, #edit_line, .edit{
+		background: inherit;					/*Use documents background*/
+		color:#eeeeee;
+	}
+	#editor, #edit_line{
+		line-height: 1 ;
+		font-size:16px;
+		//border:solid aliceblue;
+		height:100%;
+		padding:1px;
+		margin: 1px;
+		box-sizing: border-box;
+	}
+	#edit_line{
+		width: 60px;
+		overflow:hidden;
+		resize : none;
+		float:left;
+		text-align:right;
+		padding: 3px;
+	}
+/*						RTF FORMATTING     */
+h1 {font-size:1.3em;
+	page-break-before: auto;
+    text-align: center;
+    color: yellow;
+}
+h2 {font-size:1.2em;
+	text-decoration: underline;
+	page-break-before: auto;
+	}
+h3 {
+	font-size:1.1em;
+	page-break-before: auto;
+	font-weight: bold;
+    font-style: italic;
+}
+/****************************POSTIT NOTES	********************************/
+/* POST IT NOTES*/
+	.cPostIt{	/*190920		Resizing*/
+		height: auto;
+		opacity:1;
+		width: 150px;
+		border:  solid yellow;
+		border-radius: 10px;
+	  background: black;
+		z-index: 10;
+	   resize: auto;
+	   background:blue;
+	}
+
+	.contents {     /*Rev 190920  */
+		height: auto;
+		min-height: 1em;	/*At least one line  height*/
+		margin: 2px;
+	}
+	.handle {
+		background: blue;
+		font-size:small;
+		text-align: left;
+		margin: auto;
+	}
+	.handle::before {
+	  content: "⚓";
+	}
+	.close {
+		float:right;
+		color:white;
+		margin: 2px;
+		background: black;
+		opacity:1
+		padding: 2px;
+	}
+	#idPostItSVG {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 0;
+		pointer-events: none;	/*	Dont react to mouse */
+
+	}
+	#idPostItSVG line{
+		pointer-events: all;
+	}
