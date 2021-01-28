@@ -74,7 +74,7 @@ function readBT() {
 	 return bluetoothDeviceDetected.gatt.connect()
 	 .then(server => {
 		 console.log('Getting GATT Service...')
-		 return server.getPrimaryService(bleService)atom://teletype/portal/b2792472-99f5-4597-b9b8-bc689b02a31f
+		 return server.getPrimaryService(bleService)
 	 })
 	 .then(service => {
 		 console.log('Getting GATT Characteristic...')
