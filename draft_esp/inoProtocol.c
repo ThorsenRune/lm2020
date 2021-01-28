@@ -243,7 +243,7 @@ Revisions:
        zState=0;				//End  statemachine
        rxCmd=kReady;
         if (nDbgLvl&(2<<6))  mDebugInt("kGetReq for ",idx);
-       //todo: enable mPowerWatchDogReset();		//R180920 Reset the watchdog for power timeout
+       mPowerWatchDogReset();		// Reset the watchdog for power timeout
      }
      else {
        //This would be a reveive error because rxCmd was not recognized
