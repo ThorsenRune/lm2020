@@ -4,50 +4,41 @@ html, body {
 }
 
 h2  {
-
-  font-family: cabin;
   padding: 10px;
   text-align: center;
   }
 
 h1  {
 
-  font-family: cabin;
   padding: 10px;
   text-align: center;
   }
 
 h3  {
 
-  font-family: cabin;
   padding: 10px;
   text-align: center;
   }
 p, label    {
-font-family: big caslon;
-padding: 10px;
-text-align: center;
-margin: 0px 0px;
+  padding: 10px;
+  text-align: center;
+  margin: 0px 0px;
 }
 
 form
 {
   text-align: center;
-  font-family: big caslon;
 }
 input[type=submit] {
   text-align: center;
   border: none;
-  color: black;
   padding: 16px 32px;
   text-decoration: none;
   margin: 4px 2px;
-  font-family: big caslon;
   border-radius: 4px;
   cursor: pointer;
 }
 input[type=text], input[type=password] {
-  font-family: big caslon;
   width: 15%;
   padding: 12px 20px;
   margin: 2px 2px;
@@ -55,15 +46,14 @@ input[type=text], input[type=password] {
   border-radius: 4px;
 }
 input[type=number] {
-  font-family: big caslon;
-  width: 10%;
-  padding: 12px 20px;
-  margin: 2px 2px;
-  box-sizing: border-box;
-  border-radius: 4px;
+  width: 6em;       //Width needed for 6 characters (approx)
+//  padding: 12px 20px;
+//  margin: 2px 2px;
+//  box-sizing: border-box;
+//  border-radius: 4px;
 }
 input[type=checkbox] {
-  font-family: big caslon;
+
   padding: 12px 20px;
   margin: 2px 2px;
   box-sizing: border-box;
@@ -72,11 +62,9 @@ input[type=checkbox] {
 input [type=button]{
   text-align: center;
   border: none;
-  //color: black;
-  padding: 16px 32px;
+  //padding: 16px 32px;
   text-decoration: none;
   margin: 4px 2px;
-  font-family: big caslon;
   border-radius: 4px;
   cursor: pointer;
 
@@ -88,7 +76,6 @@ button {
   padding: 12px 22px;
   text-decoration: none;
   margin: 0px 0px;
-  font-family: big caslon;
   border-radius: 4px;
   cursor: pointer;
 }
@@ -131,22 +118,19 @@ path {
   float:left;
   text-align: center;
   border: none;
-  color: black;
   padding: 16px 32px;
   text-decoration: none;
   margin: 4px 2px;
-  font-family: big caslon;
+
   border-radius: 4px;
   cursor: pointer;	}	/*https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_ref_utilities_right*/
 .cRight{
   float:right;
   text-align: center;
   border: none;
-  color: black;
   padding: 16px 32px;
   text-decoration: none;
   margin: 4px 2px;
-  font-family: big caslon;
   border-radius: 4px;
   cursor: pointer;
 
