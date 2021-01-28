@@ -86,8 +86,8 @@ extern tTXProt oTXProt;			//global object of tranmission protocol
 
 
 /********************* METHODS *************************/
-	void mDispatchRX( );   	//Receive UART data and process it
-	void mDispatchTX(tTXProt*  obj);
+	void mDeSerializeRX( );   	//Receive UART data and process it
+	void mSerialize4TX(tTXProt*  obj);
 	//Run though object and send data witch have TXCount>0
 	void mTXExposeArray(tTXProt*  obj,const char* name,int Arr[],uint8_t  ArrLength, tUartCmd  ArrType);
 	// Register a variable and expose it to host
