@@ -100,7 +100,7 @@ void mTransmit(){   //Transmit internal protocol data to client
   }
   //This is where  the data exchange with the client happenes
    if (isBTConnected) {
-      //Todo1: complete code:
+      //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
       nTestVar[3]=SendDataBuf;
       SendDataBuf=0;

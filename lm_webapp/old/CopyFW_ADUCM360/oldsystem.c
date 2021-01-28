@@ -58,7 +58,7 @@ void mPBActions(){		//Actions to take on pushbutton activation
 			nMode.bits.STIMENABLE=!nMode.bits.STIMENABLE;//Toggle pause/stimulation
 			nMode.bits.HVPS_ON=nMode.bits.STIMENABLE;
 			bErrFlags.all_flags[0] = 0U;											// Clear all flags
-		//R181023 Idea: cancel shutdown on keypress   (todo1:test)
+ 
 			if (nMode.bits.SHUTDOWN)
 				nMode.bits.SHUTDOWN=0;
 	} else if (nMode.bits.KEY_LONGPRESS){
@@ -170,20 +170,6 @@ void mPS_ENA(eAction act){		//Master powersupply control
 }
 
 
-void mSystemCheck(){		//Check system status and initiate shutdown if needed
-//		if (nMode.bits.SHUTDOWN) 				mSystem_ShutDown();		//Shutting down, skip statemachine
-		if (nMode.bits.DEBUGGING) return;  //Disabled in debug mode
-		if (mPowerWatchDogTimeOut()>0)	mSystem_ShutDown();		//Watchdog timeout, start shutdown
-		if (bErrFlags.errbits.BattLow)			mSystem_ShutDown();						//Battery low, start shutdown
-		if (bErrFlags.errbits.bReceiveError)  nMode.bits.STIMENABLE=0;	//Stop stimulation on communication error
-		if (nMode.bits.STIMENABLE)
-			nMode.bits.SINEGENERATOR=0;	//Turn off sinegenerator if stimulating R181107
-		if (isCommTimeOut())
-			bErrFlags.errbits.bReceiveError=1;			//Timeout on Bluetooth communication
-}
-void mPowerWatchDogReset(void){			//Reset the power off (idle) watchdog
-	nPowerWatchDog=kPowerWatchDogTimeOut+kCommunicationTimeOut;
-}
 int isCommTimeOut(void) {				//Detects if more than kCommunicationTimeOut cycles since last communiation
 	if (nPowerWatchDog==kPowerWatchDogTimeOut )		//Trip point
 		return 1;

@@ -32,5 +32,5 @@ void MainSetup(){
   mCommInitialize();//Initialize the protocol communication with HOST
   if (nMode.bits.DEBUGGING) mDebugMsg("Done mCommInitialize");
 //+todo8	mStartTimer0(t0count);														// Start timer0
-//+todo8: mPowerWatchDogReset();  //Reset the watchdog
+  mPowerWatchDogReset();  //Reset the watchdog
 }

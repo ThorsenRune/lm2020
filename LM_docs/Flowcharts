@@ -49,6 +49,12 @@ Button     |─>	main.Init	->	|	WebSocket_Init();
 
 
 
+***               Setting up WiFi     ****
+  getWiFiCreds.cpp
+  after a timeout on no connection the device will setup a direct wifi link
+  on the Webpage goto [setup] and follow instructions
+  correlated documents:LM_Manual_SoftAP [https://docs.google.com/document/d/1NbRnOc03iK6UWZ1Ow7MSSe58b4Z45daQexx7Myo3i5k/edit#]
+
 *************+      initialization    FLOWCHART    FC&RT:201221   ******
 TODO: ref201221
 Power ON          +Check Connection--ok-->   	main.Init

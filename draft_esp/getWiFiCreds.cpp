@@ -1,3 +1,9 @@
+/*  file: getWiFiCreds.cpp
+// Configure SoftAP (direct wifi ESP-client) characteristics
+
+
+*/
+
 #include "getWiFiCreds.h"
 #include "publishvars.h"
 #include "debug.h"
@@ -9,14 +15,10 @@
  */
 
 //--------      Global VARIABLES
-// Configure SoftAP (direct wifi ESP-client) characteristics
 
 
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
 
-/*    MOVED TO creadentials.h:   */
-//String AP_SSID="";  // your internet wifi  SSID
-//String AP_PASS="";   // your internet wifi  password
 String AP_SSID = "Rune";  // your router's SSID here
 String AP_PASS = "telefon1";     // your router's password here
 String LM_URL = "url";
@@ -52,32 +54,8 @@ bool isMyStaticIPSet=false;
 bool startAPP=false;    //Ready to launch main LM_program
 bool stopsoftAP=false;    //Ready to launch main LM_program
 bool isWiFiStationConnected=false;  //Is device connected to softAP?
-bool mWIFISetup(AsyncWebServer & gserver){//Setup SOFT AP FOR CONFIGURING WIFI
-            //(Flowchart 2)
-    bool ret=false;
-    WiFi.disconnect();
-    mDebugMsgcpp("Calling InitSoftAP ");
-    ret=InitSoftAP(gserver);//Sets AP_SSID, AP_PASS by Setup a soft accesspoint   and ask the user for credentials
-      //The InitSoftAP will return the parameters
-      //connect to network and get the IP
-    DEBUG(2,"Calling mGetMyStaticIP ");
-    if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
-    if (ret){ //We got our credentials, save and restart
-      DEBUG(1,"*********MyStaticIP  |%s| *******\r\n", AP_StaticIP.c_str());
-      mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
-      mDebugMsgcpp("Calling: InitSoftAP second time");
-        //Setup the SoftAP from before, refresh client with full credentials
-      ret=InitSoftAP(gserver);//Second call to update IP and allow to proceed to server
-      if (startAPP)
-        return ret ; //If credentials have been saved now the recursive call should end width
-          //  --->mStartWebSocket
-    } else {  //Fail in getting credentials
-        DEBUG(1,"Fail in getting credentials, retry\n");
-    }
-    return false;
-}
 
-
+/*********        interface     ********/
 bool mWIFIConnect(){//Main entry point - a blocking call
   mDebugMsgcpp("Executing: mWIFIConnect1");
   //Get credentials from SPIFFS (Flowchart 0)
@@ -115,9 +93,32 @@ bool mWIFIConnect(){//Main entry point - a blocking call
 }
 
 //--------			SUB functions	----------------
+bool mWIFISetup(AsyncWebServer & gserver){//Setup SOFT AP FOR CONFIGURING WIFI
+            //(Flowchart 2)
+    bool ret=false;
+    WiFi.disconnect();
+    mDebugMsgcpp("Calling InitSoftAP ");
+    ret=InitSoftAP(gserver);//Sets AP_SSID, AP_PASS by Setup a soft accesspoint   and ask the user for credentials
+      //The InitSoftAP will return the parameters
+      //connect to network and get the IP
+    DEBUG(2,"Calling mGetMyStaticIP ");
+    if (ret) ret=mGetMyStaticIP();//(AP_SSID, AP_PASS,MyStaticIP);
+    if (ret){ //We got our credentials, save and restart
+      DEBUG(1,"*********MyStaticIP  |%s| *******\r\n", AP_StaticIP.c_str());
+      mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
+      mDebugMsgcpp("Calling: InitSoftAP second time");
+        //Setup the SoftAP from before, refresh client with full credentials
+      ret=InitSoftAP(gserver);//Second call to update IP and allow to proceed to server
+      if (startAPP)
+        return ret ; //If credentials have been saved now the recursive call should end width
+          //  --->mStartWebSocket
+    } else {  //Fail in getting credentials
+        DEBUG(1,"Fail in getting credentials, retry\n");
+    }
+    return false;
+}
 bool mGetMyStaticIP(){//Get a free  IP address and make it static
   //Flowchart: connect to network and get the IP
-  //TODO0 DEBUG
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
   WiFi.disconnect();delay(100);
   WiFi.mode(WIFI_STA);
@@ -155,12 +156,10 @@ bool mWaitUntilTrueOrTimeout(bool &bFlag){
 
 void mSetCredentials(){//Global params:(String AP_SSID,String AP_PASS,IPAddress  ) ){   //Get credentials from spiff
   //Saving credentials to SPIFFS
-  mDebugMsgcpp("Saving credentials in FLASH");
+  DEBUG(8,"Saving credentials in FLASH");
   writeFile(SPIFFS, "/SSID.txt", AP_SSID.c_str());
   writeFile(SPIFFS, "/Password.txt", AP_PASS.c_str());
   writeFile(SPIFFS, "/Url.txt", LM_URL.c_str());
-
-  //Todo1: what if an invaid ip is given to  String2IpAddress?
   writeFile(SPIFFS, "/IP.txt", AP_StaticIP.c_str());
   if (mGetCredentials()) {  //Readback
     return;
