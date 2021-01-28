@@ -146,8 +146,8 @@ void mSendVersionInfo(){//Send information about the firmware
 
 ////////////////////////////	RX TX Dispatcher	////////////////////////////
 
-//todo7: refactor mDispatchTX /mDispatchRX to mEncodeRFTX /mDecodeRFRX
-void mDispatchTX(tTXProt*  obj){   //Run though object and send data witch have TXCount>0
+//todo7: refactor mSerialize4TX /mDeSerializeRX to mEncodeRFTX /mDecodeRFRX
+void mSerialize4TX(tTXProt*  obj){   //Run though object and send data witch have TXCount>0
 /* 	@obj: 		the protocol object
 using:void Ucom_Send32bit(tFIFO oTX,int VarId, int *  Data2Send, int Count)
 */
@@ -171,7 +171,7 @@ using:void Ucom_Send32bit(tFIFO oTX,int VarId, int *  Data2Send, int Count)
      }	*/
 }
 
-void mDispatchRX( ){   //Receiving data and dispatch commands
+void mDeSerializeRX( ){   //Receiving data and dispatch commands
 /* 	@obj: 		the protocol object
   //Processing the serial receive data and
    // puts them in the protocol buffer
@@ -247,7 +247,7 @@ Revisions:
      }
      else {
        //This would be a reveive error because rxCmd was not recognized
-       mDebugMsg("bReceiveError in mDispatchRX");
+       mDebugMsg("bReceiveError in mDeSerializeRX");
        bErrFlags.errbits.bReceiveError =1;
        zState=0;				//End  statemachine
        rxCmd=kReady;
@@ -275,8 +275,8 @@ int mPopTXFIFO(){
   return mFIFO_pop(oTX);
 }
 void mProtocolProcess(void){
-   mDispatchTX(&oTXProt);
-   mDispatchRX( );
+   mSerialize4TX(&oTXProt);
+   mDeSerializeRX( );
 }
 
 

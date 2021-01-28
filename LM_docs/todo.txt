@@ -78,7 +78,7 @@ mReceive2
 FLOW INO
 ARDUINO-loop->
     *->mCommunication
-          *-->mDispatchRX
+          *-->mDeSerializeRX
                 *---->Expose2Protocol  (initializes the protocol)
 
     *-->mSendToClient : send buffer data to client
