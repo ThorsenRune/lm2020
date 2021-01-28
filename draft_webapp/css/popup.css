@@ -16,6 +16,7 @@
   cursor: pointer; /* Add a pointer on hover */
   text-align: center;
  }
+ 
 #idText{
 	height:50%;
 	width:100%;
@@ -64,7 +65,7 @@
   border: 1px solid #9c9c9c;
 }
 .form1 button {
-    
+
   padding: 0.7em;
   border: 0;
 }

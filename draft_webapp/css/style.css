@@ -1,6 +1,6 @@
 html, body {
   height: 100%;
-  background: linear-gradient(to bottom right, #ccffff 0%, #ffccff 100%);
+  background: linear-gradient(to bottom right, #003366 0%, #0099cc 69%, #00ccff 100%);
 }
 
 h2  {
@@ -29,6 +29,7 @@ padding: 10px;
 text-align: center;
 margin: 0px 0px;
 }
+
 form
 {
   text-align: center;
@@ -118,10 +119,10 @@ path {
 .container {
 	height: 45%;
 	text-align: center;
-	    background: linear-gradient(to bottom right, #ccffff 0%, #ffccff 100%);
-   border: 1px solid black;
-    border-style: solid;
-    color: black;
+	background: linear-gradient(to bottom right, #ccffff 0%, #ffccff 100%);
+  border: 1px solid black;
+  border-style: solid;
+  color: black;
 }
 
 
