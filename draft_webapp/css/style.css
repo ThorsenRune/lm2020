@@ -106,8 +106,6 @@ path {
 	text-align: center;
   border-style: solid;
 }
-
-
 .cLeft  {
   float:left;
   text-align: center;
@@ -122,4 +120,7 @@ path {
   text-align: center;
   margin: 4px 2px;
   border-radius: 4px;
+}
+.fullwidth {
+  width:100%;
 }

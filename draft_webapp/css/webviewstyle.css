@@ -24,7 +24,7 @@ h3  {
   text-align: center;
   }
 p, label    {
-font-family: big caslon;
+
 padding: 10px;
 text-align: center;
 margin: 0px 0px;
@@ -32,7 +32,7 @@ margin: 0px 0px;
 form
 {
   text-align: center;
-  font-family: big caslon;
+
 }
 input[type=submit] {
   text-align: center;
@@ -41,12 +41,12 @@ input[type=submit] {
   padding: 16px 32px;
   text-decoration: none;
   margin: 4px 2px;
-  font-family: big caslon;
+
   border-radius: 4px;
   cursor: pointer;
 }
 input[type=text], input[type=password] {
-  font-family: big caslon;
+
   width: 10%;
   padding: 12px 20px;
   margin: 2px 2px;
@@ -54,7 +54,7 @@ input[type=text], input[type=password] {
   border-radius: 4px;
 }
 input[type=checkbox] {
-  font-family: big caslon;
+
   padding: 12px 20px;
   margin: 2px 2px;
   box-sizing: border-box;
@@ -67,7 +67,7 @@ input [type=button]{
   padding: 12px 22px;
   text-decoration: none;
   margin: 0px 0px;
-  font-family: big caslon;
+
   border-radius: 4px;
   cursor: pointer;
 
@@ -79,7 +79,7 @@ button {
   padding: 12px 22px;
   text-decoration: none;
   margin: 0px 0px;
-  font-family: big caslon;
+
   border-radius: 4px;
   cursor: pointer;
 }
