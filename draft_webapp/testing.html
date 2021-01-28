@@ -4,17 +4,17 @@
 	<summary> Testing & Development </summary>
 
 	<input type="text" id="idVarName2"  placeholder="VarName"  onclick='this.focus();this.select()'>
-	<input id='idInput' type="text" style="width: 25%;" value="101">
+	<input type="text" id='idInput'  style="width: 20%;" value="101">
 	<button onclick='writeButton()'>Send</button>
 	<button onclick='serial.send(konst.kHandshake)';>Handshake</button>
 	<button onclick='prot.state(prot.kCommInit)';>Init Protocol</button>
 	<button onclick='testGetData()'>Get data</button>
 	<button onclick='testSetData()'>Set data</button>
-	Refresh Rate (ms)<input id="idRefreshRate" type="number" value="600"  step='10' onchange="mAcceptRefreshRate()">
-		<button onclick='Main_Loop()'>Step Processing</button>
+	 <span style="font-size: 12px"> &nbsp &nbsp &nbsp &nbsp &nbsp  &nbsp  &nbsp Refresh Rate (ms)</span><input id="idRefreshRate" type="number" value="600"  step='10' onchange="mAcceptRefreshRate()">
+		<button onclick='Main_Loop()' style="width: 10%;">Step Proc</button>
 	<br>
 	Debug messages
-	<textarea id="idDebugText" title="idText"  style="height: 150px;width: 100%;" ></textarea>
+	<textarea id="idDebugText" title="idText" style="height: 150px;width: 100%; font-family: big caslon;" ></textarea>
 </details>
 <script>
 

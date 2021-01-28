@@ -2,13 +2,14 @@
 .cOverlay { position: fixed; /* Sit on top of the page content */
  /* display: none; /* Hidden by default */
   border: solid;/* Show outline of popup */
+  border-radius: 4px;
   width: 80%; /* Full width (cover the whole page) */
   height: 80%; /* Full height (cover the whole page) */
   top:10%;
   left: 10%;
   right: 10%;
   bottom: 10%;
-  background-color: rgba(0,0,0,0.8); /* Black background with opacity */
+  background-color: rgba(0,0,0,0.6); /* Black background with opacity */
   z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
   cursor: pointer; /* Add a pointer on hover */
   text-align: center;
@@ -28,11 +29,17 @@
   margin-right: auto;
       display: grid;
     grid-template-columns: 1fr 1fr;
+    color: black;
+    text-decoration: none;
+    font-family: big caslon;
+    border-radius: 4px;
+    cursor: pointer;
+    background: white;
 
 }
 .cOverlay input {
   margin-bottom: 1rem;
- 
+
   border: 1px solid #9c9c9c;
 }
 .form1 button {
@@ -87,3 +94,84 @@ small {
   }
 }
 */
+
+h2  {
+
+  font-family: cabin;
+  padding: 10px;
+  text-align: center;
+  }
+
+h1  {
+
+  font-family: cabin;
+  padding: 10px;
+  text-align: center;
+  }
+
+h3  {
+
+  font-family: cabin;
+  padding: 10px;
+  text-align: center;
+  }
+p, label    {
+font-family: big caslon;
+padding: 10px;
+text-align: center;
+margin: 0px 0px;
+}
+form
+{
+  text-align: center;
+  font-family: big caslon;
+}
+input[type=submit] {
+  text-align: center;
+  border: none;
+  color: black;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  font-family: big caslon;
+  border-radius: 4px;
+  cursor: pointer;
+}
+input[type=text], input[type=password] {
+  font-family: big caslon;
+  width: 10%;
+  padding: 12px 20px;
+  margin: 2px 2px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+input[type=checkbox] {
+  font-family: big caslon;
+  padding: 12px 20px;
+  margin: 2px 2px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+input [type=button]{
+  align: center;
+  border: none;
+  color: black;
+  padding: 12px 22px;
+  text-decoration: none;
+  margin: 0px 0px;
+  font-family: big caslon;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+button {
+  align: center;
+  border: none;
+  color: black;
+  padding: 12px 22px;
+  text-decoration: none;
+  margin: 0px 0px;
+  font-family: big caslon;
+  border-radius: 4px;
+  cursor: pointer;
+}

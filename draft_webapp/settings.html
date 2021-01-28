@@ -1,15 +1,15 @@
 <!-- Prototype of a FORM FOR EDITING VARIABLE INFORMATION  -->
 
-<div class='cLeft'>	<!-- Command buttons   TODO:21styling-->
-	<input type="button" class='cLeft'   value="Set IP address" onclick="oWS.EditIP()"			><hr>
-	<input type="button"  class='cLeft' value="WiFi Setup" onclick="location.href='devicesetup.html'"			><br>
-	<input type="button"  class='cLeft' value="Reset" onClick="Main_Init();" /><br>
+<div class='cLeft'style="background:white; height: 100%;">	<!-- Command buttons   TODO:21styling-->
+	<input type="button" class='cLeft'   value="Set IP address" onclick="oWS.EditIP()"style="width: 25%"><br></br> <br></br>
+	<input type="button"  class='cLeft' value="WiFi Setup" onclick="location.href='devicesetup.html'"style="width: 25%"><br></br><br></br>
+	<input type="button"  class='cLeft' value="Reset" onClick="Main_Init();" style="width: 25%"/><br></br><br></br>
 
 
-	<input type="button"  class='cLeft' value="BlueTooth" onClick="alert('TODO: Implement');" /><br>
-	(A button that toggles between bluetoot and WiFi connection)
+	<input type="button"  class='cLeft' value="BlueTooth" onClick="alert('TODO: Implement');" style="width: 25%" />
+	<br>(A button that toggles between bluetoot and WiFi connection)<br></br><br></br>
 	<p>First of all the bluetooth API must be enabled.
-	<p>“For Chrome goto locationbar and insert:  chrome://flags/#enable-experimental-web-platform-features”
+	<p>“For Chrome goto locationbar and insert:  chrome://flags/#enable-experimental-web-platform-features” 
 
 
 
@@ -51,6 +51,4 @@
 	<input id="idDispMax" type="number" type="number">
 	<label >	Display min			</label>
 	<input id="idDispMin" type="number" type="number">
-
-
 </div>

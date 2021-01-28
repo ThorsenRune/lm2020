@@ -5,14 +5,17 @@
 html,
 body {
   height: 100%;
+  background: linear-gradient(to bottom right, #ccffff 0%, #ffccff 100%);
+  font-family: cabin;
 }
 
 body {
   margin: 0;
-  background: #3D3D4A;
+
+  background: linear-gradient(to bottom right, #003366 0%, #0099cc 69%, #00ccff 100%);
   color: white;
   min-height: 400px;
-  font-family: sans-serif;
+  font-family: cabin;
 }
 
 .info {
@@ -80,7 +83,7 @@ body {
 }
 .range-slider input[type=range][orient=vertical] {
   position: relative;
-  
+
   margin: 0;
   height: 100%;
   width: 100%;
@@ -150,4 +153,31 @@ body {
 }
 .theme4 {
   background: linear-gradient(yellow, green);
+}
+
+h2  {
+
+  font-family: cabin;
+  padding: 10px;
+  text-align: center;
+  }
+
+h1  {
+
+  font-family: cabin;
+  padding: 10px;
+  text-align: center;
+  }
+
+h3  {
+
+  font-family: cabin;
+  padding: 10px;
+  text-align: center;
+  }
+p, label    {
+font-family: big caslon;
+padding: 10px;
+text-align: center;
+margin: 0px 0px;
 }

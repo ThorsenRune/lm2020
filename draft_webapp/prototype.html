@@ -27,10 +27,10 @@
 	<div>
 		<label id='idStatus' >Unconnected</label>
 		<input type="text" id="idVarName1"  placeholder="VarName"  onclick='this.focus();this.select()'>
-    <input type="button"  class='cRight' value="Settings" onclick="idPopUp.hidden=!idPopUp.hidden;"			>
+    <input type="button"  class='cRight' value="Settings" onclick="idPopUp.hidden=!idPopUp.hidden;"> &nbsp
 
-		<input type="button" class='cRight' value="Reset" onClick="Main_Init();" />
-		<input type="button" class='cRight' value="Edit" onClick="popup.mSettings();" />
+		<input type="button" class='cRight' value="Reset" onClick="Main_Init();" /> &nbsp
+		<input type="button" class='cRight' value="Edit" onClick="popup.mSettings();" /> &nbsp
     <br>
 
 	</div>
@@ -40,7 +40,7 @@
 		<div id='idSettings'>
 			<?PHP include 'settings.html' ?>
 		</div>
-		<textarea id="idText" title="idText"  >	</textarea>
+		<!--<textarea id="idText" title="idText"  >	</textarea>-->
 		<button id="idTextClose" >OK </button>
 		<button id="idSettingsCancel" onclick="idPopUp.hidden=true" >CANCEL </button>
 	</div>
