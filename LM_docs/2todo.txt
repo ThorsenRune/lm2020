@@ -1,7 +1,8 @@
-// TODO.txt			//Descriptive file of what to do next. use an unique identifier to link list items to a fuller description
-
+// TODO.txt			//Descriptive file of what to do next.
+use an unique identifier to link list items to a fuller description
+When things have been done move them to 3Done.txt
 /*
-    []  Select WiFi/Bluetooth communication see BT210126 
+    []  Select WiFi/Bluetooth communication see BT210126
  	  []  fix popup.mSettings() - check idPopUp - Shoud allow for editing the currently selected element/widget
 		[]  fix the varsettings.html so it can be used for editing the protocol elements and widgets
 	  []	Put documentation in \DOC
