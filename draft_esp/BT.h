@@ -3,12 +3,15 @@
 		Handling wireless transmissions
 			 bluetooth
 			 issue: FC_RT210128
-			 You need to install libraries ????
+			 Libraries should be included by default in Arduino !????
 */
 
 #ifndef ____BT____    // only once guard to avoid recursive inclusion
 #define ____BT____
-#include "BLEDevice.h"
+#include <Arduino.h>
+//#define DEBUG_ON 1
+#include <BLEDevice.h>
+#if  ( DEBUG_ON==1)
 #include "BLEUtils.h"
 #include "BLEServer.h" //Library to use BLE as server
 #include "BLE2902.h"
@@ -17,5 +20,7 @@ void onBTConnect(BLEServer* pServer);
 void onBTDisconnect(BLEServer* pServer);
 void onBTWrite(BLECharacteristic *pCharacteristic);
 void InitBLE();
+
+	#endif
 
 #endif  //____BT____

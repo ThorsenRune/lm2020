@@ -3,6 +3,8 @@
 			bluetooth
 
 */
+//#define DEBUG_ON  //Skip compiling codeblocks
+#ifndef    DEBUG_ON
 #include "BT.h"
 
 //Define Service, Characteristic and Descriptor
@@ -79,3 +81,4 @@ void InitBLE() {
 // Start advertising
   pServer->getAdvertising()->start();
 }
+		#endif
