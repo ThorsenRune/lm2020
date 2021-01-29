@@ -123,7 +123,7 @@ void mTransmit(){   //Transmit internal protocol data to client
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
       //Send value
-      //-->LMCharacteristic.setValue(mSendData,SendDataBuf); //TODO, we have to send uint8_t*
+      LMCharacteristic.setValue(SendDataBuf); //TODO, we have to send uint8_t*
       //Send notification
       LMCharacteristic.notify();
       nTestVar[3]=SendDataBuf;
