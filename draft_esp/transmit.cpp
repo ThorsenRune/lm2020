@@ -10,6 +10,8 @@ extern "C" {  //Note- neccessary to implement C files
   #include "system.h"
   #include "inoProtocol.h"      //Including h file allows you to access the functions
   #include "publishvars.h"
+  #include "BT.h"
+
 }
 extern int TimeOutClient;
 extern int TimeoutWifi;
@@ -20,7 +22,7 @@ AsyncWebServer server2(80);
 
 AsyncWebServer *_server;
 AsyncWebSocket *_ws;
-bool isBTConnected=false; //todo1 - flag using BT/WiFi
+//bool isBTConnected=false; //todo1 - flag using BT/WiFi
 
 bool mWifiSetupMain(){      //Setup wifi
     bool ret;
