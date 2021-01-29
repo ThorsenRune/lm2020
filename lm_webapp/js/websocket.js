@@ -188,6 +188,7 @@ var MessageReceived = "";
 //////////////////	SERIAL COMMUNIATONS
 var serial={}		//Lowlevel serial communication
 serial.isReady=function (){
+		//todo0: add bluetooth connection check if we are using bluetooth
 		return (ws.readyState==ws.OPEN);
 	}
 serial.RXFiFo=[];	//Consume data by data= serial.RXFiFo.shift
