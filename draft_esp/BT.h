@@ -18,7 +18,7 @@
 void onBTConnect(BLEServer* pServer);
 void onBTDisconnect(BLEServer* pServer);
 void onBTWrite(BLECharacteristic *pCharacteristic);
-void InitBLE();
+bool InitBLE();
 
 
 

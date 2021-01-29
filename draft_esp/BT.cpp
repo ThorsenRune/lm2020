@@ -52,7 +52,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
 };
 /* ############################################################### */
 
-void InitBLE() {
+bool InitBLE() {
 //Set BT name
   BLEDevice::init("MeCFES");
 // Create the BLE Server
@@ -81,5 +81,6 @@ void InitBLE() {
 
 // Start advertising
   pServer->getAdvertising()->start();
+  return true;
 }
 		#endif
