@@ -64,14 +64,12 @@ function Main_Loop(){		//This is the refresh loop of the program
 }
 
 
-
-
-
-var init_SetupFromServer=function(dataurl){ //Load the protocol from server
-	var data=prot.oData;
+var init_SetupFromServer=function(dataurl){
+	//Load the protocol from server
+	var data=prot.oData;		//Referencing the global protocol object
 	mPHPCall(dataurl,'load',data,function(){
 		if (oRetData.data){
-			data=oRetData.data;		//TODO refactor   with protocol
+			data=oRetData.data;
 		} else {
 			alert ("File not found" );//oRetData.errors
 			return;
