@@ -14,7 +14,7 @@
 #if  ( DEBUG_ON==1)
 #include "BLEUtils.h"
 #include "BLEServer.h" //Library to use BLE as server
-#include "BLE2902.h"
+//#include "BLE2902.h"
 
 void onBTConnect(BLEServer* pServer);
 void onBTDisconnect(BLEServer* pServer);
