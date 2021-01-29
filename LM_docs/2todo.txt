@@ -3,9 +3,9 @@ use an unique identifier to link list items to a fuller description
 When things have been done move them to 3Done.txt
 
 ***********TODO LIST **********[done] (@who)   @where:what (how) ***************************
-    []@FC  Select WiFi/Bluetooth communication see BT210126
+    []@FC  Select WiFi/Bluetooth communication see BT210126 & FC29
     []  FC_RT210128  Make/maintain a list of libraries to install on Arduino
-    []  make calls to switch BT/WIFI connection
+    []  @INO-isBTConnected   make calls to switch BT/WIFI connection
  	  []  fix popup.mSettings() - check idPopUp - Shoud allow for editing the currently selected element/widget
 		[]  fix the varsettings.html so it can be used for editing the protocol elements and widgets
 	  []	Put documentation in \DOC
@@ -23,8 +23,13 @@ When things have been done move them to 3Done.txt
 
 *******************     DESCRIPTION OF TODO ITEMS           *******************
 
+isBTConnected: boolean that to switch WiFI/BT in CPP
+  mSwitch2BT:
+    mSetRFMethod(boolean)  //True=BT   false=WiFi
+    a method that True: initializes bluetooth  False: initializes WiFi
 
-<p>
+
+
 TodoProtocols{
 	let prot be an array, so we can connect more devices. E.g. prot[0] could be MeCFES1 and prot[1] eglove etc.
 	oaProtocols = new cProtocol3[nDevices];
