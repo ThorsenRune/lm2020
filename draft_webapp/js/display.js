@@ -166,7 +166,14 @@ function mVarName(ctrl,newname){
 		prot.pokedata();
 	}
 
-
+mToggleRFMode(){
+	bUseBluetooth()=!bUseBluetooth();		//Toggle the current state of RF
+	if (bUseBluetooth()) {
+		mMessage('Switching to BT mode');
+	} else {
+		mMessage('Switching to WiFi mode');
+	}
+}
 
 const popup={
 	 mMessage:function(str){

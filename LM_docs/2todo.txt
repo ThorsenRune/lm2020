@@ -27,9 +27,9 @@ isBTConnected: boolean that to switch WiFI/BT in CPP
   mSwitch2BT:
     mSetRFMethod(boolean)  //True=BT   false=WiFi
     a method that True: initializes bluetooth  False: initializes WiFi
-
-
-
+    mSetRFMethod please fix:return InitBLE(); so it returns true on success
+    <===>JS:bUseBluetooth
+    JS BT callgraph: isWebBluetoothEnabled
 TodoProtocols{
 	let prot be an array, so we can connect more devices. E.g. prot[0] could be MeCFES1 and prot[1] eglove etc.
 	oaProtocols = new cProtocol3[nDevices];

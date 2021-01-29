@@ -10,10 +10,19 @@ var oWS={			//The websocket interface class
 }
 
 var bWiFi_BT_State=true;	//todo:refactor name temporary
-var bUseBluetooth(newstate){
-	//RT210128 toggle bluetoot/WiFi
+var bUseBluetooth(newstate){  
+	/*
+		args: true=>use BT, false=>use WiFI, null=> return current state
+		returns true if BT is used flase if WiFi
+		@author:RT210128 toggle bluetoot/WiFi
+	*/
 	if (typeof newstate='undefined') return bWiFi_BT_State;
 	bWiFi_BT_State=newstate;
+	if (bWiFi_BT_State){		//Use bluetooth
+		startBT())	//Todo0: check that this call  is the right one
+	} else {
+		mWebSocket_InitAsync();			//Setup the websocket
+	}
 	//Todo business logic to enable disable wifi/bluetooth
 
 };
@@ -58,9 +67,9 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 //	*--->	BTReceiveEvent (data on BT) ->read data -> serial.onReceive(data)
 
 
-// initialize bluetooth and  setup an event listener
-//todo: refactor name mWebSocket_InitAsync
 function readBT() {
+	// initialize bluetooth and  setup an event listener
+	//todo: refactor name mWebSocket_InitAsync
 	document.getElementById( "idStatus").innerHTML="Connecting via BT";
 	//returns data from BT as Uint8Array [1..20]
 	//Todo: write what this does in a comment is this the Ternary Operator? (variable = (condition) ? expressionTrue : expressionFalse)
