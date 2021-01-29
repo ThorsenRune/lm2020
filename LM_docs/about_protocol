@@ -1,8 +1,7 @@
-//README.JS  			-				//DESCRIPTION TEXTFILE
-// This describes calls and inner workings of the WebApp.
-/*Its a JS file to allow for codefolding in ATOM, but has not executable code in it
-*/
-TODOS: see TODO.JS
+//about_protocol
+
+	Working documentation of the communication protocol used
+	
 
 
 

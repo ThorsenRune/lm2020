@@ -1,14 +1,27 @@
-// TODO.txt			//Descriptive file of what to do next.
+// 2TODO.txt			//Descriptive file of what to do next.
 use an unique identifier to link list items to a fuller description
 When things have been done move them to 3Done.txt
-/*
-    []  Select WiFi/Bluetooth communication see BT210126
+
+***********TODO LIST **********[done] (@who)   @where:what (how) ***************************
+    []@FC  Select WiFi/Bluetooth communication see BT210126
  	  []  fix popup.mSettings() - check idPopUp - Shoud allow for editing the currently selected element/widget
 		[]  fix the varsettings.html so it can be used for editing the protocol elements and widgets
 	  []	Put documentation in \DOC
     []  Port protocol FW files in arduino see https://drive.google.com/drive/folders/185abc_MnY5sStTrSBwsle0lv1kH3KRYu
-		todo: TodoProtocols let prot be an array, so we can connect more devices. E.g. prot[0] could be MeCFES1 and prot[1] eglove etc.
-*/
+		[]  todo: TodoProtocols let prot be an array, so we can connect more devices. E.g. prot[0] could be MeCFES1 and prot[1] eglove etc.
+    []  todo8: move 'init_SetupFromServer' into a 'server' structure
+    []  todo4: solve issue of protocol completion iss210128
+    []  @JS- css set     clear: both; on details element for responsive design
+    []  @JS - [settings] panel : list the current IP above [Set IP address]
+    []  @JS - [settings] panel : let cancel/enter keystokes act on [OK] [CANCEL] (hint: onkeydown event)
+    [RT210128]  JS mDebugMsg1 (see:notes-mDebugMsg) implement critical message at places that may cause problems and should be debugged
+    []  @JS -validate() maybe its more useful to know the number of invalid elements in the protocol. An element could be invalid but reserve space for another device/FW?
+
+
+
+*******************     DESCRIPTION OF TODO ITEMS           *******************
+
+
 <p>
 TodoProtocols{
 	let prot be an array, so we can connect more devices. E.g. prot[0] could be MeCFES1 and prot[1] eglove etc.
@@ -65,7 +78,9 @@ ToDo list
 see also:https://docs.google.com/document/d/1asDIyJUQyjWTWjn_OsVVbzIX3uRCjsKy1ccvBksbU9g/edit#heading=h.qsk0jinrkh64
 
 
-
+ISSUES
+  iss210128: when initializing the protocol the mRX_ProtInit is called for each element
+      how do we know when the last element has been reached?
 
 
 BT integration

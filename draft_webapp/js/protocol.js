@@ -26,7 +26,7 @@ const prot={		//Encapsulating communication protocol
   	,oProtElemVar :{}	//{varname: _VarDataObj	} holding volatile data
   	,wx:{}			//{window[id]:_WXObj	}Object of control settings wx.[id].[param]=
   }
-	,get oProtElemVar (){return prot.oData.oProtElemVar;} //Protocol element (alias: oProtElemVar =prot.oData.oProtElemVar;  //Todo untangle
+	,get oProtElemVar (){return prot.oData.oProtElemVar;} //Protocol element (alias: oProtElemVar =prot.oData.oProtElemVar;
 	,get oVarDesc(){return prot.oData.oVarDesc;} //Description
 	,get oWidgets(){return prot.oData.wx;} 		 //Widgets
 	,SetElement(el){	//Copy or create FW specific protocol element
@@ -81,8 +81,7 @@ prot.state=function(setState){ //Returns the state of the protocol
   if (validate()) this._state=konst.kReady
   return this._state
   function validate(){	//Check if protocol is received from device
-  //						all elements have nVarId valid number in range 64--100
-  //rev201125			todo:move into object
+  //						all elements have nVarId valid number in range 64--100 (iss201125)
   	var aNames=Object.keys(prot.oProtElemVar)
     if (!aNames.length) return false;
   	for (var i=0;i<aNames.length;i++){
@@ -91,7 +90,6 @@ prot.state=function(setState){ //Returns the state of the protocol
   		if (el.nVarId<64) return false;			//Unset element
   		if (el.nVarId>100) return false;		//Some error
   	}
-    debugger
   	return true;
   }
 }
@@ -144,7 +142,7 @@ prot.TXDispatch=function(){	//mTXDispnDataLengthatch - the response will be mRXD
 				VarData.peekdata=false;//Clear read request flag
 		}
 	} else if (prot.state()==prot.kError){
-		debugger //todo some action on protocol error
+		mDebugMsg1(1,"some action on protocol error");
 	}
   function mTX_SetReq(oProtElem){      /* Change data in device memory          Write data to device memory*/
   //Sending: Cmd,Varid,addressoffset,4databytes
@@ -209,12 +207,13 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		mMessage(prot.sFirmwareInfo,true)
 		return true
 	}
-
 	function mRX_ProtInit(){	//Register element in protocol
-	//Rev 2020
-	// Todo: determine when the protocol has been completed
-	//cmd,bStringLength,sElementName,bVarId,bDataLength,bVarType
-	//Requires stringlength+4 bytes
+    /*A konst.kCommInit is encountered - create a new element
+    and decode data as element name 'VarName','nVarId','nDataLength','nVarType'
+    serial element is : cmd[byte],len[byte],sElementName[len*byte],bVarId[byte],bDataLength[byte],bVarType[byte]
+    // iss210128  determine when the protocol has been completed
+	   //Requires stringlength+4 bytes
+  */
 		if (serial.RXFiFo[1]+5>serial.RXFiFo.length) return false; //Pack not ready yet
 		var el={}     //Create an empty element
 		var idx=1;
@@ -223,17 +222,18 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		for ( idx=2;idx<nBytes+2;idx++) {
 			el.VarName=el.VarName+ String.fromCharCode(serial.RXFiFo[idx])
         }
-		el.nVarId=serial.RXFiFo[idx++]  //Todo:9 refactor all to be zVarId like in FW code
+		el.nVarId=serial.RXFiFo[idx++]
 		el.nDataLength=serial.RXFiFo[idx++];//Length of data array
 		el.nVarType=serial.RXFiFo[idx++];//Length of data array
 		el=prot.SetElement(el);	//Register the element in the protocol and get a refernce to the protocol element
-    //Bugfix: rt210125
     if (!el.Vector) el.Vector=Array(el.nDataLength).fill(0);      //Create vector it not preinitialized in setup sFileName
     //Otherwise use default values
     else if (el.Vector.length!=el.nDataLength) el.Vector=Array(el.nDataLength).fill(0); //Be sure the length is correct
     if (typeof el.pokedata=='undefined') el.pokedata=false;   //Initialize pokedata flag
     if (typeof el.peekdata=='undefined') el.peekdata=false;   //Initialize peekdata flag
-    if (prot.ListVarNames().indexOf(el.VarName)>(prot.ListVarNames().length-2)) {  //Assume the protocol is ready when last var has been received
+    if (prot.ListVarNames().indexOf(el.VarName)>(prot.ListVarNames().length-2)) {
+      //iss210128
+      //Assume the protocol is ready when last var has been received
       prot.state(konst.kReady); //Assume that prot is ready
     }
 		serial.RXFiFo=serial.RXFiFo.slice(idx);	//Remove cmd & payload
@@ -269,7 +269,6 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		if (debug) debug.ReceivedElement=el
 		return true
 	}
-
 }
 
 
@@ -392,7 +391,7 @@ prot.mWX=function(idWX){		//contains Index, min,max
 		}
 		return myVar;
 	}
-prot.mVarValue=function(sVarName,idx,val){		// Rev 191107 todo: replace by prot.getVector
+prot.mVarValue=function(sVarName,idx,val){		//
 		//Get/Set value with digital conversion
 		//in: name of the element, idx= the index in the data array , val-if given will set the new value
 		if (!idx==undefined) debugger;
@@ -408,8 +407,8 @@ prot.mVarValue=function(sVarName,idx,val){		// Rev 191107 todo: replace by prot.
       if (undefined ===oData.Vector) return undefined
 			if (undefined ===oData.Vector[idx]) return undefined
 			var val=oData.Vector[idx]
-			if (typeof val==='undefined') debugger;	//Error you probably missed the index
-      if (typeof oDesc.Offset==='undefined') debugger;//todo fix potential errors
+			if (typeof val==='undefined') mDebugMsg1(1,"Error you probably missed the index @prot.mVarValue");
+      if (typeof oDesc.Offset==='undefined') mDebugMsg1(1,'typeof oDesc.Offsetdebugger fix potential errors');
 			var u=(val-oDesc.Offset)*oDesc.Factor;
 			oData.peekdata=true;
 			return u;

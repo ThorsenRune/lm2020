@@ -44,6 +44,15 @@ var mDebugMsg=function(txt,clear){
 	el.value=el.value+txt+"\n";
 	debugger
 }
+var mDebugMsg1=function(treshold,txt,clear){ //To replace mDebugMsg
+	/*Display critical errors, stop if below a threshold
+	Au:RT210128*/
+	if (nDbgLvl&&(nDbgLvl<nDbgLvl)) debugger;		//Catch critical errors below given treshold
+	var el=idDebugText;
+	if (clear) el.value='';
+	el.value=el.value+txt+"\n";
+	debugger
+}
 var mShowDropDownValue=function(){	//Show data in input
 	if (debug.ReceivedElement){
 		if(debug.ReceivedElement.VarName==idVarName2.value){

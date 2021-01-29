@@ -18,6 +18,8 @@ Using conditional compiling to test code without breaking the PROGRAMMING{
 	you can then revert back to working version changing number afrer 'DEBUG_ON'
 }
 
+use mDebugMsg(priority,'message') where more or less critical bugs may arise so they
+					can be caught and fixed
 
 
 
