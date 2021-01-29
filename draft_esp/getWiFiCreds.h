@@ -1,6 +1,6 @@
 /*file: getWiFiCreds.h
    This module will get the WiFi credentials stored in the FLASH memory
-   If the credentals are not valid, it will setup a direct wifi at (todo8: always same address?)
+   If the credentals are not valid, it will setup a direct wifi 'SoftAP_IP(192,168,1,1)'
    The client can connect to the local wifi network and insert the credentials of the internetwifi
 
 */

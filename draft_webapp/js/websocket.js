@@ -9,6 +9,14 @@ var oWS={			//The websocket interface class
 	}
 }
 
+var bWiFi_BT_State=true;	//todo:refactor name temporary
+var bUseBluetooth(newstate){
+	//RT210128 toggle bluetoot/WiFi
+	if (typeof newstate='undefined') return bWiFi_BT_State;
+	bWiFi_BT_State=newstate;
+	//Todo business logic to enable disable wifi/bluetooth
+
+};
 var ws=null;	//The websocket - a serial RX/TX channel to LM
 
 var mGetIpFromLocationbar=function(){		//This will get a WS ip from local storage or from search query
@@ -120,7 +128,8 @@ var MessageReceived = "";
 //Todo: call somewhere when selecting bluetooth if (isWebBluetoothEnabled() {...}
  function isWebBluetoothEnabled() {
 	 if (!navigator.bluetooth) {
-		 console.log('Web Bluetooth API is not available in this browser!')
+		 mDebugMsg1(1,'Web Bluetooth API is not available in this browser!')
+		 //
 		 return false
 	 }
 
@@ -134,7 +143,7 @@ var MessageReceived = "";
 		 optionalServices: [bleService],
 		 filters: [ { "name": deviceName } ]
 	 }
-	 console.log('Requesting any Bluetooth Device...')
+	 mDebugMsg1(2,'Requesting any Bluetooth Device...')
 	 return navigator.bluetooth.requestDevice(options).then(device => {
 		 bluetoothDeviceDetected = device
 	 }).catch(error => {
