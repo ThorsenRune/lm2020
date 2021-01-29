@@ -10,9 +10,8 @@ extern "C" {  //Note- neccessary to implement C files
   #include "system.h"
   #include "inoProtocol.h"      //Including h file allows you to access the functions
   #include "publishvars.h"
-  #include "BT.h"
-
 }
+#include "BT.h"               //fix28 - header needs to be outside extern 'c' block
 extern int TimeOutClient;
 extern int TimeoutWifi;
 extern bool bRelayLM2018 ;
@@ -22,9 +21,10 @@ AsyncWebServer server2(80);
 
 AsyncWebServer *_server;
 AsyncWebSocket *_ws;
+#if  ( DEBUG_ON==1)
 extern bool isBTConnected; //todo1 - flag using BT/WiFi
 extern BLECharacteristic LMCharacteristic;
-
+		#endif
 
 bool mWifiSetupMain(){      //Setup wifi
     bool ret;
@@ -103,16 +103,20 @@ void mTransmit(){   //Transmit internal protocol data to client
     SendDataBuf++;
   }
   //This is where  the data exchange with the client happenes
+  #if  ( DEBUG_ON==1)
    if (isBTConnected) {
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
       //Send value
       //-->LMCharacteristic.setValue(mSendData,SendDataBuf); //TODO, we have to send uint8_t*
-      //Send notification  
+      //Send notification
       LMCharacteristic.notify();
       nTestVar[3]=SendDataBuf;
       SendDataBuf=0;
-   } if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+   }
+
+   #endif
+   if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
      if (SendDataBuf>0){
          globalClient->binary(mSendData,SendDataBuf ); //Todo4: bypass th txfifo
          DEBUG(4,"TX2 -> Client %d data\n ",SendDataBuf);
