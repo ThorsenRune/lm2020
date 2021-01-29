@@ -104,6 +104,10 @@ void mTransmit(){   //Transmit internal protocol data to client
    if (isBTConnected) {
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
+      //Send value
+      LMCharacteristic.setValue(mSendData,SendDataBuf);
+      //Send notification  
+      LMCharacteristic.notify();
       nTestVar[3]=SendDataBuf;
       SendDataBuf=0;
    } if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
