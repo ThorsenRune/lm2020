@@ -37,9 +37,10 @@ bool mSetRFMethod(bool bBlueTooth){
   if (bBlueTooth){
     //Todo:@FC29 - call the methods for setting up BT
     isBTConnected=true;
+    return InitBLE();
   }
   else {
-
+    return mWifiSetupMain();
     isBTConnected=false;
   }
 
