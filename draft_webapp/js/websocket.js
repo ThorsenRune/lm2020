@@ -19,7 +19,13 @@ var bUseBluetooth=function(newstate){
 	if (typeof newstate==='undefined') return bWiFi_BT_State;
 	bWiFi_BT_State=newstate;
 	if (bWiFi_BT_State){		//Use bluetooth
-		readBT()	//Todo0: check that this call  is the right one
+		readBT()	//Start a connection todo: refactor to InitiazeBT
+		//TODO:startBT should be in a callback of readBT
+		setTimeout(function(){
+			mMessage('Waiting for pairing');
+			startBT();//Start the communication
+			mMessage('BT transmission started');
+		},15000);
 	} else {
 		mWebSocket_InitAsync();			//Setup the websocket
 	}
@@ -58,7 +64,7 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 	};
 	ws.onerror = function (error) {
 		document.getElementById( "idStatus").innerHTML="Failed to connect";
-		alert('Cant connect to '+staticIP);
+		mMessage('Cant connect to '+staticIP);
 	};
 }
 

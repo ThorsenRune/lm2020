@@ -37,6 +37,7 @@ bool mSetRFMethod(bool bBlueTooth){
   if (bBlueTooth){
     //Todo:@FC29 - call the methods for setting up BT
     //isBTConnected=true; //isBTConnected returns true if BT is connected set by onBTConnectDisconnect
+    DEBUG(1,"Starting Bluetooth");
     return InitBLE();
   }
   else {
@@ -130,8 +131,10 @@ void mTransmit(){   //Transmit internal protocol data to client
    if (isBTConnected) {
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
-      //Send value
-      LMCharacteristic.setValue(SendDataBuf); //TODO, we have to send uint8_t*
+      //Send value mSendData is the array of data. SendDataBuf is the length of the array mSendData
+      //todo5: refactor SendDataBuf with a better name
+       DEBUG(1,"BlueTooth sending  %d data\n ",SendDataBuf);
+      LMCharacteristic.setValue(mSendData); //TODO, we have to send uint8_t*
       //Send notification
       LMCharacteristic.notify();
       nTestVar[3]=SendDataBuf;
