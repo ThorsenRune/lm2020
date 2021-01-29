@@ -6,7 +6,7 @@
 //#define DEBUG_ON  //Skip compiling codeblocks
 #ifndef    DEBUG_ON
 #include "BT.h"
-#include "BLE2902.h"
+
 
 //Define Service, Characteristic and Descriptor
 #define LMService BLEUUID("783b26f8-740d-4187-9603-82281d6d7e4f")
