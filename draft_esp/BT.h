@@ -11,7 +11,7 @@
 #include <Arduino.h>
 //#define DEBUG_ON 1
 #include <BLEDevice.h>
-#if  ( DEBUG_ON==1)
+
 #include "BLEUtils.h"
 #include "BLEServer.h" //Library to use BLE as server
 //#include "BLE2902.h"
@@ -21,6 +21,6 @@ void onBTDisconnect(BLEServer* pServer);
 void onBTWrite(BLECharacteristic *pCharacteristic);
 void InitBLE();
 
-	#endif
+ 
 
 #endif  //____BT____
