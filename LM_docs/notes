@@ -1,0 +1,19 @@
+
+
+
+******************	PROGRAMMING PATTERNS			******
+
+
+
+---DEBUGGING INO-----
+
+Using conditional compiling to test code without breaking the PROGRAMMING{
+	solution the problem of slowly implementing new features and still having a working program
+	in the start of the ino/c/cpp file write
+			#define DEBUG_ON   1          //Conditional compilation for DEBUGGING
+	now sprinkle the following around your new code
+		#if  ( DEBUG_ON==1)
+			//your code
+		#endif
+	you can then revert back to working version changing number afrer 'DEBUG_ON'
+}
