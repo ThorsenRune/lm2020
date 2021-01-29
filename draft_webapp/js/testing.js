@@ -3,6 +3,7 @@
 
 //	todo:	Part of this is going to be a textinput widget
 devpanel={}	;			//Panel for testing and Development
+var nDbgLvl=0;
 devpanel.redraw=function(){
 	if (konst.kReady==prot.state()){
 		lib.mFillDataList(idVarName2,Object.keys(prot.oProtElemVar));	// To gui
@@ -18,7 +19,7 @@ function testGetData(){
 	if (oElem)	oElem.peekdata=true  //Correct way to request the variable
 	mShowDropDownValue();
 }
-function testSetData(){
+function testSetData(){nDbgLvlnDbgLvl
 	var oElem=prot.ElementByName( idVarName2.value)
 	var Vec=utils.String2Array(idInput.value);
 	prot.setVector(oElem,Vec);
@@ -47,7 +48,7 @@ var mDebugMsg=function(txt,clear){
 var mDebugMsg1=function(treshold,txt,clear){ //To replace mDebugMsg
 	/*Display critical errors, stop if below a threshold
 	Au:RT210128*/
-	if (nDbgLvl&&(nDbgLvl<nDbgLvl)) debugger;		//Catch critical errors below given treshold
+	if (nDbgLvl&&(nDbgLvl<treshold)) debugger;		//Catch critical errors below given treshold
 	var el=idDebugText;
 	if (clear) el.value='';
 	el.value=el.value+txt+"\n";

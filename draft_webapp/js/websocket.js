@@ -19,7 +19,7 @@ var bUseBluetooth=function(newstate){
 	if (typeof newstate==='undefined') return bWiFi_BT_State;
 	bWiFi_BT_State=newstate;
 	if (bWiFi_BT_State){		//Use bluetooth
-		startBT()	//Todo0: check that this call  is the right one
+		readBT()	//Todo0: check that this call  is the right one
 	} else {
 		mWebSocket_InitAsync();			//Setup the websocket
 	}
@@ -152,7 +152,7 @@ var MessageReceived = "";
 		 optionalServices: [bleService],
 		 filters: [ { "name": deviceName } ]
 	 }
-	 mDebugMsg1(2,'Requesting any Bluetooth Device...')
+	 mMessage('Requesting any Bluetooth Device...')
 	 return navigator.bluetooth.requestDevice(options).then(device => {
 		 bluetoothDeviceDetected = device
 	 }).catch(error => {

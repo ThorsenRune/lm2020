@@ -167,7 +167,7 @@ function mVarName(ctrl,newname){
 	}
 
 var mToggleRFMode=function(){
-	bUseBluetooth()=!bUseBluetooth();		//Toggle the current state of RF
+	bUseBluetooth(!bUseBluetooth());		//Toggle the current state of RF
 	if (bUseBluetooth()) {
 		mMessage('Switching to BT mode');
 	} else {

@@ -36,12 +36,12 @@ bool mSetRFMethod(bool bBlueTooth){
 */
   if (bBlueTooth){
     //Todo:@FC29 - call the methods for setting up BT
-    isBTConnected=true;
+    //isBTConnected=true; //isBTConnected returns true if BT is connected set by onBTConnectDisconnect
     return InitBLE();
   }
   else {
     return mWifiSetupMain();
-    isBTConnected=false;
+    //isBTConnected returns false if BT is disconnected set by onBTDisconnect
   }
 
 }
