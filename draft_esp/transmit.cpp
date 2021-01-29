@@ -1,7 +1,7 @@
 /*
 		Handling wireless transmissions
 			websocket
-			todo: bluetooth
+			todo: bluetooth see:mSetRFMethod
 
 */
 
@@ -23,9 +23,22 @@ AsyncWebServer server2(80);
 AsyncWebServer *_server;
 AsyncWebSocket *_ws;
 #ifndef DEBUG_ON
+#endif
 extern bool isBTConnected; //todo1 - flag using BT/WiFi
 extern BLECharacteristic LMCharacteristic;
-		#endif
+
+
+//*************************** interface*****************************
+
+bool mSetRFMethod(bool bBlueTooth){
+/*  Calling this will change the RF transmission method to BlueTooth or WiFi
+    @author:RT210128
+*/
+  
+
+}
+
+
 
 bool mWifiSetupMain(){      //Setup wifi
     bool ret;
@@ -105,7 +118,7 @@ void mTransmit(){   //Transmit internal protocol data to client
   }
   //This is where  the data exchange with the client happenes
   #ifndef DEBUG_ON)
- 
+
    if (isBTConnected) {
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
