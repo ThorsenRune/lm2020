@@ -17,3 +17,11 @@ Using conditional compiling to test code without breaking the PROGRAMMING{
 		#endif
 	you can then revert back to working version changing number afrer 'DEBUG_ON'
 }
+
+
+
+
+
+************HINTS for using ATOM for code editing****************
+---USING CODE FOLDING : you can set the arrow keys to (un)fold your CODE
+			[menu][edit][folding]
