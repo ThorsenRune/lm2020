@@ -126,7 +126,7 @@ void mTransmit(){   //Transmit internal protocol data to client
     SendDataBuf++;
   }
   //This is where  the data exchange with the client happenes
-  #ifndef DEBUG_ON)
+
 
    if (isBTConnected) {
       //Todo: BT210126 complete code:
@@ -141,7 +141,7 @@ void mTransmit(){   //Transmit internal protocol data to client
       SendDataBuf=0;
    }
 
-   #endif
+ 
    if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
      if (SendDataBuf>0){
          globalClient->binary(mSendData,SendDataBuf ); //Todo4: bypass th txfifo
