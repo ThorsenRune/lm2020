@@ -10,6 +10,8 @@ extern "C" {  //Note- neccessary to implement C files
   #include "system.h"
   #include "inoProtocol.h"      //Including h file allows you to access the functions
   #include "publishvars.h"
+  #include "BT.h"
+
 }
 extern int TimeOutClient;
 extern int TimeoutWifi;
@@ -20,7 +22,9 @@ AsyncWebServer server2(80);
 
 AsyncWebServer *_server;
 AsyncWebSocket *_ws;
-bool isBTConnected=false; //todo1 - flag using BT/WiFi
+extern bool isBTConnected; //todo1 - flag using BT/WiFi
+extern BLECharacteristic LMCharacteristic;
+
 
 bool mWifiSetupMain(){      //Setup wifi
     bool ret;
@@ -102,6 +106,10 @@ void mTransmit(){   //Transmit internal protocol data to client
    if (isBTConnected) {
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
+      //Send value
+      //-->LMCharacteristic.setValue(mSendData,SendDataBuf); //TODO, we have to send uint8_t*
+      //Send notification  
+      LMCharacteristic.notify();
       nTestVar[3]=SendDataBuf;
       SendDataBuf=0;
    } if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
