@@ -1,24 +1,26 @@
 <!-- Prototype of a FORM FOR EDITING VARIABLE INFORMATION  -->
-
+<label>Firmware:</label><p id='idFirmware'>Device not connected</p>
 <details  <!-- Sliders -->
-	<summary> Control buttons </summary>
-<div class='item-a'>	<!-- Command buttons   TODO:21styling-->
-	<input type="button" class='cLeft'   value="Set IP address" onclick="oWS.EditIP()"style="width: 25%"><br></br> <br></br>
-	<input type="button"  class='cLeft' value="WiFi Setup" onclick="location.href='devicesetup.html'"style="width: 25%"><br></br><br></br>
-	<input type="button"  class='cLeft' value="Reset" onClick="Main_Init();" style="width: 25%"/><br></br><br></br>
+	<summary> Device mode/setup </summary>
+<div class='item-a btn-group'>	<!-- Command buttons   TODO:21styling-->
 
-
-	<input type="button"  class='cLeft' value="BlueTooth" onClick="alert('TODO: Implement');" style="width: 25%" />
-	<br>(A button that toggles between bluetoot and WiFi connection)<br></br><br></br>
-	<p>First of all the bluetooth API must be enabled.
-	<p>“For Chrome goto locationbar and insert:  chrome://flags/#enable-experimental-web-platform-features”
+	<label>Change to a device with different IP</label>
+	<input type="button"    value="Set IP address" onclick="oWS.EditIP()" >
+	<label>Setup the WiFi connection for your router</label>
+	<input type="button"   value="WiFi Setup" onclick="location.href='devicesetup.html'" >
+	<label>Reset the protocol</label>
+	<input type="button"    value="Reset" onClick="Main_Init();"  />
+	<input type="button"  class='cLeft' value="BlueTooth" onClick="alert('TODO: Implement');"   />
+ 			(A button that toggles between bluetoot and WiFi connection)<br></br><br></br>
+	<p>The browser must be bluetooth enabled
+	<p>For Chrome goto locationbar and insert:  chrome://flags/#enable-experimental-web-platform-features
 	<br>
 </div>
 </details>
 <details>
-		<summary> Device Specifications </summary>
+		<summary>Assign and define variable </summary>
 <div  class="form1" action="">
-	<label>Firmware name</label>
+
 	<pre id='idVarName'>Title</pre><br>
 	<label >
 	Descriptive name</label>

@@ -205,6 +205,7 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
             prot.sFirmwareInfo = prot.sFirmwareInfo+ chr
         }
 		serial.RXFiFo=serial.RXFiFo.slice(nBytes+2);	//Remove cmd,length,payload
+    idFirmware.innerHTML=prot.sFirmwareInfo;
 		mMessage(prot.sFirmwareInfo,true)
 		return true
 	}
