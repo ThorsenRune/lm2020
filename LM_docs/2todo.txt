@@ -4,6 +4,7 @@ When things have been done move them to 3Done.txt
 
 ***********TODO LIST **********[done] (@who)   @where:what (how) ***************************
     []@FC  Select WiFi/Bluetooth communication see BT210126
+    []  FC_RT210128  Make/maintain a list of libraries to install on Arduino
  	  []  fix popup.mSettings() - check idPopUp - Shoud allow for editing the currently selected element/widget
 		[]  fix the varsettings.html so it can be used for editing the protocol elements and widgets
 	  []	Put documentation in \DOC
@@ -15,7 +16,7 @@ When things have been done move them to 3Done.txt
     []  @JS - [settings] panel : list the current IP above [Set IP address]
     []  @JS - [settings] panel : let cancel/enter keystokes act on [OK] [CANCEL] (hint: onkeydown event)
     [RT210128]  JS mDebugMsg1 (see:notes-mDebugMsg) implement critical message at places that may cause problems and should be debugged
-    []  @JS -validate() maybe its more useful to know the number of invalid elements in the protocol. An element could be invalid but reserve space for another device/FW?
+    []  @JS -validate() see:iss201125 maybe its more useful to know the number of invalid elements in the protocol. An element could be invalid but reserve space for another device/FW?
 
 
 
