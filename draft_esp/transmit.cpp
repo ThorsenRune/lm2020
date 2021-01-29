@@ -34,7 +34,14 @@ bool mSetRFMethod(bool bBlueTooth){
 /*  Calling this will change the RF transmission method to BlueTooth or WiFi
     @author:RT210128
 */
-  
+  if (bBlueTooth){
+    //Todo:@FC29 - call the methods for setting up BT
+    isBTConnected=true;
+  }
+  else {
+
+    isBTConnected=false;
+  }
 
 }
 
