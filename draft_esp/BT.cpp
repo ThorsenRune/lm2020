@@ -35,14 +35,14 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       //Serial.println(rxValue[0]);
 
       if (rxValue.length() > 0) {
-        Serial.println("*********");
-        Serial.print("Received Value: ");
+       // Serial.println("*********");
+       // Serial.print("Received Value: ");
 
         for (int i = 0; i < rxValue.length(); i++) {
-          Serial.print(rxValue[i]);
+         //Serial.print(rxValue[i]);
         }
-        Serial.println();
-        Serial.println("*********");
+        //Serial.println();
+        //Serial.println("*********");
       }
 
     }
@@ -60,7 +60,7 @@ void InitBLE() {
   BLEService *pLM = pServer->createService(LMService);
 
 //Create and add the characteristic to pBattery service
-  pBattery->addCharacteristic(&LMCharacteristic);
+  pLM->addCharacteristic(&LMCharacteristic);
 //Attach descriptor
   LMDescriptor.setValue("Data sent with LM Protocol");
   LMCharacteristic.addDescriptor(&LMDescriptor);

@@ -22,7 +22,9 @@ AsyncWebServer server2(80);
 
 AsyncWebServer *_server;
 AsyncWebSocket *_ws;
-//bool isBTConnected=false; //todo1 - flag using BT/WiFi
+extern bool isBTConnected; //todo1 - flag using BT/WiFi
+extern BLECharacteristic LMCharacteristic;
+
 
 bool mWifiSetupMain(){      //Setup wifi
     bool ret;
@@ -105,7 +107,7 @@ void mTransmit(){   //Transmit internal protocol data to client
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
       //Send value
-      LMCharacteristic.setValue(mSendData,SendDataBuf);
+      //-->LMCharacteristic.setValue(mSendData,SendDataBuf); //TODO, we have to send uint8_t*
       //Send notification  
       LMCharacteristic.notify();
       nTestVar[3]=SendDataBuf;
