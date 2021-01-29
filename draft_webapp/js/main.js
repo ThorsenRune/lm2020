@@ -22,7 +22,7 @@ function  Main_Init(){
 	prot.sFileName=mDataFile();		//Get the settings file e.g. data.txt
 	display.init()
 	display.idVarName1.onchange=mDDSetVarName;
-	mSetRFMethod(true);				//Select BT. Todo2: substitute true with a variable parameter
+	bUseBluetooth(true);				//Select BT. Todo2: substitute true with a variable parameter
 //	mWebSocket_InitAsync();			//Setup the websocket
 	init_SetupFromServer(dataurl);	//Get protocol and widget setup from a file
 	initAndSetupTheSliders();
