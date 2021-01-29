@@ -24,7 +24,7 @@ AsyncWebServer *_server;
 AsyncWebSocket *_ws;
 #ifndef DEBUG_ON
 #endif
-extern bool isBTConnected; //todo1 - flag using BT/WiFi
+bool useBT; //todo1 - flag using BT/WiFi
 extern BLECharacteristic LMCharacteristic;
 
 
@@ -36,7 +36,7 @@ bool mSetRFMethod(bool bBlueTooth){
 */
   if (bBlueTooth){
     //Todo:@FC29 - call the methods for setting up BT
-    //isBTConnected=true; //isBTConnected returns true if BT is connected set by onBTConnectDisconnect
+    useBT=true; //isBTConnected returns true if BT is connected set by onBTConnectDisconnect
     DEBUG(1,"Starting Bluetooth");
     return InitBLE();
   }
@@ -128,7 +128,7 @@ void mTransmit(){   //Transmit internal protocol data to client
   //This is where  the data exchange with the client happenes
 
 
-   if (isBTConnected) {
+   if (useBT) {
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
       //Send value mSendData is the array of data. SendDataBuf is the length of the array mSendData
@@ -141,7 +141,7 @@ void mTransmit(){   //Transmit internal protocol data to client
       SendDataBuf=0;
    }
 
- 
+
    if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
      if (SendDataBuf>0){
          globalClient->binary(mSendData,SendDataBuf ); //Todo4: bypass th txfifo
