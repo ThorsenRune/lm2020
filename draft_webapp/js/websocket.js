@@ -163,7 +163,7 @@ var MessageReceived = "";
 		 bluetoothDeviceDetected = device
 	 }).catch(error => {
 		 //Todo:
-		 mAlert('Cannot connect to bluetooth'+ error.message);
+		 mMessage('Cannot connect to bluetooth'+ error.message);
 		 //Todo : add type of error. handleChangedValue
 	 })
  }
