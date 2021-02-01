@@ -32,7 +32,7 @@ class MyServerCallbacks : public BLEServerCallbacks {
 /* ###############################################################  CALL back to receive data from Phone */
 
 class MyCallbacks: public BLECharacteristicCallbacks {
-    //Data from client
+    //Reveive data from client
     //todo:fc see _WsEvent
     void onBTWrite(BLECharacteristic *pCharacteristic) {
       std::string rxValue = pCharacteristic->getValue();
@@ -41,7 +41,9 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       if (rxValue.length() > 0) {
        // Serial.println("*********");
        // Serial.print("Received Value: ");
-
+         mReceive2(rxValue,rxValue.length());
+         //todo: rxValue must be an int array
+         //rxValue.length() must be an int
         for (int i = 0; i < rxValue.length(); i++) {
          //Serial.print(rxValue[i]);
         }
