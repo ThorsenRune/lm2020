@@ -78,7 +78,9 @@ button {
   cursor: pointer;
 }
 
-
+details { /*see:RT210201*/
+  clear: both;
+}
 svg {
     position: relative;
 	text-align: center;

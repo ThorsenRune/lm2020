@@ -120,15 +120,19 @@ void mTransmit(){   //Transmit internal protocol data to client
   //todo0:   oTX&RX are initialized in setup-->---->	MainSetup --->mCommInitialize
     mProtocolProcess();						//Process RX/TX buffers
   DEBUG(5,"mTransmit to client\n");
+  if (oTX==NULL) { //Catch if buffers were uninitialized, premature call 
+    mDebugHalt("Fatal error- using buffer before mCommInitialize ");
+  }
   while (!mFIFO_isEmpty(oTX)){
     uint8_t sendbyte=mPopTXFIFO();    //Get byte from  protocol
     mSendData[SendDataBuf]=sendbyte;    //Get a byte from serial port
     SendDataBuf++;
   }
   //This is where  the data exchange with the client happenes
-
-
-   if (useBT) {
+   if (SendDataBuf<1){
+     DEBUG (4,"Nothing to send");
+   }   else if (useBT) {
+     //Sending via BT
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
       //Send value mSendData is the array of data. SendDataBuf is the length of the array mSendData
@@ -139,10 +143,8 @@ void mTransmit(){   //Transmit internal protocol data to client
       LMCharacteristic.notify();
       nTestVar[3]=SendDataBuf;
       SendDataBuf=0;
-   }
-
-
-   if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+   } else if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+     //Sending via WIFI
      if (SendDataBuf>0){
          globalClient->binary(mSendData,SendDataBuf ); //Todo4: bypass th txfifo
          DEBUG(4,"TX2 -> Client %d data\n ",SendDataBuf);

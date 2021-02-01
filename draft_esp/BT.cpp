@@ -8,12 +8,16 @@
 #endif
 #include "BT.h"
 #include "transmit.h"
+<<<<<<< HEAD
 #include <Arduino.h>
 #include <stdint.h>           //Define standard types uint32_t etc
 #include <stdbool.h>				//Boolan types rt210107
 #include "debug.h"
 
 
+=======
+ 
+>>>>>>> d92f77de7b48f5cbe00bd5c3654d130f2c2a6cdb
 
 //Define Service, Characteristic and Descriptor
 #define LMService BLEUUID("783b26f8-740d-4187-9603-82281d6d7e4f")
@@ -56,6 +60,12 @@ class MyCallbacks: public BLECharacteristicCallbacks {
        // Serial.println("*********");
        // Serial.print("Received Value: ");
          mReceive2(rxValue,myString.length());
+<<<<<<< HEAD
+=======
+       //todo0: fix dataformat because :
+       //mReceive2 expects uint8_t *data, size_t len
+      //   mReceive2(rxValue,rxValue.length());
+>>>>>>> d92f77de7b48f5cbe00bd5c3654d130f2c2a6cdb
          //todo: rxValue must be an int array
          //rxValue.length() must be an int
         //for (int i = 0; i < myString.length(); i++) {
@@ -64,7 +74,6 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         //Serial.println();
         //Serial.println("*********");
       }
-
     }
 };
 /* ############################################################### */

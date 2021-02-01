@@ -2,4 +2,7 @@
 
 210126	Started to reorganize documentation in LM_docs
 
- 
+[RT210128]  JS mDebugMsg1 (see:notes-mDebugMsg) implement critical message at places that may cause problems and should be debugged
+[RT210201]  @JS - [settings] panel : let cancel/enter keystokes act on [OK] [CANCEL] (hint: onkeydown event)
+[RT210201]  @JS- css set     clear: both; on details element for responsive design
+[in progress]	Put documentation in \DOC

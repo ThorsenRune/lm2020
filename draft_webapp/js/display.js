@@ -16,6 +16,7 @@ display.init=function(){
 	display.idValue		=window.idValue
 	display.idIdx		=window.idIdx
 	display.ActiveWidget=document.activeElement;			//Active control
+	document.onkeydown=function(event){mKeyDown(event)}
 }
 
 
@@ -201,6 +202,7 @@ const popup={
 			display.idPopUp.hidden=true
 		}else if (display.idPopUp.hidden){
 			display.idSettingsCancel.onclick=function(){that.mShow(false)}
+			document.onkeydown=function(event){mKeyDown(event)}
 			display.idText.onblur=display.idSettingsCancel.onclick;
 			display.idText.hidden=true;
 			display.idSettings.hidden=true;
@@ -216,3 +218,8 @@ const popup={
 	}
 }
 var nSubCounter=10;
+var mKeyDown=function(evnt){			//Envent handler for keyboard strokes
+	if (mIsVisible(idTextClose)){	//Close settings winndow on cancel
+		if(evnt.keyCode==27)	idPopUp.hidden=true
+	}
+}
