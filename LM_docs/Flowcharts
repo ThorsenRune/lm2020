@@ -116,3 +116,7 @@ Notes: Tabsize 4
   allow value update for every new value sent|                       |
 6) stopBTnotifications() (/websoket.js)      |                       |
   stop value update                          |                       |
+
+
+
+            TRY LM_docs\Prova_bidirectional_connection TO UNDERSTAND HOW THE MODEL works
