@@ -7,7 +7,10 @@
 #ifndef    DEBUG_ON
 #endif
 #include "BT.h"
-
+#include <Arduino.h>
+#include <stdint.h>           //Define standard types uint32_t etc
+#include <stdbool.h>				//Boolan types rt210107
+#include "debug.h"   //Enables debugging with   DUMP(someValue);  TRACE();
 
 //Define Service, Characteristic and Descriptor
 #define LMService BLEUUID("783b26f8-740d-4187-9603-82281d6d7e4f")
@@ -22,13 +25,13 @@ bool isBTConnected = false;
 class MyServerCallbacks : public BLEServerCallbacks {
     //Todo:@FC when is this metod invoked?
     void onBTConnect(BLEServer* pServer) {
-      DEBUG(1,'BT Connected');
+      DEBUG(1,"BT Connected");
      isBTConnected = true;
     };
 
     void onBTDisconnect(BLEServer* pServer) {
       isBTConnected = false;
-      DEBUG(1,'BT Dis-Connected');
+      DEBUG(1,"BT Dis-Connected");
     }
 };
 
@@ -45,7 +48,9 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       if (rxValue.length() > 0) {
        // Serial.println("*********");
        // Serial.print("Received Value: ");
-         mReceive2(rxValue,rxValue.length());
+       //todo0: fix dataformat because :
+       //mReceive2 expects uint8_t *data, size_t len
+      //   mReceive2(rxValue,rxValue.length());
          //todo: rxValue must be an int array
          //rxValue.length() must be an int
         for (int i = 0; i < rxValue.length(); i++) {
