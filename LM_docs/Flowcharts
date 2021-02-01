@@ -101,13 +101,18 @@ Notes: Tabsize 4
 
                                                    COMMUNICATION
 
-                                             +───────────────────────>
+3) send2LMviaBT()   (/websoket.js)           +───────────────────────>
+   send data to Arduino                      |                       |
+  (called by serial.send (/websoket.js))     |                       |
+                                             |                       |  4) onWrite() handle received data (/BT.cpp)
+                                                                          ---> send them to mReceive2() (/transmit.cpp)
                                              |                       |
                                              |                       |
                                              |                       |
                                              |                       |
-                                             |<───────────────────── +
+                                             |<───────────────────── + 5) LMCharacteristic.setValue(); and LMCharacteristic.notify(); are used to update characteristic value (/transmit.cpp)
                                              |                       |
-                                             |                       |
-                                             |                       |
-                                             |                       |
+6) startBTnotifications() (/websoket.js)     |                       |
+  allow value update for every new value sent|                       |
+6) stopBTnotifications() (/websoket.js)      |                       |
+  stop value update                          |                       |
