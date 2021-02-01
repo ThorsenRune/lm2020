@@ -6,6 +6,7 @@
 //#define DEBUG_ON  //Skip compiling codeblocks
 #ifndef    DEBUG_ON
 #include "BT.h"
+#include "transmit.h"
 
 
 //Define Service, Characteristic and Descriptor
@@ -35,18 +36,21 @@ class MyCallbacks: public BLECharacteristicCallbacks {
     //Reveive data from client
     //todo:fc see _WsEvent
     void onBTWrite(BLECharacteristic *pCharacteristic) {
-      std::string rxValue = pCharacteristic->getValue();
+      std::string myString = pCharacteristic->getValue();
+      size_t len=myString.length();
+      std::vector<uint8_t> myVector(myString.begin(), myString.end());
+      uint8_t *rxValue = &myVector[0];
       //Serial.println(rxValue[0]);
 
-      if (rxValue.length() > 0) {
+      if (myString.length() > 0) {
        // Serial.println("*********");
        // Serial.print("Received Value: ");
-         mReceive2(rxValue,rxValue.length());
+         mReceive2(rxValue,myString.length());
          //todo: rxValue must be an int array
          //rxValue.length() must be an int
-        for (int i = 0; i < rxValue.length(); i++) {
+        //for (int i = 0; i < myString.length(); i++) {
          //Serial.print(rxValue[i]);
-        }
+        //}
         //Serial.println();
         //Serial.println("*********");
       }
