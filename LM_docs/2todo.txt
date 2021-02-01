@@ -3,7 +3,7 @@ use an unique identifier to link list items to a fuller description
 When things have been done move them to 3Done.txt
 
 ***********TODO LIST **********[done] (@who)   @where:what (how) ***************************
-    []@FC  Select WiFi/Bluetooth communication see BT210126 & FC29
+    []@FC  Select WiFi/Bluetooth communication see BT210126 & FC29,todo210201
     []  FC_RT210128  Make/maintain a list of libraries to install on Arduino
     []  @INO-isBTConnected   make calls to switch BT/WIFI connection
  	  []  fix popup.mSettings() - check idPopUp - Shoud allow for editing the currently selected element/widget

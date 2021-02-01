@@ -1,7 +1,7 @@
  // This is a module of prototype.html used for websocket.ino to interface with LM from browser (client)
  // todo: rename globally to webserial.js
 /*
-		FLOW:
+		FLOW: todo210201
 		(event)*--->	BTReceiveEvent (data on BT)
 										|-->read data -> serial.onReceive(data)
 
