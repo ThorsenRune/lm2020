@@ -19,11 +19,11 @@ var bUseBluetooth=function(newstate){
 	if (typeof newstate==='undefined') return bWiFi_BT_State;
 	bWiFi_BT_State=newstate;
 	if (bWiFi_BT_State){		//Use bluetooth
-		readBT()	//Start a connection todo: refactor to InitiazeBT
-		//TODO:startBT should be in a callback of readBT
+		connectviaBT()	//Start a connection todo: refactor to InitiazeBT
+		//TODO:startBTnotifications should be in a callback of connectviaBT
 		setTimeout(function(){
 			mMessage('Waiting for pairing');
-			startBT();//Start the communication
+			startBTnotifications();//Start the communication
 			mMessage('BT transmission started');
 		},15000);
 	} else {
@@ -73,7 +73,7 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 //	*--->	BTReceiveEvent (data on BT) ->read data -> serial.onReceive(data)
 
 
-function readBT() {
+function connectviaBT() {
 	// initialize bluetooth and  setup an event listener
 	//todo: refactor name mWebSocket_InitAsync
 	document.getElementById( "idStatus").innerHTML="Connecting via BT";
@@ -171,8 +171,8 @@ var MessageReceived = "";
 
 
  //SEND A MESSAGE TO THE ESP32
- //Todo: pass data as parameter writeBT(data)
-  function writeBT(value) {   //value is an arry of bytes
+ //Todo: pass data as parameter send2LMviaBT(data)
+  function send2LMviaBT(value) {   //value is an arry of bytes
   //let encoder = new TextEncoder('utf-8');
   log('Setting Characteristic User Description...');
   gattCharacteristic.writeValue(value)
@@ -192,7 +192,7 @@ var MessageReceived = "";
 
 //??NOW TO UPDATE DATA??//
 //START NOTIFICATIONS
- function startBT() {
+ function startBTnotificationsnotifications() {
 	 gattCharacteristic.startNotifications()
 	 .then(_ => {
 		 console.log('Start reading...')
@@ -202,7 +202,7 @@ var MessageReceived = "";
 	 })
  }
 //STOP NOTIFICATIONS
- function stopBT() {
+ function stopBTnotifications() {
 	 gattCharacteristic.stopNotifications()
 	 .then(_ => {
 		 console.log('Stop reading...')
@@ -224,7 +224,7 @@ serial.send=function(nByte){		//Calling the websocket nByte =[1,2,3,4,] di dati
 	var view=new Int8Array(buffer)
 	view[0]=nByte
 	if(isBTConnected){
-		writeBT(buffer)			//todo : if buffer.length > 20 loop split
+		send2LMviaBT(buffer)			//todo : if buffer.length > 20 loop split
 	} else {
 		ws.send(buffer)
 

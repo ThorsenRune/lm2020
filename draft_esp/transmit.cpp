@@ -24,7 +24,7 @@ AsyncWebServer *_server;
 AsyncWebSocket *_ws;
 #ifndef DEBUG_ON
 #endif
-bool useBT; //todo1 - flag using BT/WiFi
+bool useBT=false; //todo1 - flag using BT/WiFi
 extern BLECharacteristic LMCharacteristic;
 
 
@@ -36,13 +36,13 @@ bool mSetRFMethod(bool bBlueTooth){
 */
   if (bBlueTooth){
     //Todo:@FC29 - call the methods for setting up BT
-    useBT=true; //isBTConnected returns true if BT is connected set by onBTConnectDisconnect
+    useBT=true; //isBTClientConnected returns true if BT is connected set by onBTConnectDisconnect
     DEBUG(1,"Starting Bluetooth");
     return InitBLE();
   }
   else {
     return mWifiSetupMain();
-    //isBTConnected returns false if BT is disconnected set by onBTDisconnect
+    //isBTClientConnected returns false if BT is disconnected set by onBTDisconnect
   }
 
 }
@@ -133,7 +133,7 @@ void mTransmit(){   //Transmit internal protocol data to client
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
       //Send value mSendData is the array of data. SendDataBuf is the length of the array mSendData
       //todo5: refactor SendDataBuf with a better name
-       DEBUG(1,"BlueTooth sending  %d data\n ",SendDataBuf);
+      DEBUG(1,"BlueTooth sending  %d data\n ",SendDataBuf);
       LMCharacteristic.setValue(mSendData); //TODO, we have to send uint8_t*
       //Send notification
       LMCharacteristic.notify();

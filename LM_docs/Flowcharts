@@ -85,3 +85,29 @@ SETUP.HTML is a page for selecting wifi network
 
 
 Notes: Tabsize 4
+
+*****************************BT Structure***************************************
+
+                                            +──────+             +────────+
+                                            |Client|             |  |LM|  |
+                                            ++─────+             +───+────+
+                                             |                       | 1) Configure LM in BT mode using initBLE() (/BT.cpp) ---> isBTactive=true
+                                             |                       |       Waiting for client to connect......
+2) Client connect to BT via BT button        |                       |
+  It triggers ConnectviaBT() (/websocket.js) |                       |
+  ---> isBTConnected=true                    |                       | --> isBTClientConnected = true (/BT.cpp)
+                                             :                       :     (BT connection established and both devices aware of this...)
+                                             |
+
+                                                   COMMUNICATION
+
+                                             +───────────────────────>
+                                             |                       |
+                                             |                       |
+                                             |                       |
+                                             |                       |
+                                             |<───────────────────── +
+                                             |                       |
+                                             |                       |
+                                             |                       |
+                                             |                       |

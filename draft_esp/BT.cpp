@@ -7,15 +7,13 @@
 #ifndef    DEBUG_ON
 #endif
 #include "BT.h"
-<<<<<<< HEAD
 #include "transmit.h"
-
-=======
 #include <Arduino.h>
 #include <stdint.h>           //Define standard types uint32_t etc
 #include <stdbool.h>				//Boolan types rt210107
-#include "debug.h"   //Enables debugging with   DUMP(someValue);  TRACE();
->>>>>>> 7d8a0b1b356bee62971cde04f97cb33f38967f2d
+#include "debug.h"
+
+
 
 //Define Service, Characteristic and Descriptor
 #define LMService BLEUUID("783b26f8-740d-4187-9603-82281d6d7e4f")
@@ -23,20 +21,21 @@ BLECharacteristic LMCharacteristic(BLEUUID("1bfd9f18-ae1f-4bba-9fe9-0df611340195
 BLEDescriptor LMDescriptor(BLEUUID("2f562183-0ca1-46be-abd6-48d0be28f83d"));
 
 //Identify BT connection
-bool isBTConnected = false;
+bool isBTClientConnected = false;
+bool isBTActive = false;
 
 
 //Control if the BT is connected
 class MyServerCallbacks : public BLEServerCallbacks {
     //Todo:@FC when is this metod invoked?
-    void onBTConnect(BLEServer* pServer) {
-      DEBUG(1,"BT Connected");
-     isBTConnected = true;
+    void onConnect(BLEServer* pServer) {
+      DEBUG(1,"BT Client Connected");
+      isBTClientConnected = true;
     };
 
-    void onBTDisconnect(BLEServer* pServer) {
-      isBTConnected = false;
-      DEBUG(1,"BT Dis-Connected");
+    void onDisconnect(BLEServer* pServer) {
+      isBTClientConnected = false;
+      DEBUG(1,"BT Client Dis-Connected");
     }
 };
 
@@ -46,7 +45,7 @@ class MyServerCallbacks : public BLEServerCallbacks {
 class MyCallbacks: public BLECharacteristicCallbacks {
     //Reveive data from client
     //todo:fc see _WsEvent
-    void onBTWrite(BLECharacteristic *pCharacteristic) {
+    void onWrite(BLECharacteristic *pCharacteristic) {
       std::string myString = pCharacteristic->getValue();
       size_t len=myString.length();
       std::vector<uint8_t> myVector(myString.begin(), myString.end());
@@ -56,13 +55,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       if (myString.length() > 0) {
        // Serial.println("*********");
        // Serial.print("Received Value: ");
-<<<<<<< HEAD
          mReceive2(rxValue,myString.length());
-=======
-       //todo0: fix dataformat because :
-       //mReceive2 expects uint8_t *data, size_t len
-      //   mReceive2(rxValue,rxValue.length());
->>>>>>> 7d8a0b1b356bee62971cde04f97cb33f38967f2d
          //todo: rxValue must be an int array
          //rxValue.length() must be an int
         //for (int i = 0; i < myString.length(); i++) {
@@ -94,7 +87,7 @@ bool InitBLE() {
   LMCharacteristic.addDescriptor(new BLE2902());
 
   /* ###############################################################  define callback */
-//Define the command for Phone-to-Arduino communication handling
+//Define the command for Client-to-Arduino communication handling
   LMCharacteristic.setCallbacks(new MyCallbacks());
   /* ############################################################### */
 
@@ -105,5 +98,6 @@ bool InitBLE() {
 
 // Start advertising
   pServer->getAdvertising()->start();
+  isBTactive = true;
   return true;
 }
