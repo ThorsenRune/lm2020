@@ -195,7 +195,7 @@ var MessageReceived = "";
 
 //??NOW TO UPDATE DATA??//
 //START NOTIFICATIONS
- function startBTnotificationsnotifications() {
+ function startBTnotifications() {
 	 gattCharacteristic.startNotifications()
 	 .then(_ => {
 		 console.log('Start reading...')
