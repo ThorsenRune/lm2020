@@ -126,7 +126,7 @@ function connectGATT() {  // works like ws.onmessage
  	 receivedValue=value;
 	 serial.onReceive(receivedValue);
  //	 MessageReceived = receivedValue;
-   document.getElementById( "idStatus").innerHTML="CONNECTED, Acquiring data";
+   mDebugMsg1(1,"CONNECTED, Acquiring data");
  	 isBTConnected = true;
   }
 

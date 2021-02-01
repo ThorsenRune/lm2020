@@ -7,15 +7,8 @@
 #ifndef    DEBUG_ON
 #endif
 #include "BT.h"
-<<<<<<< HEAD
 #include "transmit.h"
-
-=======
-#include <Arduino.h>
-#include <stdint.h>           //Define standard types uint32_t etc
-#include <stdbool.h>				//Boolan types rt210107
-#include "debug.h"   //Enables debugging with   DUMP(someValue);  TRACE();
->>>>>>> 7d8a0b1b356bee62971cde04f97cb33f38967f2d
+ 
 
 //Define Service, Characteristic and Descriptor
 #define LMService BLEUUID("783b26f8-740d-4187-9603-82281d6d7e4f")

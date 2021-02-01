@@ -1,5 +1,18 @@
  // This is a module of prototype.html used for websocket.ino to interface with LM from browser (client)
  // todo: rename globally to webserial.js
+/*
+		FLOW:
+		(event)*--->	BTReceiveEvent (data on BT)
+										|-->read data -> serial.onReceive(data)
+
+
+
+
+
+
+*/
+
+
 var oWS={			//The websocket interface class
 	EditIP:function(){	//Let user insert IP manually
 			var wsip=mGetIpFromLocationbar();
@@ -46,8 +59,7 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 }
 
 
-//	BT_InitBluetoot - setup addEventListener BTReceiveEvent
-//	*--->	BTReceiveEvent (data on BT) ->read data -> serial.onReceive(data)
+
 
 
 // initialize bluetooth and  setup an event listener
