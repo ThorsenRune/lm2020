@@ -122,7 +122,8 @@ function connectGATT() {  // works like ws.onmessage
  	 let decoder = new TextDecoder('utf-8');
  	 let value = event.target.value
  	 var now = new Date()
- 	 console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) )
+ 	 console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) );
+	  mDebugMsg1(1,'> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) );
  	 receivedValue=value;
 	 serial.onReceive(receivedValue);
  //	 MessageReceived = receivedValue;
