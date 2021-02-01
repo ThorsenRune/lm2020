@@ -24,7 +24,7 @@ AsyncWebServer *_server;
 AsyncWebSocket *_ws;
 #ifndef DEBUG_ON
 #endif
-bool useBT=false; //todo1 - flag using BT/WiFi
+extern bool isBTClientConnected;
 extern BLECharacteristic LMCharacteristic;
 
 
@@ -36,7 +36,7 @@ bool mSetRFMethod(bool bBlueTooth){
 */
   if (bBlueTooth){
     //Todo:@FC29 - call the methods for setting up BT
-    useBT=true; //isBTClientConnected returns true if BT is connected set by onBTConnectDisconnect
+    //useBT=true; //isBTClientConnected returns true if BT is connected set by onBTConnectDisconnect
     DEBUG(1,"Starting Bluetooth");
     return InitBLE();
   }
@@ -120,7 +120,7 @@ void mTransmit(){   //Transmit internal protocol data to client
   //todo0:   oTX&RX are initialized in setup-->---->	MainSetup --->mCommInitialize
     mProtocolProcess();						//Process RX/TX buffers
   DEBUG(5,"mTransmit to client\n");
-  if (oTX==NULL) { //Catch if buffers were uninitialized, premature call 
+  if (oTX==NULL) { //Catch if buffers were uninitialized, premature call
     mDebugHalt("Fatal error- using buffer before mCommInitialize ");
   }
   while (!mFIFO_isEmpty(oTX)){
@@ -131,7 +131,7 @@ void mTransmit(){   //Transmit internal protocol data to client
   //This is where  the data exchange with the client happenes
    if (SendDataBuf<1){
      DEBUG (4,"Nothing to send");
-   }   else if (useBT) {
+   }   else if (isBTClientConnected) {
      //Sending via BT
       //Todo: BT210126 complete code:
       //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
