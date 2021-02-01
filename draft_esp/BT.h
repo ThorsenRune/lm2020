@@ -18,9 +18,9 @@
 
 void mTransmit();
 void mReceive2(uint8_t *data, size_t len);
-void onBTConnect(BLEServer* pServer);
-void onBTDisconnect(BLEServer* pServer);
-void onBTWrite(BLECharacteristic *pCharacteristic);
+void onConnect(BLEServer* pServer);
+void onDisconnect(BLEServer* pServer);
+void onWrite(BLECharacteristic *pCharacteristic);
 bool InitBLE();
 
 
