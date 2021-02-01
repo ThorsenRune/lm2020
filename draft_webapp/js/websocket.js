@@ -177,14 +177,14 @@ var MessageReceived = "";
  //Todo: pass data as parameter send2LMviaBT(data)
   function send2LMviaBT(value) {   //value is an arry of bytes
   //let encoder = new TextEncoder('utf-8');
-  log('Setting Characteristic User Description...');
+  mDebugMsg1(1,'Setting Characteristic User Description...');
   gattCharacteristic.writeValue(value)
   .then(_ => {
- 	 log('> Characteristic User Description changed to: ' + value);
+ 	 mDebugMsg1(1,'> Characteristic User Description changed to: ' + value);
   })
   .catch(error => {
 		//todo9: userfriendly message
- 	 log('Argh! ' + error);
+ 	 mDebugMsg1(1,'Argh! ' + error);
   });
 
 
@@ -198,20 +198,25 @@ var MessageReceived = "";
  function startBTnotifications() {
 	 gattCharacteristic.startNotifications()
 	 .then(_ => {
-		 console.log('Start reading...')
+		 console.log('Start reading...');
+		 mDebugMsg1(1,'Start reading...');
 	 })
 	 .catch(error => {
-		 console.log('[ERROR] Start: ' + error)
+		 console.log('[ERROR] Start: ' + error);
+		  mDebugMsg1(1,'[ERROR] Start: ' + error);
+
 	 })
  }
 //STOP NOTIFICATIONS
  function stopBTnotifications() {
 	 gattCharacteristic.stopNotifications()
 	 .then(_ => {
-		 console.log('Stop reading...')
+		 console.log('Stop reading...');
+		  mDebugMsg1(1,'Stop reading...');
 	 })
 	 .catch(error => {
-		 console.log('[ERROR] Stop: ' + error)
+		 console.log('[ERROR] Stop: ' + error);
+		mDebugMsg1(1,'[ERROR] Start: ' + error);
 	 })
  }
 
