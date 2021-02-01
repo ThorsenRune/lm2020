@@ -45,19 +45,11 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       size_t len=myString.length();
       std::vector<uint8_t> myVector(myString.begin(), myString.end());
       uint8_t *rxValue = &myVector[0];
-      //Serial.println(rxValue[0]);
+      DEBUG(1,"BT Message received");
 
       if (myString.length() > 0) {
-       // Serial.println("*********");
-       // Serial.print("Received Value: ");
+        DEBUG(1,"BT Message has a content");
          mReceive2(rxValue,myString.length());
-         //todo: rxValue must be an int array
-         //rxValue.length() must be an int
-        //for (int i = 0; i < myString.length(); i++) {
-         //Serial.print(rxValue[i]);
-        //}
-        //Serial.println();
-        //Serial.println("*********");
       }
     }
 };
