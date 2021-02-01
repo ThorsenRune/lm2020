@@ -49,6 +49,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
 
       if (myString.length() > 0) {
         DEBUG(1,"BT Message has a content");
+        Serial.println(myString.c_str());
          mReceive2(rxValue,myString.length());
       }
     }
