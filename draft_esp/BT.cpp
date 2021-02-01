@@ -92,6 +92,6 @@ bool InitBLE() {
 
 // Start advertising
   pServer->getAdvertising()->start();
-  isBTactive = true;
+  isBTActive = true;
   return true;
 }
