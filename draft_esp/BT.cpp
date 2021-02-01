@@ -56,13 +56,10 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       if (myString.length() > 0) {
        // Serial.println("*********");
        // Serial.print("Received Value: ");
-<<<<<<< HEAD
          mReceive2(rxValue,myString.length());
-=======
        //todo0: fix dataformat because :
        //mReceive2 expects uint8_t *data, size_t len
       //   mReceive2(rxValue,rxValue.length());
->>>>>>> 7d8a0b1b356bee62971cde04f97cb33f38967f2d
          //todo: rxValue must be an int array
          //rxValue.length() must be an int
         //for (int i = 0; i < myString.length(); i++) {

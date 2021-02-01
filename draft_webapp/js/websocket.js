@@ -80,7 +80,7 @@ function readBT() {
 	//returns data from BT as Uint8Array [1..20]
 	//Todo: write what this does in a comment is this the Ternary Operator? (variable = (condition) ? expressionTrue : expressionFalse)
 	return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo() && isWebBluetoothEnabled())
-	.then(connectGATT)
+	.then(connectGATT)  //todo:@FC please explain what is happening here
 	.then(_ => {
 		console.log('Evaluating signal of interest...')
 		return gattCharacteristic.readValue()	//receiving data from BT - Uint8Array [1..20]
@@ -89,8 +89,10 @@ function readBT() {
 		console.log('Waiting to start reading: ' + error)
 	})
 }
-// CONNECT TO A GENERIC ATTRIBUTE
- function connectGATT() {  // ws.onmessage
+
+function connectGATT() {  // works like ws.onmessage
+	 //When the user has paired the bluetooth this will set the isBTConnected flag
+	 // CONNECT TO A GENERIC ATTRIBUTE
 	 if (bluetoothDeviceDetected.gatt.connected && gattCharacteristic) {
 		 return Promise.resolve()
 	 }
@@ -108,6 +110,7 @@ function readBT() {
 		 gattCharacteristic.addEventListener('characteristicvaluechanged',
 				 handleChangedValue) //Like serial.onReceive
 		 document.getElementById( "idStatus").innerHTML="CONNECTED";
+		 alert('Bluetooth connected');
 		 isBTConnected = true;
 	 })
 
