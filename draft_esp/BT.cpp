@@ -3,8 +3,9 @@
 			bluetooth
 
 */
-//#define DEBUG_ON  //Skip compiling codeblocks
+#define DEBUG_ON  //Skip compiling codeblocks
 #ifndef    DEBUG_ON
+#endif
 #include "BT.h"
 
 
@@ -19,12 +20,15 @@ bool isBTConnected = false;
 
 //Control if the BT is connected
 class MyServerCallbacks : public BLEServerCallbacks {
+    //Todo:@FC when is this metod invoked?
     void onBTConnect(BLEServer* pServer) {
+      DEBUG(1,'BT Connected');
      isBTConnected = true;
     };
 
     void onBTDisconnect(BLEServer* pServer) {
       isBTConnected = false;
+      DEBUG(1,'BT Dis-Connected');
     }
 };
 
@@ -86,4 +90,3 @@ bool InitBLE() {
   pServer->getAdvertising()->start();
   return true;
 }
-		#endif
