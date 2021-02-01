@@ -225,6 +225,7 @@ var MessageReceived = "";
 //////////////////	SERIAL COMMUNIATONS
 var serial={}		//Lowlevel serial communication
 serial.isReady=function (){
+		//Todo: return true on BT open
 		return (ws.readyState==ws.OPEN);
 	}
 serial.RXFiFo=[];	//Consume data by data= serial.RXFiFo.shift
