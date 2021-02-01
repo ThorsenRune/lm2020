@@ -114,8 +114,8 @@ bool mWaitForWSClient(int TimeOutClient){
 // Get and Send data to client (the browser)
 
 #define MAXL 800
-char mSendData[MAXL] ;	// A temporary send buffer todo4: remove
-int SendDataBuf=0;
+char DataBuffer[MAXL] ;	// A temporary send buffer todo4: remove
+int DataBufferLength=0;      //Rename to DataBufferLength;
 void mTransmit(){   //Transmit internal protocol data to client
   //todo0:   oTX&RX are initialized in setup-->---->	MainSetup --->mCommInitialize
     mProtocolProcess();						//Process RX/TX buffers
@@ -125,31 +125,31 @@ void mTransmit(){   //Transmit internal protocol data to client
   }
   while (!mFIFO_isEmpty(oTX)){
     uint8_t sendbyte=mPopTXFIFO();    //Get byte from  protocol
-    mSendData[SendDataBuf]=sendbyte;    //Get a byte from serial port
-    SendDataBuf++;
+    DataBuffer[DataBufferLength]=sendbyte;    //Get a byte from serial port
+    DataBufferLength++;
   }
   //This is where  the data exchange with the client happenes
-   if (SendDataBuf<1){
+   if (DataBufferLength<1){
      DEBUG (4,"Nothing to send");
    }   else if (isBTClientConnected) {
      //Sending via BT
       //Todo: BT210126 complete code:
-      //bluetoot transmit (mSendData,SendDataBuf ); //Todo4: bypass th txfifo
-      //Send value mSendData is the array of data. SendDataBuf is the length of the array mSendData
-      //todo5: refactor SendDataBuf with a better name
-      DEBUG(1,"BlueTooth sending  %d data\n ",SendDataBuf);
-      LMCharacteristic.setValue(mSendData); //TODO, we have to send uint8_t*
+      //bluetoot transmit (DataBuffer,DataBufferLength ); //Todo4: bypass th txfifo
+      //Send value DataBuffer is the array of data. DataBufferLength is the length of the array DataBuffer
+      //todo5: refactor DataBufferLength with a better name
+      DEBUG(1,"BlueTooth sending  %d data\n ",DataBufferLength);
+      LMCharacteristic.setValue(DataBuffer); //TODO, we have to send uint8_t*
       //Send notification
       LMCharacteristic.notify();
-      nTestVar[3]=SendDataBuf;
-      SendDataBuf=0;
+      nTestVar[3]=DataBufferLength;
+      DataBufferLength=0;
    } else if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
      //Sending via WIFI
-     if (SendDataBuf>0){
-         globalClient->binary(mSendData,SendDataBuf ); //Todo4: bypass th txfifo
-         DEBUG(4,"TX2 -> Client %d data\n ",SendDataBuf);
-         nTestVar[3]=SendDataBuf;
-         SendDataBuf=0;
+     if (DataBufferLength>0){
+         globalClient->binary(DataBuffer,DataBufferLength ); //Todo4: bypass th txfifo
+         DEBUG(4,"TX2 -> Client %d data\n ",DataBufferLength);
+         nTestVar[3]=DataBufferLength;
+         DataBufferLength=0;
      }  else (DEBUG(9,"Nothing to send\n"));
    } else DEBUG(8,"Not Connected\n");
     if (nDbgLvl&(2<<2))  delay(1); //Max messages per second =15 dont go below 100    	//note 201111
