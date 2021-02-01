@@ -59,7 +59,6 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         //Serial.println();
         //Serial.println("*********");
       }
-
     }
 };
 /* ############################################################### */
