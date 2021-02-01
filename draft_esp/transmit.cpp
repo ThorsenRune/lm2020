@@ -138,7 +138,8 @@ void mTransmit(){   //Transmit internal protocol data to client
       //Send value DataBuffer is the array of data. DataBufferLength is the length of the array DataBuffer
       //todo5: refactor DataBufferLength with a better name
       DEBUG(1,"BlueTooth sending  %d data\n ",DataBufferLength);
-      LMCharacteristic.setValue(DataBuffer); //TODO, we have to send uint8_t*
+      std::string s( DataBuffer,DataBufferLength );
+      LMCharacteristic.setValue(s); //TODO, we have to send uint8_t*
       //Send notification
       LMCharacteristic.notify();
       nTestVar[3]=DataBufferLength;
