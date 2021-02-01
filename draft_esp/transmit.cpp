@@ -117,6 +117,7 @@ bool mWaitForWSClient(int TimeOutClient){
 char DataBuffer[MAXL] ;	// A temporary send buffer todo4: remove
 int DataBufferLength=0;      //Rename to DataBufferLength;
 void mTransmit(){   //Transmit internal protocol data to client
+  // INO:mTransmit  <--->  JS:serial.onReceive
   //todo0:   oTX&RX are initialized in setup-->---->	MainSetup --->mCommInitialize
     mProtocolProcess();						//Process RX/TX buffers
   DEBUG(5,"mTransmit to client\n");
@@ -154,6 +155,23 @@ void mTransmit(){   //Transmit internal protocol data to client
    } else DEBUG(8,"Not Connected\n");
     if (nDbgLvl&(2<<2))  delay(1); //Max messages per second =15 dont go below 100    	//note 201111
 }
+void mReceive2(uint8_t *data, size_t len){ //Get data from client
+// INO:mReceive2  <--->  JS:serial.send
+
+	int i=0;
+  DEBUG(8,"mReceive len:  %i\n",(int)len);
+    for( i=0; i < len; i++) {
+        DEBUG(7,"data %i\n",(int)data[i]);
+        if (bRelayLM2018){  //Pass through to subdevice (LM)
+              TRACE();
+          Serial2.write(data[i]);		//Send incoming data  to LM
+        } else {  //push the data onto buffer
+          mPushRX2FIFO((char) data[i]);
+      }
+    }
+	//if (i>0)Serial.printf("  Received data- pack length : %s \n" ,i);
+//	Serial.print("RSSI:");	Serial.println(rssi);
+}
 
 void _WsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
 		//AwsEventType describes what event has happened, like receive data or disconnetc
@@ -170,21 +188,6 @@ void _WsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTy
 	} else {
 		DEBUG(1,"unhandled onWsEvent\n");
 	}
-}
-void mReceive2(uint8_t *data, size_t len){ //Get data from client
-	int i=0;
-  DEBUG(8,"mReceive len:  %i\n",(int)len);
-    for( i=0; i < len; i++) {
-        DEBUG(7,"data %i\n",(int)data[i]);
-        if (bRelayLM2018){  //Pass through to subdevice (LM)
-              TRACE();
-          Serial2.write(data[i]);		//Send incoming data  to LM
-        } else {  //push the data onto buffer
-          mPushRX2FIFO((char) data[i]);
-      }
-    }
-	//if (i>0)Serial.printf("  Received data- pack length : %s \n" ,i);
-//	Serial.print("RSSI:");	Serial.println(rssi);
 }
 
 /*END ************INTERFACE FOR SEND AND RECEIVE FROM CLIENT*************************/
