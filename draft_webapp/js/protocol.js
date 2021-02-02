@@ -62,6 +62,39 @@ const prot={		//Encapsulating communication protocol
   }
   ,get refreshRate(){return this.oData.nPeriod;}
   ,set refreshRate(newvalue){ this.oData.nPeriod=newvalue;}
+  ,mDataExchange(mode){
+    //mode=='swap' , will exchange data through the server
+    //Sets the datafile and returns previous datafile on the server
+    if (mode=='swap'){
+      if (oRetData)
+      if (oRetData.data)
+      if (oRetData.data.Poke){
+        prot.oData=oRetData.data;
+        prot.lastState='redraw'
+        prot.oData.Poke=false;
+      }
+      //mAndExchange();	//Data exhange to Android App
+      mPHPCall(dataurl,'swap',prot.oData);	//Get file and write new prot.oData
+    } else  {
+      if (prot.oData.Poke){ 			//mPHPCall(dataurl,'swap',prot.oData,mCb);
+        prot.lastState='poke'
+        mPHPCall(dataurl,'save',prot.oData);
+      } else{
+        mPHPCall(dataurl,'load',prot.oData,mCb);
+      }
+      function mCb(oRetData){		//when returning from PHP PROCESS SAVED oWatch
+        if (oRetData.data)			prot.oData=oRetData.data;
+        if (prot.oData){
+          if (prot.oData.Poke) {
+            prot.lastState='redraw'
+            prot.oData.Poke=false;
+          }
+        }
+      }
+    }
+    prot.oData.Poke=false;	//Done poking in the exchange process
+  }
+
 }
 /* pattern example
 prot.oProtElemVar.__proto__.setVector=function() {

@@ -15,6 +15,7 @@ var oRetData={};	//Create a permanent copy
 
 //	****************************	SERVER INTERFACE	***************
 var mPHPCall = function(url,cmd,data,callback) {
+	//cmd ={save,load,swap}
 	return   new Promise((resolve, reject) => {
 		var xhr = new XMLHttpRequest();			//Stuff using the str
 		var sending={}

@@ -47,7 +47,6 @@ function mDataFile(newfile){
 
 
 
-
 var hInterval=0;
 function Main_Loop(){		//This is the refresh loop of the program
 		var reentries=0;
@@ -62,8 +61,43 @@ function Main_Loop(){		//This is the refresh loop of the program
 			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
 			reentries--;
 		},prot.refreshRate); 	//Loop peridoically
-}
 
+
+
+/*	Todo:move this flowchart
+			the problem: streaming the data from one client to another
+			Now Main_Loop2 implements a method for exchanging data to another client
+
+			client1	<-> server <-> client2
+
+			prot.mDataExchange(mode); //mode=swap,load,save
+
+			mode=save:				mode=load
+			client1	(data)----> server (data)---->client2
+			mode=load:				mode=save
+			client1	(data)<---- server (data)<----client2
+			mode=swap:				mode=swap
+			client1	(data)<----> server (data)<---->client2
+
+
+
+*/
+
+
+var bRelay2Server=true;			//Flag. Send data to server for remote observation
+var mode='swap';					//see flowchart above
+var Main_Loop2=function(interval) {
+	//An alternative to Main_Loop
+	if (prot.refreshRate>30){
+			if (display.doRedraw) display.redraw();
+			display.refresh();      //Update screen widgets and get userinput
+			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
+			if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
+	}
+	setTimeout(functions(){
+		requestAnimationFrame(Main_Loop2)
+	},prot.refreshRate);
+}
 
 var init_SetupFromServer=function(dataurl){
 	//Load the protocol from server
