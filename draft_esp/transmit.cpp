@@ -12,7 +12,7 @@ extern "C" {  //Note- neccessary to implement C files
   #include "inoProtocol.h"      //Including h file allows you to access the functions
   #include "publishvars.h"
 }
-#include "BT.h"               //fix28 - header needs to be outside extern 'c' block
+//#include "BT.h"               //fix28 - header needs to be outside extern 'c' block
 extern int TimeOutClient;
 extern int TimeoutWifi;
 extern bool bRelayLM2018 ;
@@ -24,8 +24,8 @@ AsyncWebServer *_server;
 AsyncWebSocket *_ws;
 #ifndef DEBUG_ON
 #endif
-extern bool isBTClientConnected;
-extern BLECharacteristic LMCharacteristic;
+//extern bool isBTClientConnected;
+//extern BLECharacteristic LMCharacteristic;
 
 
 //*************************** interface*****************************
@@ -34,16 +34,16 @@ bool mSetRFMethod(bool bBlueTooth){
 /*  Calling this will change the RF transmission method to BlueTooth or WiFi
     @author:RT210128
 */
-  if (bBlueTooth){
+/*  if (bBlueTooth){
     //Todo:@FC29 - call the methods for setting up BT
     //useBT=true; //isBTClientConnected returns true if BT is connected set by onBTConnectDisconnect
     DEBUG(1,"Starting Bluetooth");
     return InitBLE();
-  }
-  else {
+  }*/
+//  else {
     return mWifiSetupMain();
     //isBTClientConnected returns false if BT is disconnected set by onBTDisconnect
-  }
+//  }
 
 }
 
@@ -132,7 +132,9 @@ void mTransmit(){   //Transmit internal protocol data to client
   //This is where  the data exchange with the client happenes
    if (DataBufferLength<1){
      DEBUG (4,"Nothing to send");
-   }   else if (isBTClientConnected) {
+   }
+
+/* else if (isBTClientConnected) {
      //Sending via BT
       //Todo: BT210126 complete code:
       //bluetoot transmit (DataBuffer,DataBufferLength ); //Todo4: bypass th txfifo
@@ -145,7 +147,9 @@ void mTransmit(){   //Transmit internal protocol data to client
       LMCharacteristic.notify();
       nTestVar[3]=DataBufferLength;
       DataBufferLength=0;
-   } else if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+   }
+*/
+   else if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
      //Sending via WIFI
      if (DataBufferLength>0){
          globalClient->binary(DataBuffer,DataBufferLength ); //Todo4: bypass th txfifo
@@ -156,6 +160,8 @@ void mTransmit(){   //Transmit internal protocol data to client
    } else DEBUG(8,"Not Connected\n");
     if (nDbgLvl&(2<<2))  delay(1); //Max messages per second =15 dont go below 100    	//note 201111
 }
+
+
 void mReceive2(uint8_t *data, size_t len){ //Get data from client
 // INO:mReceive2  <--->  JS:serial.send
 
@@ -173,6 +179,7 @@ void mReceive2(uint8_t *data, size_t len){ //Get data from client
 	//if (i>0)Serial.printf("  Received data- pack length : %s \n" ,i);
 //	Serial.print("RSSI:");	Serial.println(rssi);
 }
+
 
 void _WsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
 		//AwsEventType describes what event has happened, like receive data or disconnetc

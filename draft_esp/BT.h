@@ -5,7 +5,7 @@
 			 issue: FC_RT210128
 			 Libraries should be included by default in Arduino !????
 */
-
+/*
 #ifndef ____BT____    // only once guard to avoid recursive inclusion
 #define ____BT____
 #include <Arduino.h>
@@ -26,3 +26,4 @@ bool InitBLE();
 
 
 #endif  //____BT____
+*/
