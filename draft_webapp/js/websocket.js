@@ -233,12 +233,12 @@ serial.send=function(nByte){		//Calling the websocket nByte =[1,2,3,4,] di dati
 	var buffer=new ArrayBuffer(1)
 	var view=new Int8Array(buffer)
 	view[0]=nByte
-	if(isBTConnected){
-		send2LMviaBT(buffer)			//todo : if buffer.length > 20 loop split
-	} else {
+	//if(isBTConnected){
+		//send2LMviaBT(buffer)			//todo : if buffer.length > 20 loop split
+	//} else {
 		ws.send(buffer)
 
-	}
+//	}
 }
 serial.onReceive=function(data){		//Called from the websockt
 	for (var i=0;i<data.length;i++){
