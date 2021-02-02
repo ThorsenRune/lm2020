@@ -3,7 +3,7 @@
 			bluetooth
 
 */
-#define DEBUG_ON  //Skip compiling codeblocks
+/*#define DEBUG_ON  //Skip compiling codeblocks
 #ifndef    DEBUG_ON
 #endif
 #include "BT.h"
@@ -34,9 +34,9 @@ class MyServerCallbacks : public BLEServerCallbacks {
     }
 };
 
-
+*/
 /* ###############################################################  CALL back to receive data from Phone */
-
+/*
 class MyCallbacks: public BLECharacteristicCallbacks {
     //Reveive data from client
     //todo:fc see _WsEvent
@@ -54,8 +54,9 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       }
     }
 };
+*/
 /* ############################################################### */
-
+/*
 bool InitBLE() {
 //Set BT name
   BLEDevice::init("MeCFES");
@@ -73,11 +74,12 @@ bool InitBLE() {
   LMCharacteristic.addDescriptor(&LMDescriptor);
   LMCharacteristic.addDescriptor(new BLE2902());
 
+*/
   /* ###############################################################  define callback */
 //Define the command for Client-to-Arduino communication handling
-  LMCharacteristic.setCallbacks(new MyCallbacks());
+/*  LMCharacteristic.setCallbacks(new MyCallbacks());*/
   /* ############################################################### */
-
+/*
 //Add UUID to the custom service
   pServer->getAdvertising()->addServiceUUID(LMService);
 //Start service
@@ -88,3 +90,4 @@ bool InitBLE() {
   isBTActive = true;
   return true;
 }
+*/
