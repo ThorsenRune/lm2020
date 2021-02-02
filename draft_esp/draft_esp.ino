@@ -42,8 +42,8 @@ void setup(){
   mESPSetup();
   DEBUG(1,"-------------running Android setup ------------");
   MainSetup();		//Setup the system, protocol & pointers.. (rt210107)
-  //int ret=mWifiSetupMain();
-  int ret= mSetRFMethod(true);
+  //int ret= mSetRFMethod(true);    Uncomment  to enable bluetooth
+  int ret=mWifiSetupMain();
   if (!ret) {DEBUG(1,"REBOOT");delay(2000);ReBoot();}
   //Websocket running okmProtocolProcess
   mDebugMsg("calling main loop in LM_ESP.ino");
