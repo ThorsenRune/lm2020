@@ -3,12 +3,13 @@ use an unique identifier to link list items to a fuller description
 When things have been done move them to 3Done.txt
 
 ***********TODO LIST **********[done] (@who)   @where:what (how) ***************************
-    []@FC  Select WiFi/Bluetooth communication see BT210126 & FC29,todo210201
+
+    []  Study the best implementation for 'Main_Loop2' exchanging data with remote client (see Roadmap)
     []  FC_RT210128  Make/maintain a list of libraries to install on Arduino
-    []  @INO-isBTConnected   make calls to switch BT/WIFI connection
+  
  	  []  fix popup.mSettings() - check idPopUp - Shoud allow for editing the currently selected element/widget
 		[]  fix the varsettings.html so it can be used for editing the protocol elements and widgets
-    []  Port protocol FW files in arduino see https://drive.google.com/drive/folders/185abc_MnY5sStTrSBwsle0lv1kH3KRYu
+
 		[]  todo: TodoProtocols let prot be an array, so we can connect more devices. E.g. prot[0] could be MeCFES1 and prot[1] eglove etc.
     []  todo8: move 'init_SetupFromServer' into a 'server' structure
     []  @JS - [settings] panel : list the current IP above [Set IP address]
