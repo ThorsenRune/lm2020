@@ -1,0 +1,32 @@
+ {"msg":"/* Development of collaborative platform \nTemplate Created by: Kenrick Beckett   Name: Chat Engine\n*/\n \n/******INTERFACE********************************************/\n\tfunction mDataRcvd(txt){\n\t\tfor (var i = 0; i < txt.length; i++) {\n\t\t\tvar obj=JSON.parse(txt[i])\n\t\t\tvar s=\"<span>\"+obj.name+\"</span>\"\n\t\t\t$('#chat-area').append($(\"<p>\"+ s +\"</p>\"));\n\t\t\tvar e = document.createElement('textarea');\n\t\t\te.value=obj.msg;\n\t\t\t$('#chat-area').append(e);\n\t\t}\t\t\t\t\t\t\t\t  \n\t}\n\tfunction mDataSend(message, nickname){\n\t\tvar obj={msg:message,name:nickname}\n\t\tvar s=JSON.stringify(obj);\n\t\tsendChat(s, nickname)\n\t}\n\n/***************************************************/\nvar instanse = false;\nvar state;\nvar mes;\nvar file;\n\nfunction Chat () {\n    this.update = updateChat;\n    this.send = mDataSend;\n\tthis.getState = getStateOfChat;\n}\n\n//gets the state of the chat\nfunction getStateOfChat(){\n\tif(!instanse){\n\t\t instanse = true;\n\t\t $.ajax({\n\t\t\t   type: \"POST\",\n\t\t\t   url: \"process.php\",\n\t\t\t   data: {  \n\t\t\t   \t\t\t'function': 'getState',\n\t\t\t\t\t\t'file': file\n\t\t\t\t\t\t},\n\t\t\t   dataType: \"json\",\n\t\t\t   success: function(data){\n\t\t\t\t   state = data.state;\n\t\t\t\t   instanse = false;\n\t\t\t   },\n\t\t\t});\n\t}\t \n}\n\n//Updates the chat\nfunction updateChat(){\n\t if(!instanse){\n\t\t instanse = true;\n\t     $.ajax({\n\t\t\t   type: \"POST\",\n\t\t\t   url: \"process.php\",\n\t\t\t   data: {  \n\t\t\t   \t\t\t'function': 'update',\n\t\t\t\t\t\t'state': state,\n\t\t\t\t\t\t'file': file\n\t\t\t\t\t\t},\n\t\t\t   dataType: \"json\",\n\t\t\t   success: function(data){\n\t\t\t\t   if(data.text){\n\t\t\t\t\t   mDataRcvd(data.text);\n\t\t\t\t   }\n\t\t\t\t   document.getElementById('chat-area').scrollTop = document.getElementById('chat-area').scrollHeight;\n\t\t\t\t   instanse = false;\n\t\t\t\t   state = data.state;\n\t\t\t   },\n\t\t\t});\n\t }\n\t else {\n\t\t setTimeout(updateChat, 1500);\n\t }\n}\n\n//send the message\nfunction sendChat(message, nickname)\n{       \n    updateChat();\n     $.ajax({\n\t\t   type: \"POST\",\n\t\t   url: \"process.php\",\n\t\t   data: {  \n\t\t   \t\t\t'function': 'send',\n\t\t\t\t\t'message': message,\n\t\t\t\t\t'nickname': nickname,\n\t\t\t\t\t'file': file\n\t\t\t\t },\n\t\t   dataType: \"json\",\n\t\t   success: function(data){\n\t\t\t   updateChat();\n\t\t   },\n\t\t});\n}\n\n\n\n\n\n","name":"receiver"}
+{"name":{"fID":"sender","fDate":"17/4/2020, 09:29:30"},"msg":"msg:message\n"}
+{"name":{"fID":"sender","fDate":"17/4/2020, 09:53:00"},"msg":"besked\n"}
+{"name":{"fID":"sender","fDate":"17/4/2020, 09:58:29"},"msg":"123\n"}
+{"name":{"fID":"sender","fDate":"17/4/2020, 10:01:03"},"msg":"sdfsdf\n"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:26:34"},"body":"23"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:26:39"},"body":"\neee"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:26:44"},"body":"1\n"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:28:23"},"body":"1"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:28:23"},"body":"2"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:28:24"},"body":"3"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:28:26"},"body":"4"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:29:08"},"body":"1"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:29:09"},"body":"2"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:29:10"},"body":"3"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 10:29:11"},"body":"4"}
+{"head":{"fID":"receiver","fDate":"17/4/2020, 10:29:30"},"body":"Hi"}
+{"head":{"fID":"receiver","fDate":"17/4/2020, 10:30:43"},"body":"Check this out"}
+{"head":{"fID":"receiver","fDate":"17/4/2020, 11:12:23"},"body":"asddas"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 11:18:15"},"body":"saf"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 11:19:58"},"body":"Some "}
+{"head":{"fID":"sender","fDate":"17/4/2020, 11:34:37"},"body":"asd"}
+{"head":{"fID":"null","fDate":"17/4/2020, 11:34:50"},"body":"asd"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 11:34:56"},"body":"asd"}
+{"head":{"fID":"sender","fDate":"17/4/2020, 13:31:16"},"body":"asd"}
+{"head":{"fID":"Guest","fDate":"17/4/2020, 13:57:03"},"body":"asdasd"}
+{"head":{"fID":"Inco","fDate":"17/4/2020, 13:57:32"},"body":"Hello"}
+{"head":{"fID":"Guest","fDate":"17/4/2020, 13:57:41"},"body":"Ciao inco"}
+{"head":{"fID":"A","fDate":"3/2/2021, 09:20:17"},"body":"asdad"}
+{"head":{"fID":"B","fDate":"3/2/2021, 09:20:31"},"body":"bbbbbbbbbbbbb"}
+{"head":{"fID":"A","fDate":"3/2/2021, 09:22:47"},"body":"aaaaa"}
+{"head":{"fID":"B","fDate":"3/2/2021, 09:23:00"},"body":"vvvvv"}
