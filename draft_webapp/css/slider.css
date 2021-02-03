@@ -45,21 +45,21 @@ body {
   position: absolute;
   left: 5px;
   width: 30px;
-  height: 40px;
+  height: 30px;
   line-height: 30px;
   background: white;
   color: #777;
+  font-size: 65%;
 
   box-shadow: 0 0 0 4px #3D3D4A;
   border-radius: 50%;
   pointer-events: none;
-  font-size: inherit;
 }
 .range-slider__thumb1 { /*   Alternative thumb  */
   position: absolute;
   left: 5px;
-  width: 30px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   line-height: 30px;
   background: yellow;
   color: #777;
