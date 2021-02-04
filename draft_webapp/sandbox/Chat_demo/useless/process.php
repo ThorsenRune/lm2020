@@ -1,4 +1,9 @@
 <?php
+  ini_set('display_errors', 1);
+  ini_set('display_startup_errors', 1);       //error messaging Todo6: remove before release
+  header("Access-Control-Allow-Origin: *");		//Enabling CORS
+
+
     $function = $_POST['function'];	//Selector for kind of operation
     $log = array();
     switch($function) {
@@ -6,8 +11,8 @@
         	 if(file_exists('chat.txt')){
                $lines = file('chat.txt');
         	 }
-             $log['state'] = count($lines); 
-        	 break;	
+             $log['state'] = count($lines);
+        	 break;
     	 case('update'):
         	$state = $_POST['state'];
         	if(file_exists('chat.txt')){
@@ -26,11 +31,11 @@
 					 $text[] =  $line = str_replace("\n", "", $line);
 					   }
 					}
-				 $log['text'] = $text; 
+				 $log['text'] = $text;
 			}
-        	  
+
              break;
-    	 
+
     	 case('send'):
 		  //$nickname = htmlentities(strip_tags($_POST['nickname']));
 			 $reg_exUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
@@ -38,9 +43,9 @@
 		 if(($message) != "\n"){
 			 if(preg_match($reg_exUrl, $message, $url)) {
        			$message = preg_replace($reg_exUrl, '<a href="'.$url[0].'" target="_blank">'.$url[0].'</a>', $message);
-				} 
+				}
 				$message = $_POST['message'];
-        	 fwrite(fopen('chat.txt', 'a'),  $message = str_replace("\n", " ", $message) . "\n"); 
+        	 fwrite(fopen('chat.txt', 'a'),  $message = str_replace("\n", " ", $message) . "\n");
 		 }
         	 break;
     }

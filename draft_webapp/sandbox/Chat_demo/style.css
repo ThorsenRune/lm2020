@@ -1,17 +1,36 @@
 *                               { margin: 0; padding: 0; }
-body                            { background: url(images/bg.png); }
+body                            { background: #312929; }
 h2                              { color: #fa9f00; font: 30px Helvetica, Sans-Serif; margin: 0 0 10px 0; }
 #page-wrap                      { width: 500px; margin: 30px auto; position: relative; }
 
-#chat-wrap                      { border: 1px solid #eee; margin: 0 0 15px 0; }
-#idTextArea                      { height: 300px; overflow: auto; border: 1px solid #666; padding: 20px; background: white; }
+#chat-wrap                      { border: 1px solid #eee;  }
+#idTextArea                      { height: 300px; overflow: auto; border: 1px solid #666; padding: 20px;
+
+																}
 #idTextArea span                 { color: white; background: #333; padding: 4px 8px; -moz-border-radius: 5px; -webkit-border-radius: 8px; margin: 0 5px 0 0; }
 #idTextArea p                    { padding: 8px 0; border-bottom: 1px solid #ccc; }
 
 #idName                      { position: absolute; top: 12px; right: 0; color: white;
-		
-		text-align: right; }   
+
+		text-align: right; }
 #idName span                 { color: #fa9f00; }
 
 #send-message-area p            { float: left; color: white; padding-top: 27px;  }
-#sendie                         { border: 3px solid #999; width: 360px; padding: 10px;  float: right; }
+#sendie1                         {
+	border: 3px solid #999;
+	width: 100%;
+	background: inherit;
+	/* padding: 10px; */
+	/* float: right; */
+}
+
+textarea,p {
+
+		width:100%;
+
+		background: inherit;
+color: white;
+}
+div {
+	    clear: both;
+}
