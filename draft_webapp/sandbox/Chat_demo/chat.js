@@ -28,6 +28,7 @@ function mInit(){
 			};
     //  mStartSocket();
 		idSendText.value="Some message";
+		idPort.innerText=port;
 		WSInit();
 		}
 

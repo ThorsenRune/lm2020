@@ -10,7 +10,9 @@
 
 <body onload="mInit()">
     <span id="page-wrap">
-        <h2>Communications</h2> <p id="idName"></p>
+        <label>WebSocket port</label>
+				<span id='idPort'>Port</span>
+				<p id="idName"></p>
         <div id="chat-wrap">
 					<div id="idTextArea"></div>
 				</div>
@@ -29,7 +31,7 @@
 
 <script>
 		function mStartServer(){
-			window.open("http://localhost/Downloads/ws/php-socket.php","_blank");
+			window.open("server.php","_blank");
 		}
 	/*
 			CLIENT Script that requires that server.php has been called.
