@@ -11,34 +11,36 @@
   http://localhost/public/lm2020/draft_webapp/sandbox/Chat_demo/peer.html<hr>
 		<span id="page-wrap">
 				<label>Connection</label>
-			 <span id='idPort'>Port</span>
-       <span id='idPing'>Ping</span>
-
+			 <span id='idPort'>peerid</span>
+       <label>pingtime:</label><span id='idPing'>timestamp</span>
+       <label>Payload size:</label><span id='idDataSize'>bytes</span>
 			 <p id="idName"></p>
 				<div id="chat-wrap">
 				 <div id="idTextArea"></div>
 			 </div>
+       	 <div hidden>
 			 <p>Your message: </p>
 			 <textarea id="sendie"  ></textarea>
 				<form id="send-message-area">
 				</form>
+         </div>
 		</span>
-	 <div>
+	 <div hidden>
 		 <button onclick='	mWSSend(idSendText.value);'>SEND</button>
 		 <hr>
 		 <button onclick='mStartServer()'>Start Server</button>
 		 <button onclick='idTextArea.innerHTML=""'>clear</button>
 		 <button onclick='mCloseSocket()'>stop</button>
 		 <hr>
+   </div>
 		 <button onclick='start()'>start</button>
 		 <button onclick='join()'>join</button>
 		 <button onclick='mSend()'>send</button>
-	 </div>
 </body>
 
 <script>
 	var peer = null
-	var peerId = 'lmdongnocchi'
+	var peerId = 'lmdongnocchi1'
 	var conn = null
 	var opponent = {
 		peerId: null
@@ -57,9 +59,18 @@
 		peer = new Peer(peerId);
 		peer.on('open', function(id) {
 			peerId = id
+      idPort.innerText=peerId
+
 		})
 		peer.on('error', function(err) {
-			alert(''+err)
+
+      //If someone has started this then join instead
+/*      if (err.type=="unavailable-id")      {
+        join(); //Dont start but join
+        return
+      }
+      */
+      alert(''+err)
 		})
 
 		// Heroku HTTP routing timeout rule (https://devcenter.heroku.com/articles/websockets#timeouts) workaround
@@ -95,45 +106,58 @@
 	function join() {
 		initialize()
 		peer.on('open', function() {
-			var destId = prompt("Opponent's peer ID:",peerId)
+      //Ask for peerId
+			//var destId = prompt("Opponent's peer ID:",peerId)
+      destId=peerId;  //peerId is the shared ID
 			conn = peer.connect(destId, {
 				reliable: true
 			})
 			conn.on('open', function() {
 				opponent.peerId = destId
-				mMessage("Waiting for opponent's move");
+        idPort.innerText=destId
+				mMessage("Waiting for someone to send data");
 				turn = false
 				begin()
 			})
 		})
 	}
-
   function mSend() {
-    conn.send(['payload', makeArray(datasize)])
+    loopback=true;    //Signal to loopback the signal
+    var data=[]
+    data[0]='payload'
+    data[1]= makeArray(datasize)
+    data[2]=Date.now();
+    data[3]='sendback'
+    conn.send(data);
     process()
   }
-  function mReceive(){
+  function mReceive(data){
     var a = data[1]
-    mMessage('csum'+a[0]+'  ctrl'+checksum(a));
+    var dt=-data[2]+Date.now();
+    mMessage('TimeDiff(ms):'+dt+'  check sum diff:'+(a[0]-checksum(a)));
+    idDataSize.innerText=bytelength(data);
+    if (data[3]=='sendback'){
+      data[3]='received'
+      conn.send(data);
+    }
   }
 	function begin() {
 			conn.on('data', function(data) {
 				switch(data[0]) {
-					case 'payload':mReceive(data)
-
+					case 'payload':
+            mReceive(data)
 						process()
 						break
 				}
 			})
 			conn.on('close', function() {
 				if(!ended) {
-					mMessage('Opponent forfeited!')
+					mMessage('Remote disconnected!')
 				}
-				turn = false
 			})
 			peer.on('error', function(err) {
+        debugging
 				alert(''+err)
-				turn = false
 			})
 		}
 
