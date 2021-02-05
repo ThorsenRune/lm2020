@@ -7,7 +7,6 @@
   <script type="text/javascript" src="chat.js"></script>
 
 </head>
-
 <body onload="mInit()">
     <span id="page-wrap">
         <label>WebSocket port</label>
@@ -22,10 +21,11 @@
         </form>
     </span>
 		<div>
+			<button onclick='	mWSSend(idSendText.value);'>SEND</button>
 			<hr>
 			<button onclick='mStartServer()'>Start Server</button>
 			<button onclick='idTextArea.innerHTML=""'>clear</button>
-			<button onclick='mCloseSocket())'>stop</button>
+			<button onclick='mCloseSocket()'>stop</button>
 		</div>
 </body>
 

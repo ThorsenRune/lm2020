@@ -82,6 +82,18 @@ function Main_Loop(){		//This is the refresh loop of the program
 
 
 */
+/* note210205
+	testurl:localhost/public/lm2020/lm_webapp
+		Testing scenario:
+			client1 opens testurl in one browser
+			client2 opens testurl in another browser (or in incognito mode)
+			one should be master (connected to ESP)
+			the other is a remote (connected to   master which connects to ESP)
+
+			our problem is to decide what is master/remote?
+			[prot] data are saved/loaded to server using data.php by calling prot.mDataExchange
+			remote can read/write the data callign prot.mDataExchange
+*/
 
 
 var bRelay2Server=true;			//Flag. Send data to server for remote observation

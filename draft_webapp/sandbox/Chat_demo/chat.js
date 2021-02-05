@@ -4,6 +4,9 @@ Template Created by: Kenrick Beckett   Name: Chat Engine
 var idSendText;
 var port=8090;
 
+var phpdata={};		//Data to share over the websocket
+phpdata.ShareData=1000;
+
 //sudo su; kill -9 $(sudo lsof -t -i:5006)
 function mInit(){
 		idSendText=sendie;
@@ -16,51 +19,27 @@ function mInit(){
         window.localStorage.setItem('chatusername',name);//Save the name
     	// display name on pageidSendText
 			idName.innerHTML="You are: <span id='chatuser'>" + name + "</span>";
-    	// kick off chat
-
-//			chat.getState();     		// watch textarea for key presses
       idSendText.onkeydown=function(event) {
         var keyCode1 = event.which;
 				if (keyCode1 == 13) {
-					mSocketSend(idSendText.value);					//Send
+					mWSSend(idSendText.value);					//Send
 					event.preventDefault();  		          //Stop key
 				}
 			};
-    //  mStartSocket();
 		idSendText.value="Some message";
 		idPort.innerText=port;
 		WSInit();
 		}
 
-function sChatUser(){return chatuser.innerText}
-function mSocketSend(msg){  //RT210203
-  idSendText.value=msg;   //Set the send text
-  mDataRcvd('> ' + msg);  //Echo locally
-	var messageJSON = {
-		chat_user: sChatUser(),
-		chat_message: msg
-	};
-	websocket.send(JSON.stringify(messageJSON));
-}
-//function mStartSocket(){
-function mCloseSocket(){
-	socket.close();
-}
-function showMessage(msg){mDataRcvd(msg)}
-var phpdata;
-var WSInit=function (){
-	//var websocket = new WebSocket("ws://localhost:8090/demo/php-socket.php");
+var WSInit=function (){ //Initialize the websocket
 	var websocket = new WebSocket("ws://localhost:"+port);
 	websocket.onopen = function(event) {
 		showMessage("Connection is established!");
 	}
 	websocket.onmessage = function(event) {
 		var Data = JSON.parse(event.data);
-		phpdata=Data;
-		showMessage(Data.message_type+">"+Data.message);
-
+		mWSReceive(Data);
 	};
-
 	websocket.onerror = function(event){
 		showMessage(" Problem due to some Error ");
 	};
@@ -68,12 +47,36 @@ var WSInit=function (){
 		showMessage(" Connection Closed ");
 	};
 	window.websocket=websocket; //Export it
-
-
-
-
+}
+function mWSSend(msg){  //Send to WS
+  idSendText.value=msg;   //Set the send text
+  mDataRcvd('> ' + msg);  //Echo locally
+	var messageJSON = {
+		msgSender: sChatUser()
+		,message: msg
+		,ShareData:phpdata.ShareData+1
+	};
+	websocket.send(JSON.stringify(messageJSON));
+}
+function mWSReceive(Data){			//Read from WS
+	if (Data.ShareData) phpdata.ShareData=Data.ShareData;
+	showMessage(Data.msgSender+">"+JSON.stringify(Data));
 }
 
+
+
+
+
+
+
+
+//function mStartSocket(){
+function mCloseSocket(){
+	mDataRcvd('Closing socket');
+	websocket.close()
+}
+
+function showMessage(msg){mDataRcvd(msg)}
 
 //}
 /******INTERFACE********************************************/
@@ -107,9 +110,13 @@ var WSInit=function (){
 		container.appendChild(e);               // Append as last element in container
 	}
 
-/***************************************************/
+/***********UTILITY FUNCTIONS****************************************/
 
+function sChatUser(){return chatuser.innerText}
 //		UTILS
+
+
+
 	sDate=function(timestamp){   //Return a date string
 		if (timestamp)	return (new Date(timestamp)).toLocaleString('it')
 		return (new Date( )).toLocaleString('it')

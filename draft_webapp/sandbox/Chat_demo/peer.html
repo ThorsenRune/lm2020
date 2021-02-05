@@ -1,0 +1,171 @@
+<html>
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" 	content="width=device-width, initial-scale=1">
+	<title>PEER </title>
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<script type="text/javascript" src="chat.js"></script>
+	<script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+</head>
+<body onload='mMessage("Start")'>
+  http://localhost/public/lm2020/draft_webapp/sandbox/Chat_demo/peer.html<hr>
+		<span id="page-wrap">
+				<label>Connection</label>
+			 <span id='idPort'>Port</span>
+       <span id='idPing'>Ping</span>
+
+			 <p id="idName"></p>
+				<div id="chat-wrap">
+				 <div id="idTextArea"></div>
+			 </div>
+			 <p>Your message: </p>
+			 <textarea id="sendie"  ></textarea>
+				<form id="send-message-area">
+				</form>
+		</span>
+	 <div>
+		 <button onclick='	mWSSend(idSendText.value);'>SEND</button>
+		 <hr>
+		 <button onclick='mStartServer()'>Start Server</button>
+		 <button onclick='idTextArea.innerHTML=""'>clear</button>
+		 <button onclick='mCloseSocket()'>stop</button>
+		 <hr>
+		 <button onclick='start()'>start</button>
+		 <button onclick='join()'>join</button>
+		 <button onclick='mSend()'>send</button>
+	 </div>
+</body>
+
+<script>
+	var peer = null
+	var peerId = 'lmdongnocchi'
+	var conn = null
+	var opponent = {
+		peerId: null
+	}
+  var datasize=5000;
+	var turn = false
+		var ended = false
+	function initialize(peerId) {
+		/*peer = new Peer('', {
+			host: location.hostname,
+			port: location.port || (location.protocol === 'https:' ? 443 : 80),
+			path: '/peerjs',
+			debug: 3
+		})
+		*/
+		peer = new Peer(peerId);
+		peer.on('open', function(id) {
+			peerId = id
+		})
+		peer.on('error', function(err) {
+			alert(''+err)
+		})
+
+		// Heroku HTTP routing timeout rule (https://devcenter.heroku.com/articles/websockets#timeouts) workaround
+		function ping() {
+			console.log(peer)
+      idPing.innerText=Date.now();
+			peer.socket.send({
+				type: 'ping'
+			})
+			setTimeout(ping, 16000)
+		}
+		ping()
+	}
+
+	function start() {     //The master client set up a connection
+		initialize(peerId)
+		peer.on('open', function() {
+			mMessage('Ask your friend to join using your peer ID: '+peerId)
+		//	alert('Ask your friend to join using your peer ID: '+peerId)
+		})
+		peer.on('connection', function(c) {
+			if(conn) {
+				c.close()
+				return
+			}
+			conn = c
+			turn = true
+			mMessage('Your move!');
+			begin()
+		})
+	}
+
+	function join() {
+		initialize()
+		peer.on('open', function() {
+			var destId = prompt("Opponent's peer ID:",peerId)
+			conn = peer.connect(destId, {
+				reliable: true
+			})
+			conn.on('open', function() {
+				opponent.peerId = destId
+				mMessage("Waiting for opponent's move");
+				turn = false
+				begin()
+			})
+		})
+	}
+
+  function mSend() {
+    conn.send(['payload', makeArray(datasize)])
+    process()
+  }
+  function mReceive(){
+    var a = data[1]
+    mMessage('csum'+a[0]+'  ctrl'+checksum(a));
+  }
+	function begin() {
+			conn.on('data', function(data) {
+				switch(data[0]) {
+					case 'payload':mReceive(data)
+
+						process()
+						break
+				}
+			})
+			conn.on('close', function() {
+				if(!ended) {
+					mMessage('Opponent forfeited!')
+				}
+				turn = false
+			})
+			peer.on('error', function(err) {
+				alert(''+err)
+				turn = false
+			})
+		}
+
+		function process() {
+		}
+		function makeArray(datasize){   //Make a dummy array of random data [0] = checksum
+			var a=[0]
+			for (i=1;i<datasize;i++){
+				a[i]=Math.random()
+			}
+			a[0]=checksum(a);
+			return a;
+		}
+    function bytelength(a){
+      return JSON.stringify(a).length
+    }
+		function checksum(a){
+			var sum=0;
+			for (i=1;i<datasize;i++){
+				sum=sum+a[i]
+			}
+			return sum;
+		}
+
+
+var counter=10;
+
+
+
+	function mMessage(msg){mDataRcvd(msg)}
+
+
+</script>
+
+</html>
