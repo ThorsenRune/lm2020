@@ -5,6 +5,7 @@
 	<title>PEER </title>
 	<link rel="stylesheet" href="style.css" type="text/css" />
 	<script type="text/javascript" src="chat.js"></script>
+<!--  <script type="text/javascript" src="peerjs.js"></script><!---->
 	<script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
 </head>
 <body onload='mMessage("Start")'>
@@ -29,25 +30,37 @@
 		 <button onclick='	mWSSend(idSendText.value);'>SEND</button>
 		 <hr>
 		 <button onclick='mStartServer()'>Start Server</button>
-		 <button onclick='idTextArea.innerHTML=""'>clear</button>
 		 <button onclick='mCloseSocket()'>stop</button>
 		 <hr>
    </div>
 		 <button onclick='start()'>start</button>
 		 <button onclick='join()'>join</button>
 		 <button onclick='mSend()'>send</button>
+     <button onclick='idTextArea.innerHTML=""'>clear</button>
+     <button onclick='mClose()'>Close</button>
+     <button onclick='mChangeDataLength()'>ChangeDataLength</button>
+
+     <hr>
+     Demo of WebRTC exchange of data in realtime. One master should [start]
+     then others may [join] and exchange a (100kb) data array [5000 eleements]
 </body>
 
 <script>
 	var peer = null
-	var peerId = 'lmdongnocchi1'
+	var peerId = 'lmdongnocchi'
 	var conn = null
 	var opponent = {
 		peerId: null
 	}
-  var datasize=5000;
+  var datasize=50;    //The length of the testdata
 	var turn = false
-		var ended = false
+
+
+  function mClose(){
+    debugger
+    peer.destroy()
+
+  }
 	function initialize(peerId) {
 		/*peer = new Peer('', {
 			host: location.hostname,
@@ -74,41 +87,57 @@
 		})
 
 		// Heroku HTTP routing timeout rule (https://devcenter.heroku.com/articles/websockets#timeouts) workaround
-		function ping() {
-			console.log(peer)
-      idPing.innerText=Date.now();
-			peer.socket.send({
-				type: 'ping'
-			})
-			setTimeout(ping, 16000)
-		}
+
 		ping()
 	}
+  function ping() {
+    if (!peer) idPing.innerText='Closed'
+    //console.log(peer)
+    if (!ping.pingtimes)ping.pingtimes=0; ping.pingtimes=ping.pingtimes+1;
+    idPing.innerText=ping.pingtimes;
+    peer.socket.send({
+      type: 'ping'
+    })
+    setTimeout(ping, 16000)
+  }
 
 	function start() {     //The master client set up a connection
-		initialize(peerId)
-		peer.on('open', function() {
-			mMessage('Ask your friend to join using your peer ID: '+peerId)
-		//	alert('Ask your friend to join using your peer ID: '+peerId)
-		})
+		//peer = new Peer(peerId);
+    peer = new Peer();
+    peer.on('open', function(id) {
+
+      peerId = id
+      idPort.innerText=peerId
+      mMessage('Ask your friend to join using your peer ID: '+peerId)
+    })
+    peer.on('error', function(err) {
+      alert(''+err)
+    })
 		peer.on('connection', function(c) {
 			if(conn) {
-				c.close()
-				return
+        mMessage("Anoteher has joined")
+        mMessage('c.close')
+			//	c.close()
+			//	return
 			}
 			conn = c
-			turn = true
-			mMessage('Your move!');
-			begin()
+			mMessage('Start sending data!');
+			begin(conn)
 		})
+    ping()    // Heroku HTTP routing timeout rule (https://devcenter.heroku.com/articles/websockets#timeouts) workaround
 	}
-
+  function mChangeDataLength(){
+    datasize=prompt("Datalength",datasize);
+  }
 	function join() {
-		initialize()
+    peer = new Peer();
+		peer.on('error', function(err) {
+      alert(''+err)
+		})
 		peer.on('open', function() {
       //Ask for peerId
-			//var destId = prompt("Opponent's peer ID:",peerId)
-      destId=peerId;  //peerId is the shared ID
+			var destId = prompt("Opponent's peer ID:",peerId)
+      //destId=peerId;  //peerId is the shared ID
 			conn = peer.connect(destId, {
 				reliable: true
 			})
@@ -117,8 +146,12 @@
         idPort.innerText=destId
 				mMessage("Waiting for someone to send data");
 				turn = false
-				begin()
+				begin(conn)
 			})
+      conn.on('error', function(err) {
+        alert(''+err)
+      })
+      ping()
 		})
 	}
   function mSend() {
@@ -131,7 +164,7 @@
     conn.send(data);
     process()
   }
-  function mReceive(data){
+  function mReceive(conn,data){
     var a = data[1]
     var dt=-data[2]+Date.now();
     mMessage('TimeDiff(ms):'+dt+'  check sum diff:'+(a[0]-checksum(a)));
@@ -141,19 +174,17 @@
       conn.send(data);
     }
   }
-	function begin() {
+	function begin(conn) {
 			conn.on('data', function(data) {
 				switch(data[0]) {
 					case 'payload':
-            mReceive(data)
+            mReceive(conn,data)
 						process()
 						break
 				}
 			})
 			conn.on('close', function() {
-				if(!ended) {
 					mMessage('Remote disconnected!')
-				}
 			})
 			peer.on('error', function(err) {
         debugging
