@@ -94,9 +94,9 @@ var Main_Loop2=function(interval) {
 			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
 			if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
 	}
-	setTimeout(functions(){
-		requestAnimationFrame(Main_Loop2)
-	},prot.refreshRate);
+	setTimeout(function(){
+		requestAnimationFrame(Main_Loop2);
+	}, prot.refreshRate);
 }
 
 var init_SetupFromServer=function(dataurl){
