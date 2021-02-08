@@ -106,7 +106,7 @@ var Main_Loop2=function(interval) {
 			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
 			if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
 	}
-	setTimeout(functions(){
+	setTimeout(function(){
 		requestAnimationFrame(Main_Loop2)
 	},prot.refreshRate);
 }
@@ -127,7 +127,7 @@ var init_SetupFromServer=function(dataurl){
 }
 
 
-function mWatchDog(settimeout){		//Getter/setter for a watchdog.
+/*function mWatchDog(settimeout){		//Getter/setter for a watchdog.
 	if (settimeout) {
 		mWatchDog.timeout=false
 		mWatchDog.waiting=true
@@ -136,5 +136,5 @@ function mWatchDog(settimeout){		//Getter/setter for a watchdog.
 			mWatchDog.waiting=false
 		},settimeout)
 	}
-}
-mWatchDog.waiting=false;		//Initial state of the wathcdog
+}*/
+//mWatchDog.waiting=false;		//Initial state of the wathcdog
