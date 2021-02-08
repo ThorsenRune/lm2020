@@ -47,7 +47,7 @@
 
 <script>
 	var peer = null
-	var peerId = 'lmdongnocchi1'
+	var peerId = 'lmdongnocchi'
 	var conn = null
 	var opponent = {
 		peerId: null
@@ -61,35 +61,7 @@
     peer.destroy()
 
   }
-	function initialize(peerId) {
-		/*peer = new Peer('', {
-			host: location.hostname,
-			port: location.port || (location.protocol === 'https:' ? 443 : 80),
-			path: '/peerjs',
-			debug: 3
-		})
-		*/
-		peer = new Peer(peerId);
-		peer.on('open', function(id) {
-			peerId = id
-      idPort.innerText=peerId
-
-		})
-		peer.on('error', function(err) {
-
-      //If someone has started this then join instead
-/*      if (err.type=="unavailable-id")      {
-        join(); //Dont start but join
-        return
-      }
-      */
-      alert(''+err)
-		})
-
-		// Heroku HTTP routing timeout rule (https://devcenter.heroku.com/articles/websockets#timeouts) workaround
-
-		ping()
-	}
+	
   function ping() {
     if (!peer) idPing.innerText='Closed'
     //console.log(peer)
@@ -100,10 +72,13 @@
     })
     setTimeout(ping, 16000)
   }
-
+    var config={
+     debug: 3,
+     config: {'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }]}
+   };
 	function start() {     //The master client set up a connection
 		//peer = new Peer(peerId);
-    peer = new Peer(peerId);
+    peer = new Peer(peerId,config);
     peer.on('open', function(id) {
 
       peerId = id
@@ -114,33 +89,32 @@
       alert(''+err)
     })
 		peer.on('connection', function(c) {
-			if(conn) {
-        mMessage("Anoteher has joined")
-        mMessage('c.close')
-			//	c.close()
-			//	return
-			}
+			if(conn)         mMessage("Another has joined")
 			conn = c
 			mMessage('Start sending data!');
 			begin(conn)
 		})
     ping()    // Heroku HTTP routing timeout rule (https://devcenter.heroku.com/articles/websockets#timeouts) workaround
 	}
-  function mChangeDataLength(){
-    datasize=prompt("Datalength",datasize);
-  }
+  var remoteid='fjern_id9382'
 	function join() {
-    peer = new Peer();
-		peer.on('error', function(err) {
+    var remote = new Peer(remoteid,config); //remote
+		remote.on('error', function(err) {
       alert(''+err)
 		})
-		peer.on('open', function() {
+    remote.on('connection', function(c) {
+      alert ('Connected');
+    })
+		remote.on('open', function() {
       //Ask for peerId
-			var destId = prompt("Opponent's peer ID:",peerId)
+			var destId = prompt("Master ID:",peerId)
       //destId=peerId;  //peerId is the shared ID
-			conn = peer.connect(destId, {
+			conn = remote.connect(destId, {
 				reliable: true
 			})
+      conn.on('connection', function(c) {
+        alert ('Conn Connected');
+      })
 			conn.on('open', function() {
 				opponent.peerId = destId
         idPort.innerText=destId
@@ -161,6 +135,7 @@
     data[1]= makeArray(datasize)
     data[2]=Date.now();
     data[3]='sendback'
+    mMessage('Sending')
     conn.send(data);
     process()
   }
@@ -176,6 +151,7 @@
   }
 	function begin(conn) {
 			conn.on('data', function(data) {
+        mMessage('Data received')
 				switch(data[0]) {
 					case 'payload':
             mReceive(conn,data)
@@ -212,6 +188,9 @@
 			}
 			return sum;
 		}
+  function mChangeDataLength(){
+      datasize=prompt("Datalength",datasize);
+    }
 
 
 var counter=10;
