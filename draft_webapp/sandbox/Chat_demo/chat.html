@@ -1,0 +1,71 @@
+<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+
+<label>My ID:</label><input id="my-id" />
+<label>ID to connect to:</label><input id="their-id" />
+<label>Message</label><input id="message" />
+<button id="send-message">Send message</button>
+<label>Received:</label><input id="received" />
+<script>
+	var id = "sniksnak1";
+	id=uuidv4();
+document.querySelector('#my-id').value = id;
+
+let conn;
+
+document.querySelector('#send-message').addEventListener('click', () => {
+  console.log("Send message clicked")
+  if (!conn) {
+    console.log("Connection is not already creaeted. Creating a new one...")
+    conn = peer.connect(document.querySelector('#their-id').value);
+    conn.on('error', e => {
+      console.error('Something went wrong!', e)
+    })
+
+    conn.on('data', (data) => {
+      document.querySelector('#received').value = data;
+    });
+  } else {
+    console.log(`Connection already established. ID: ${conn.id}`);
+  }
+
+  const message = document.querySelector('#message').value;
+  console.log(`Message to send: ${message}`);
+
+  if (conn.open) {
+    console.log('Connection is already open. Sending message...');
+    conn.send(message);
+  } else {
+    console.log('Connection is not open. Opening connection...');
+    conn.on('open', () => {
+      console.log('Connection opened! Sending message...');
+      conn.send(message);
+    });
+  }
+})
+
+const peer = new Peer(id);
+
+peer.on('connection', (c) => {
+  console.log('connected!')
+  conn = c;
+
+  document.querySelector('#their-id').value = conn.peer;
+
+  conn.on('data', (data) => {
+    document.querySelector('#received').value = data;
+  });
+});
+
+peer.on('error', e => {
+  console.error('Something went wrong with the peer!', e)
+});
+
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0,
+      v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+	</script>
