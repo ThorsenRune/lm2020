@@ -53,7 +53,7 @@ void setup(){
 /*******************ARDUINO MAIN WHILE LOOP *******************************/
 //      AUTOMATICALLTY CALLED BT ARDUINO IDE
 void loop(){		//The main loop of the
-    Serial.println(WiFi.RSSI());
+    //Serial.println(WiFi.RSSI());
     mWaitCycleStart();							// 1.  Wait for a block start using system clocks
    if (nDbgLvl>0) mGenerateSignal();
 /*************      BUSINESS LOGIC FOR THE SIGNAL PROCESSING AND COMMUNICATION  *****/

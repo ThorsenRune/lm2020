@@ -61,6 +61,7 @@ function Main_Loop(){		//This is the refresh loop of the program
 			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
 			reentries--;
 		},prot.refreshRate); 	//Loop peridoically
+	}
 
 
 
@@ -115,14 +116,15 @@ var init_SetupFromServer=function(dataurl){
 }
 
 
+
 function mWatchDog(settimeout){		//Getter/setter for a watchdog.
 	if (settimeout) {
-		mWatchDog.timeout=false
-		mWatchDog.waiting=true
+		mWatchDog.timeout=false;
+		mWatchDog.waiting=true;
 		setTimeout(function(){	//Wait until the protocol has setteled
-			mWatchDog.timeout=true
-			mWatchDog.waiting=false
-		},settimeout)
+			mWatchDog.timeout=true;
+			mWatchDog.waiting=false;
+		},settimeout);
 	}
 }
 mWatchDog.waiting=false;		//Initial state of the wathcdog
