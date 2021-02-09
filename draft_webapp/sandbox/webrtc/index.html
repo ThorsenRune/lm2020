@@ -5,17 +5,24 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
 </head>
 <body>
+<style>
+  video{
+    width: 25%;
+    border:solid thick blue;
+  }
+</style>
 <div>
-    <video id="localVideo" autoplay="true" muted="muted"></video>
-    <video id="remoteVideo" autoplay="true" style="display:none"></video>
+    <video id="localVideo" autoplay="true" autoplay controls  muted="muted"></video>
+    <video id="remoteVideo" autoplay="true" autoplay controls muted="muted"></video>
 </div>
+
 <script type="text/javascript">
 
     var answer = 0;
     var pc=null
 	var localStream=null;
 	var ws=null;
-    
+
     // Not necessary with websockets, but here I need it to distinguish calls
     var unique = Math.floor(100000 + Math.random() * 900000);
 
@@ -32,7 +39,7 @@
 
 	// Start
     navigator.mediaDevices.getUserMedia({
-           //  audio: true, // audio is off here, enable this line to get audio too
+            audio: true, // audio is off here, enable this line to get audio too
             video: true
         }).then(function (stream) {
             localVideo.srcObject = stream;
@@ -62,8 +69,8 @@
 				 xhttp.send(message);
 			}
 
-            // Websocket-hack: onmessage is extended for receiving 
-            // multiple events at once for speed, because the polling 
+            // Websocket-hack: onmessage is extended for receiving
+            // multiple events at once for speed, because the polling
             // frequency of EventSource is low.
 			ws.onmessage = function(e) {
 				if (e.data.includes("_MULTIPLEVENTS_")) {
@@ -77,21 +84,21 @@
 			}
 
             // Go show myself
-            localVideo.addEventListener('loadedmetadata', 
+            localVideo.addEventListener('loadedmetadata',
                 function () {
                     publish('client-call', null)
                 }
             );
-			
+
         }).catch(function (e) {
             console.log("Problem while getting audio/video stuff ",e);
         });
-		
-    
+
+
     function onsinglemessage(data) {
         var package = JSON.parse(data);
         var data = package.data;
-        
+
         console.log("received single message: " + package.event);
         switch (package.event) {
             case 'client-call':
@@ -116,7 +123,7 @@
                     console.error('Before processing the client-answer, I need a client-offer');
                     break;
                 }
-                pc.setRemoteDescription(new RTCSessionDescription(data),function(){}, 
+                pc.setRemoteDescription(new RTCSessionDescription(data),function(){},
                     function(e) { console.log("Problem while doing client-answer: ",e);
                 });
                 break;
@@ -145,7 +152,7 @@
                     console.error('Before processing the client-answer, I need a client-offer');
                     break;
                 }
-                pc.addIceCandidate(new RTCIceCandidate(data), function(){}, 
+                pc.addIceCandidate(new RTCIceCandidate(data), function(){},
                     function(e) { console.log("Problem adding ice candidate: "+e);});
                 break;
         }
@@ -167,8 +174,8 @@
             }
         }
         pc.ontrack = function (e) {
-            document.getElementById('remoteVideo').style.display="block";
-            document.getElementById('localVideo').style.display="none";
+          //  document.getElementById('remoteVideo').style.display="block";
+          //  document.getElementById('localVideo').style.display="none";
             remoteVideo.srcObject = e.streams[0];
         };
     }

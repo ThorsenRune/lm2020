@@ -58,7 +58,7 @@ if (count($all)!=0) {
 	flock($file, LOCK_SH);
 	echo 'data: ', fread($file, filesize($filename)), PHP_EOL;
 	fclose($file);
-	unlink($filename);
+	unlink($filename);       //Delete the file
 	break;
     }
 
