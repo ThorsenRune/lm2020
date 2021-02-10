@@ -92,7 +92,7 @@ const prot={		//Encapsulating communication protocol
         }
       }
     }
-    prot.oData.Poke=false;	//Done poking in the exchange process
+    prot.oData.PokeRemote=false;	//Done poking in the exchange process
   }
 
 }
@@ -456,7 +456,8 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
 			for (var idx=0;idx<vector.length;idx++){//Scale units 2 raw data
 				oProtElemVar .Vector[idx]=(vector[idx]/oDesc.Factor)+Number(oDesc.Offset);
 			}
-			prot.pokedata(oProtElemVar );
+    debugger
+			prot.pokedata000(oProtElemVar );debugger; mDebugMsg('Invalid call')
 		} else {
 //			if (undefined ===oProtElemVar .Vector) return undefined
 			var vector=oProtElemVar.Vector       //The data array

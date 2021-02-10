@@ -71,28 +71,30 @@ const prot={		//Encapsulating communication protocol
       if (oRetData.data.Poke){
         prot.oData=oRetData.data;
         prot.lastState='redraw'
-        prot.oData.Poke=false;
+        prot.oData.PokeRemote=false;
       }
       //mAndExchange();	//Data exhange to Android App
       mPHPCall(dataurl,'swap','swapdata',prot.oData);	//Get file and write new prot.oData
     } else  {
-      if (prot.oData.Poke){ 			//mPHPCall(dataurl,'swap',prot.oData,mCb);
+      if (prot.oData.PokeRemote){ 			//mPHPCall(dataurl,'swap',prot.oData,mCb);
         prot.lastState='poke'
         mPHPCall(dataurl,'save','swapdata',prot.oData);
-      } else{
+      } else{       //Load
         mPHPCall(dataurl,'load','swapdata',prot.oData,mCb);
       }
       function mCb(oRetData){		//when returning from PHP PROCESS SAVED oWatch
         if (oRetData.data)			prot.oData=oRetData.data;
         if (prot.oData){
-          if (prot.oData.Poke) {
+          if (prot.oData.PokeRemote) {
             prot.lastState='redraw'
-            prot.oData.Poke=false;
+            prot.oData.PokeRemote=false;
+            display.doRedraw=true;  //Request a redraw of the display
+            prot.remotePeek=false;  //Clear flag getting data from remote
           }
         }
       }
     }
-    prot.oData.Poke=false;	//Done poking in the exchange process
+    prot.oData.PokeRemote=false;	//Done poking in the exchange process
   }
 
 }
@@ -434,8 +436,9 @@ prot.mVarValue=function(sVarName,idx,val){		//
 		if (val!=undefined){
 			var raw=(val/oDesc.Factor)+Number(oDesc.Offset);
 		    if (oData.Vector)			oData.Vector[idx]=raw;    //RT210121  guard void
-			oData.pokedata=true;	//Request a write to device
+			oData.PokeRemotedata=true;	//Request a write to device
 			oData.peekdata=true;	//Request a readback from device
+      this.oData.PokeRemote=true;   //This = protocol
 		} else {
       if (undefined ===oData.Vector) return undefined
 			if (undefined ===oData.Vector[idx]) return undefined
@@ -456,7 +459,8 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
 			for (var idx=0;idx<vector.length;idx++){//Scale units 2 raw data
 				oProtElemVar .Vector[idx]=(vector[idx]/oDesc.Factor)+Number(oDesc.Offset);
 			}
-			prot.pokedata(oProtElemVar );
+      debugger; mDebugMsg('Invalid call')
+			prot.pokedata000(oProtElemVar );
 		} else {
 //			if (undefined ===oProtElemVar .Vector) return undefined
 			var vector=oProtElemVar.Vector       //The data array

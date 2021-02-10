@@ -164,7 +164,8 @@ function mVarName(ctrl,newname){
 				,Number(display.idDispMax.value)]
 		oWX.Range(r);
 		mWidgetSet(oWX);//Refresh the widget
-		prot.pokedata();
+
+		prot.pokedata000();	debugger; mDebugMsg('Invalid call')
 	}
 
 var mToggleRFMode=function(){
