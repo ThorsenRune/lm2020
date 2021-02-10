@@ -29,7 +29,7 @@ function  Main_Init(){
 	signal.init();
 	display.redraw();					//Redraw the display
 	prot.state(prot.kCommInit);		//Start the statemachine for initializing communciation
-	Main_Loop();					//Goto the main requesting data from device and polling answers periodically
+	Main_Loop2();					//Goto the main requesting data from device and polling answers periodically
 }
 
 /***********************	MAIN PROCESSING		***********************************/
