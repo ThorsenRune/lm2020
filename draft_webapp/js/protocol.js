@@ -74,13 +74,13 @@ const prot={		//Encapsulating communication protocol
         prot.oData.Poke=false;
       }
       //mAndExchange();	//Data exhange to Android App
-      mPHPCall(dataurl,'swap',prot.oData);	//Get file and write new prot.oData
+      mPHPCall(dataurl,'swap','swapdata',prot.oData);	//Get file and write new prot.oData
     } else  {
       if (prot.oData.Poke){ 			//mPHPCall(dataurl,'swap',prot.oData,mCb);
         prot.lastState='poke'
-        mPHPCall(dataurl,'save',prot.oData);
+        mPHPCall(dataurl,'save','swapdata',prot.oData);
       } else{
-        mPHPCall(dataurl,'load',prot.oData,mCb);
+        mPHPCall(dataurl,'load','swapdata',prot.oData,mCb);
       }
       function mCb(oRetData){		//when returning from PHP PROCESS SAVED oWatch
         if (oRetData.data)			prot.oData=oRetData.data;

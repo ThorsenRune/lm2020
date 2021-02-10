@@ -22,48 +22,52 @@ function  Main_Init(){
 	prot.sFileName=mDataFile();		//Get the settings file e.g. data.txt
 	display.init()
 	display.idVarName1.onchange=mDDSetVarName;
-	bUseBluetooth(false);				//Assume no bluetooth
+	//bUseBluetooth(false);				//Assume no bluetooth
 	mWebSocket_InitAsync();			//Setup the websocket
-	init_SetupFromServer(dataurl);	//Get protocol and widget setup from a file
-	initAndSetupTheSliders();
-	signal.init();
-	display.redraw();					//Redraw the display
-	prot.state(prot.kCommInit);		//Start the statemachine for initializing communciation
-	Main_Loop();					//Goto the main requesting data from device and polling answers periodically
+	mPHPCall(dataurl,'load',prot.sFileName,prot.oData,function(oRetData){
+		prot.oData=oRetData.data;
+		initAndSetupTheSliders();
+		signal.init();
+		display.redraw();					//Redraw the display
+		prot.state(prot.kCommInit);		//Start the statemachine for initializing communciation
+		requestAnimationFrame(Main_Loop2);					//Goto the main requesting data from device and polling answers periodically
+	}
+
+
+);
+	//init_SetupFromServer(dataurl);	//Get protocol and widget setup from a file
 }
 
 /***********************	MAIN PROCESSING		***********************************/
-function mDataFile(newfile){
-	var datafile=location.hash.replace('#','').replaceAll('.txt','');
-	if (newfile){
-		datafile=newfile.replaceAll('.txt','');;
-	}else{
-		if (datafile.length<3) datafile='data';
-	}
-	datafile=datafile.replaceAll('.txt','');
-	location.hash=datafile
-	return datafile+'.txt';
-}
 
-
-
-var hInterval=0;
-function Main_Loop(){		//This is the refresh loop of the program
-		var reentries=0;
-	//Called peridoically
-		if (hInterval) clearInterval(hInterval);
-    if (prot.refreshRate<30) return;
-		hInterval=setInterval(function(){
-			if (reentries>0) return;
-			reentries++;
+var bRelay2Server=true;			//Flag. Send data to server for remote observation
+var mode='swap';					//see flowchart above
+var guard=false
+var timing=[Date.now(), 0]
+var Main_Loop2=function(interval) {
+		if (guard) debugger;
+		guard=true
+	//An alternative to Main_Loop
+	if (prot.refreshRate>30){
 			if (display.doRedraw) display.redraw();
 			display.refresh();      //Update screen widgets and get userinput
 			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
-			reentries--;
-		},prot.refreshRate); 	//Loop peridoically
+	//		if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
+ 		 	timing[1]=Date.now()
+			idSignalLegend.innerText=timing[1]-timing[0];
+			timing[0]=timing[1]
 	}
+	setTimeout(function(){
+		requestAnimationFrame(Main_Loop2)
+	},prot.refreshRate);
+	guard=false
+}
 
 
+/*
+	Note on setInterval, if you see your call stack growing during debug, don't worry.
+	 	its an artefact see:https://stackoverflow.com/questions/47585441/why-does-settimeout-clutter-my-call-stack-under-chrome-devtools
+*/
 
 /*	Todo:move this flowchart
 			the problem: streaming the data from one client to another
@@ -97,36 +101,19 @@ function Main_Loop(){		//This is the refresh loop of the program
 */
 
 
-var bRelay2Server=true;			//Flag. Send data to server for remote observation
-var mode='swap';					//see flowchart above
-var Main_Loop2=function(interval) {
-	//An alternative to Main_Loop
-	if (prot.refreshRate>30){
-			if (display.doRedraw) display.redraw();
-			display.refresh();      //Update screen widgets and get userinput
-			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
-			if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
+
+/************		HELPERS ************/
+function mDataFile(newfile){
+	var datafile=location.hash.replace('#','').replaceAll('.txt','');
+	if (newfile){
+		datafile=newfile.replaceAll('.txt','');;
+	}else{
+		if (datafile.length<3) datafile='data';
 	}
-	setTimeout(function(){
-		requestAnimationFrame(Main_Loop2)
-	},prot.refreshRate);
+	datafile=datafile.replaceAll('.txt','');
+	location.hash=datafile
+	return datafile+'.txt';
 }
-
-var init_SetupFromServer=function(dataurl){
-	//Load the protocol from server
-	var data=prot.oData;		//Referencing the global protocol object
-	mPHPCall(dataurl,'load',data,function(){
-		if (oRetData.data){
-			data=oRetData.data;
-		} else {
-			alert ("File not found" );//oRetData.errors
-			return;
-		}
-		data.cmd=prot.kCommInit;
-		prot.oData=data;
-	});
-}
-
 
 
 function mWatchDog(settimeout){		//Getter/setter for a watchdog.
