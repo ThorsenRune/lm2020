@@ -41,7 +41,8 @@ function  Main_Init(){
 /***********************	MAIN PROCESSING		***********************************/
 
 var bRelay2Server=true;			//Flag. Send data to server for remote observation
-var mode='swap';					//see flowchart above
+var mode='swap';
+var diff;					//see flowchart above
 var guard=false
 var timing=[Date.now(), 0]
 var Main_Loop2=function(interval) {
@@ -54,6 +55,8 @@ var Main_Loop2=function(interval) {
 			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
 	//		if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
  		 	timing[1]=Date.now()
+			diff=timing[1]-timing[0];
+                        mMessage(diff);
 			idSignalLegend.innerText=timing[1]-timing[0];
 			timing[0]=timing[1]
 	}
