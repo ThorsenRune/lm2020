@@ -55,8 +55,8 @@ var Main_Loop2=function(interval) {
 			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
 	//		if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
  		 	timing[1]=Date.now()
-			diff=timing[1]-timing[0];
-                        mMessage(diff);
+			//diff=timing[1]-timing[0];
+                        //mMessage(diff);
 			idSignalLegend.innerText=timing[1]-timing[0];
 			timing[0]=timing[1]
 	}
