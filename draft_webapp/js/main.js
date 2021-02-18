@@ -54,9 +54,10 @@ var Main_Loop2=function(interval) {
 			display.refresh();      //Update screen widgets and get userinput
 			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
 	//		if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
- 		 	timing[1]=Date.now()
-			//diff=timing[1]-timing[0];
-                        //mMessage(diff);
+ 		 	timing[1]=Date.now();
+			diff=timing[1]-timing[0];
+			//var updrate=lenB/(diff/1000);
+      //mMessage(updrate);
 			idSignalLegend.innerText=timing[1]-timing[0];
 			timing[0]=timing[1]
 	}

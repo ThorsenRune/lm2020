@@ -176,9 +176,13 @@ prot.TXDispatch=function(){	//mTXDispnDataLengthatch - the response will be mRXD
 				mTX_GetReq(VarData);
 				VarData.peekdata=false;//Clear read request flag
 		}
+    var lenB = VarData.byteLength;
+    console.log(len);
 	} else if (prot.state()==prot.kError){
 		mDebugMsg1(1,"some action on protocol error");
 	}
+
+
   function mTX_SetReq(oProtElem){      /* Change data in device memory          Write data to device memory*/
   //Sending: Cmd,Varid,addressoffset,4databytes
       var offs;

@@ -21,7 +21,7 @@
 		<link rel="stylesheet" href="./css/slider.css">
 		<link rel="stylesheet" href="./css/popup.css">
     <link rel="stylesheet" href="./css/colordark.css">  <!-- Selection of color theme -->
-    <!--<link rel="stylesheet" href="./css/colorskyblue.css">  <!-- Selection of color theme -->
+    <!--<link rel="stylesheet" href="./css/colorskyblue.css">  Selection of color theme -->
 
    </head>
    <body>
@@ -29,10 +29,9 @@
 	<div>
 		<label id='idStatus' >Unconnected</label>
 		<input type="text" id="idVarName1"  placeholder="VarName"  onclick='this.focus();this.select()'>
-    <input type="button"  class='cRight' value="Settings" onclick="idPopUp.hidden=!idPopUp.hidden;"> &nbsp
-
-		<input type="button" class='cRight' value="Reset" onClick="Main_Init();" /> &nbsp
-		<input type="button" class='cRight' value="Edit" onClick="popup.mSettings();" /> &nbsp
+    <input type="button"  class='cRight' value="Settings" onclick="idPopUp.hidden=!idPopUp.hidden"/> &nbsp;
+		<input type="button" class='cRight' value="Reset" onClick="Main_Init()" /> &nbsp;
+		<input type="button" class='cRight' value="Edit" onClick="popup.mSettings()" /> &nbsp;
     <br>
 
 	</div>
@@ -46,7 +45,7 @@
 <!--    	<button id="idSettingsCancel" onclick="idPopUp.hidden=true" >CANCEL </button> -->
   </div>
 	</div>
-	<details  <!-- Sliders -->
+	<details>  <!-- Sliders -->
 		<summary> Slider controls </summary>
 		<?PHP include 'sliders_vert.html' ?>
 	</details>
