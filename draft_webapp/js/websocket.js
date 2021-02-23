@@ -52,7 +52,6 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 	document.getElementById( "idStatus").innerHTML="Calling device";
 	aRXData=[]
 	ws.binaryType="arraybuffer"
-	mMessage('Connecting to:'+staticIP);
 	ws.onopen = function() {
 		document.getElementById( "idStatus").innerHTML="CONNECTED";
 		if (callbackonconnect)callbackonconnect();

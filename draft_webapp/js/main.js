@@ -30,7 +30,7 @@ function  Main_Init(){
 		signal.init();
 		display.redraw();					//Redraw the display
 		prot.state(prot.kCommInit);		//Start the statemachine for initializing communciation
-		requestAnimationFrame(Main_Loop2);					//Goto the main requesting data from device and polling answers periodically
+		requestAnimationFrame(Main_Loop);					//Goto the main requesting data from device and polling answers periodically
 	}
 
 
@@ -40,12 +40,12 @@ function  Main_Init(){
 
 /***********************	MAIN PROCESSING		***********************************/
 
-var bRelay2Server=true;			//Flag. Send data to server for remote observation
-var mode='swap';
+var bRelay2Server=false;			//Flag. Send data to server for remote observation
+var mode='';
 var diff;					//see flowchart above
 var guard=false
 var timing=[Date.now(), 0]
-var Main_Loop2=function(interval) {
+var Main_Loop=function(interval) {
 		if (guard) debugger;
 		guard=true
 	//An alternative to Main_Loop
@@ -53,16 +53,14 @@ var Main_Loop2=function(interval) {
 			if (display.doRedraw) display.redraw();
 			display.refresh();      //Update screen widgets and get userinput
 			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
-	//		if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
+ 			if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
  		 	timing[1]=Date.now();
 			diff=timing[1]-timing[0];
-			//var updrate=lenB/(diff/1000);
-      //mMessage(updrate);
 			idSignalLegend.innerText=timing[1]-timing[0];
 			timing[0]=timing[1]
 	}
 	setTimeout(function(){
-		requestAnimationFrame(Main_Loop2)
+		requestAnimationFrame(Main_Loop)
 	},prot.refreshRate);
 	guard=false
 }

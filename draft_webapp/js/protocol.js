@@ -176,8 +176,6 @@ prot.TXDispatch=function(){	//mTXDispnDataLengthatch - the response will be mRXD
 				mTX_GetReq(VarData);
 				VarData.peekdata=false;//Clear read request flag
 		}
-    var lenB = VarData.byteLength;
-    console.log(len);
 	} else if (prot.state()==prot.kError){
 		mDebugMsg1(1,"some action on protocol error");
 	}
