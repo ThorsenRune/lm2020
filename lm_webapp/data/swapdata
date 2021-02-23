@@ -1,0 +1,398 @@
+{
+    "Title": "LM 2020 App with ESP32\/8266 bridge",
+    "nPeriod": "990",
+    "sFileName": "swapdata",
+    "prot": {},
+    "oVarDesc": {
+        "aRMSfilt": {
+            "VarName": "aRMSfilt",
+            "Unit": "uV",
+            "Offset": 0,
+            "Factor": 0.001,
+            "Alias": "aRMSfilt"
+        },
+        "nMode.all_flags": {
+            "VarName": "nMode.all_flags",
+            "Unit": "",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "nMode.all_flags"
+        },
+        "Art_signal": {
+            "VarName": "Art_signal",
+            "Unit": "uVolt",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "Artificial Signal"
+        },
+        "yData": {
+            "VarName": "yData",
+            "Unit": "uV",
+            "Offset": 0,
+            "Factor": 5.0e-5,
+            "Alias": "yData"
+        },
+        "xData1": {
+            "VarName": "xData1",
+            "Unit": "uV",
+            "Offset": 0,
+            "Factor": 5.0e-5,
+            "Alias": "xData1"
+        },
+        "yData1": {
+            "VarName": "yData1",
+            "Unit": "",
+            "Offset": 0,
+            "Factor": 5.0e-5,
+            "Alias": "yData1"
+        },
+        "IMin": {
+            "VarName": "IMin",
+            "Unit": "mA",
+            "Offset": 0,
+            "Factor": 0.001,
+            "Alias": "IMin"
+        },
+        "aIAmp": {
+            "VarName": "aIAmp",
+            "Unit": "mA",
+            "Offset": 0,
+            "Factor": 0.001,
+            "Alias": "aIAmp"
+        },
+        "Offset": {
+            "VarName": "Offset",
+            "Unit": "uV",
+            "Offset": 0,
+            "Factor": 0.001,
+            "Alias": "Offset"
+        },
+        "Gain": {
+            "VarName": "Gain",
+            "Unit": "% A\/V",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "Gain"
+        },
+        "IMax": {
+            "VarName": "IMax",
+            "Unit": "mA",
+            "Offset": 0,
+            "Factor": 0.001,
+            "Alias": "IMax"
+        },
+        "HVValue": {
+            "VarName": "HVValue",
+            "Unit": "",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "HVValue"
+        },
+        "nBlankInterval": {
+            "VarName": "nBlankInterval",
+            "Unit": "samples",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "nBlankInterval"
+        },
+        "bErrFlags.all_flags": {
+            "VarName": "bErrFlags.all_flags",
+            "Unit": "",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "bErrFlags.all_flags"
+        },
+        "nTimerInMs": {
+            "VarName": "nTimerInMs",
+            "Unit": "",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "nTimerInMs"
+        },
+        "StimCountEx": {
+            "VarName": "StimCountEx",
+            "Unit": "",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "StimCountEx"
+        },
+        "aMLev": {
+            "VarName": "aMLev",
+            "Unit": "",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "aMLev"
+        },
+        "IMaxLimit": {
+            "VarName": "IMaxLimit",
+            "Unit": "",
+            "Offset": 0,
+            "Factor": 0.001,
+            "Alias": "IMaxLimit"
+        },
+        "StimNegDur": {
+            "VarName": "StimNegDur",
+            "Unit": "",
+            "Offset": 0,
+            "Factor": 1,
+            "Alias": "StimNegDur"
+        }
+    },
+    "oProtElemVar": {
+        "nTestVar": {
+            "VarName": "nTestVar",
+            "nVarId": 64,
+            "nDataLength": 5,
+            "nVarType": 232,
+            "Vector": [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "peekdata": false,
+            "pokedata": false
+        },
+        "nTimerInMs": {
+            "VarName": "nTimerInMs",
+            "nVarId": 65,
+            "nDataLength": 3,
+            "nVarType": 232,
+            "Vector": [
+                0,
+                0,
+                0
+            ],
+            "peekdata": false,
+            "pokedata": false
+        },
+        "nMode.all_flags": {
+            "VarName": "nMode.all_flags",
+            "nVarId": 66,
+            "nDataLength": 1,
+            "nVarType": 232,
+            "Vector": [
+                0
+            ],
+            "peekdata": false,
+            "pokedata": false
+        },
+        "bErrFlags.all_flags": {
+            "VarName": "bErrFlags.all_flags",
+            "nVarId": 67,
+            "nDataLength": 1,
+            "nVarType": 232,
+            "Vector": [
+                0
+            ],
+            "peekdata": false,
+            "pokedata": false
+        },
+        "Art_signal": {
+            "VarName": "Art_signal",
+            "nVarId": 68,
+            "nDataLength": 120,
+            "nVarType": 232,
+            "Vector": [
+                -364,
+                -325,
+                -274,
+                -211,
+                -140,
+                -64,
+                14,
+                93,
+                168,
+                236,
+                294,
+                341,
+                375,
+                393,
+                396,
+                382,
+                354,
+                312,
+                257,
+                191,
+                118,
+                41,
+                -37,
+                -115,
+                -188,
+                -254,
+                -309,
+                -353,
+                -382,
+                -395,
+                -393,
+                -376,
+                -343,
+                -297,
+                -238,
+                -171,
+                -96,
+                -18,
+                60,
+                137,
+                208,
+                271,
+                323,
+                363,
+                387,
+                396,
+                390,
+                368,
+                331,
+                281,
+                220,
+                150,
+                74,
+                -4,
+                -83,
+                -159,
+                -228,
+                -288,
+                -336,
+                -371,
+                -392,
+                -396,
+                -385,
+                -358,
+                -318,
+                -264,
+                -200,
+                -128,
+                -51,
+                28,
+                106,
+                180,
+                246,
+                303,
+                348,
+                379,
+                395,
+                395,
+                379,
+                348,
+                303,
+                246,
+                180,
+                106,
+                28,
+                -51,
+                -128,
+                -200,
+                -264,
+                -318,
+                -358,
+                -385,
+                -396,
+                -392,
+                -371,
+                -336,
+                -288,
+                -228,
+                -159,
+                -83,
+                -4,
+                74,
+                150,
+                220,
+                281,
+                331,
+                368,
+                390,
+                396,
+                387,
+                363,
+                323,
+                271,
+                208,
+                137,
+                60,
+                -18,
+                -96,
+                -171,
+                -239
+            ],
+            "peekdata": true,
+            "pokedata": false
+        },
+        "Gain": {
+            "VarName": "Gain",
+            "nVarId": 69,
+            "nDataLength": 2,
+            "nVarType": 232,
+            "Vector": [
+                89,
+                10
+            ],
+            "peekdata": true,
+            "pokedata": true
+        }
+    },
+    "wx": {
+        "wvs1": {
+            "id": "wvs1",
+            "varname": "IMin",
+            "Index": "0",
+            "Range": [
+                "0",
+                "50"
+            ]
+        },
+        "wvs2": {
+            "id": "wvs2",
+            "varname": "IMax",
+            "Index": "0",
+            "Range": [
+                "0",
+                "50"
+            ]
+        },
+        "wvs3": {
+            "id": "wvs3",
+            "varname": "aIAmp",
+            "Index": "0",
+            "Range": [
+                "0",
+                "40"
+            ]
+        },
+        "wvs4": {
+            "id": "wvs4",
+            "varname": "Offset",
+            "Index": 0,
+            "Range": [
+                0,
+                1000
+            ]
+        },
+        "wss1": {
+            "id": "wss1",
+            "varname": "Art_signal",
+            "Index": 10,
+            "Range": [
+                -200,
+                300
+            ]
+        },
+        "wvs5": {
+            "id": "wvs5",
+            "varname": "Gain",
+            "Index": 0,
+            "Range": [
+                0,
+                500
+            ]
+        }
+    },
+    "cmd": null,
+    "Poke": true,
+    "status": {
+        "SerialDeviceName": "LM-BT07",
+        "ProtState": "kProtReady",
+        "PortState": "kBT_Connected1"
+    }
+}
