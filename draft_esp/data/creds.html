@@ -12,38 +12,46 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
 <body>
   <h2>Configurazione WiFi</h2>
   <p>Inserisci per favore i credenziali della rete WiFi che si desirera utilizzare</p>
+  <button   onclick='Main_Init();'>Get Current Settings</button>
   <!--<p>Please insert the credentals for the Internet WiFi you want to use<p>-->
 <!--
   the action="/get" is misleading
 -->
-  <form id="idCredentials" action="/get"  method="POST" enctype="application/x-www-form-urlencoded" accept-charset="UTF-8">
-    SSID rete Wifi: <input type="text" name="SSID" id='idSSID'>
-    <div>
-    <label>Password: </label><input type="password" name="Password" id="myPass">
-    <!-- An element to toggle between password visibility -->
-    <div>
-        <input type="checkbox" onclick="viewPassword()" id="idpasswordcheck" name="passwordcheck">
-        <label for="password">  Mostra Password</label>
-    </div>
-    </div>
-      <br>
-    Server : <input type="text" name="LM_URL" id="idLM_URL" value="URL OF THE SERVER">
-    <br>
-    <input type="submit" value="Accetta Valori">
-  </form>
-    <hr>
-  <div id="idAcceptIP">
-    <p><button id='idgetDataIP' onclick='getDataIP();'style="align:center;"">Get static IP</button></p>
-    <p><button id='idAppStartBtn' onclick='getStartWS();' style="align:center;">Restart device</button></p>
-    <p><button id='idAppStartBtn' onclick='mAppStart();' style="align:center;">visita sito LM</button></p>
-    <label>IP : </label><input type="text" name="IPname" id="idIP" value="196.168.1.1">
-    <p>2- Visita il <a href="#" id="idURL">sito</a> dedicato a MeCFES.</p>
-    <H2>Visita il <a href="#" id="idURL1">sito</a> dedicato a MeCFES.</h2>
-  </div>
+  <fieldset id="idAcceptIP">
+    <label>SSID rete Wifi: </label>
+    <input type="text" name="SSID" id="idSSID"   style=" width: 50%;">
+    <button   onclick='getDataSSID(idSSID.value);'>Set</button>
+  </fieldset>
+  <fieldset>
+    <label>Password: </label>
+    <input type="password" name="Password" id="myPass">
+    <button   onclick='getDataPWD(myPass.value);'>Set</button><br>
+    <!-- An eye element to toggle between password visibility -->
+    <input type="checkbox" onclick="viewPassword()" id="idpasswordcheck" name="passwordcheck">
+    &#128065
+  </fieldset>
+  <fieldset>
+    <label >Server : </label >
+    <input type="text" name="LM_URL" id="idLM_URL" value="URL OF THE SERVER">
+    <button   onclick='getDataURL(idLM_URL.value);'>Set</button>
+  </fieldset>
+  <button id='idgetDataIP' onclick='mAJAX("getIP");'  >Get free IP</button>
+  <fieldset id="idAcceptIP">
+    <label>IP : </label>
+    <input type="text" name="IPname" id="idIP" value="196.168.1.100" style=" width: 50%;">
+    <button id='idgetDataIP' onclick='getDataIP(idIP.value);'>Set</button>
+  </fieldset>
+  <hr>
+  <p><button id='idAppStartBtn' onclick='mAppStart();' style="align:center;">Switch network & Restart device</button></p>
+  <H2>Visita il <a href=LM_ServerUrl+"#" id="idURL1">sito</a> dedicato a MeCFES.</h2>
 <script>
     var LM_ServerUrl;
     var WiFiSSID;
     var LM_Ip;
+function mSetAppLink(){
+  var url="http://"+LM_ServerUrl+"?ws="+LM_Ip;
+  document.getElementById("idURL1").setAttribute('href',url);
+}
 function mAppStart(){
       getStartWS();     //RESTART LM
       alert('Connect to your wifi internet '+ WiFiSSID);
@@ -72,15 +80,12 @@ function getStartWS() {
   xhttp.send();
 }
 function getDataIP(value) {
-    getDataURL();
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       LM_Ip=this.responseText;
       document.getElementById("idIP").value = LM_Ip;
-      var url="http://"+LM_ServerUrl+"?ws="+LM_Ip;
-      document.getElementById("idURL").href = url;
-      document.getElementById("idURL1").setAttribute('href',url);
+      mSetAppLink();
     }
   };
   var param='ip'
@@ -134,7 +139,24 @@ function getDataPWD(value) {
     xhttp.open("GET", param, true);
   xhttp.send();
 }
+
+function mAJAX(cmd,value) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       alert(this.responseText);
+       mSetAppLink();
+    }
+  };
+  if (value)
+    xhttp.open("GET",cmd+ "?value="+value, true);
+  else
+    xhttp.open("GET", cmd, true);
+  xhttp.send();
+}
+
 document.addEventListener("DOMContentLoaded", Main_Init);
+
 function Main_Init(){
   getDataIP();
   getDataSSID();

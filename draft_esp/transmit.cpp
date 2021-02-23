@@ -53,9 +53,11 @@ bool mWifiSetupMain(){      //Setup wifi
     bool ret;
     if (_server==NULL)_server = new AsyncWebServer(80);
     ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
+
     if (ret) ret=mStartWebSocket3(); //Use credentials to attempt connection
     if (ret){ //Connection good wait for client to activate WS
       DEBUG(1,("\nConnected to WiFi |"+getAP_SSID() +"|"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
+      DEBUG(0,"\n----------WiFi.localIP() %s\n",WiFi.localIP().toString().c_str());
       ret=mWaitForWSClient(TimeOutClient);
     }
     if (!ret){
@@ -69,13 +71,17 @@ bool mWifiSetupMain(){      //Setup wifi
 bool mStartWebSocket3(){  //Returns true when connection is established
 	DEBUG(1,("Starting Websocket \n|"+getAP_SSID() +"| , |"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
   IPAddress staticIP=getIP();
-  IPAddress gateway(192, 168, 1, 1);
+  IPAddress gateway(192, 168, 1, 254);
   IPAddress subnet(255, 255, 255, 0);
-  WiFi.config(staticIP,staticIP,subnet);  // if using static IP, enter parameters at the top
+  IPAddress ip(192, 168, 1, 177);
+  if (!WiFi.config(staticIP,staticIP,subnet)) {
+   BRK(2,"STA Failed to configure");
+ }
+//  WiFi.config(staticIP,staticIP,subnet);  // if using static IP, enter parameters at the top
   WiFi.begin(getAP_SSID().c_str(),getAP_PASS().c_str());
   for (int i=0;i<TimeoutWifi;i++){ //Loop until timeout
     if (WiFi.status() == WL_CONNECTED) return true;   //Happily connected to wifi
-    if (mChangeDebugLevel()) break;
+    if (mChangeDebugLevel()) break;                 //If userinput on serial monitor then skip to mWIFISetup
     delay(1000); //Sleep to let connect
     Serial.print("."); //Make some waiting dots
   }
@@ -89,16 +95,14 @@ bool mWaitForWSClient(int TimeOutClient){
   if (_server==NULL)_server = new AsyncWebServer(80);
   TRACE();
   _ws=new AsyncWebSocket("/ws");
-  TRACE();
   _ws->onEvent(_WsEvent);
-    TRACE();
   _server->addHandler(_ws);
-    TRACE();
-  //  Why is this neccessary???
-  _server->on("/html", HTTP_GET, [](AsyncWebServerRequest *request){
+  //  Checking if the device is alive and on the network address
+  _server->on("/hello", HTTP_GET, [](AsyncWebServerRequest *request){  //Send the empty loginsite but we can change this to something more intelligent
     DEBUG(2,"html served");
-    request->send(SPIFFS, "/ws.html", "text/html");
+    request->send(SPIFFS, "/creds.html", "text/html");
   });
+
   _server->begin();
   DEBUG(2,"Waiting for client to connect");
   for (int i=0;i<TimeOutClient;i++){    //try until timeout

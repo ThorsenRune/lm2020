@@ -10,8 +10,10 @@
 	<button onclick='prot.state(prot.kCommInit)'>Init Protocol</button>
 	<button onclick='testGetData()'>Get data</button>
 	<button onclick='testSetData()'>Set data</button>
-	 <div  >  Refresh Rate (ms)<input id="idRefreshRate" type="number" value="600"  step='10' onchange="mAcceptRefreshRate()">
-		 </div>
+	<div>
+	 	Refresh Rate (ms)<input id="idRefreshRate" type="number" value="600"  step='10' onchange="mAcceptRefreshRate()">
+		Timing <input type="text" id='idTimingCheck'    disabled> 
+	</div>
 		<button onclick='Main_Loop()' >Step Proc</button>
 	<br>
 	Debug messages
