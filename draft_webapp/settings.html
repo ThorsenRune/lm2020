@@ -9,6 +9,12 @@
 	<input type="button"   value="WiFi Setup" onclick="location.href='devicesetup.html'" >
 	<label>Reset the protocol</label>
 	<input type="button"    value="Reset" onClick="Main_Init()"  />
+
+
+	<label>Save protocol settings</label>
+	<input type="button"    value="Save" onClick="mPHPCall(dataurl,'save',prot.sFileName,prot.oData)"  />
+
+
 	<!-- <input type="button"  class='cLeft' value="BlueTooth" onClick="connectviaBT()"   />
 	<input type="button"  class='cLeft' value="BT Start" onClick="startBTnotifications()"   />
  			(A button that toggles between bluetoot and WiFi connection)<br></br><br></br>

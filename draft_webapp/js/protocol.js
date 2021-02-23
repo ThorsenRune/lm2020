@@ -66,23 +66,12 @@ const prot={		//Encapsulating communication protocol
     //mode=='swap' , will exchange data through the server
     //Sets the datafile and returns previous datafile on the server
     if (mode=='swap'){
-      debugger;
-      if (oRetData)
-      if (oRetData.data)
-      if (oRetData.data.Poke){
-        prot.oData=oRetData.data;
-        prot.lastState='redraw'
-        prot.bPokeRemote=false;
-      }
-      //mAndExchange();	//Data exhange to Android App
-      mPHPCall(dataurl,'swap','swapdata',prot.oData);	//Get file and write new prot.oData
-    } else  {
-      if (prot.bPokeRemote){ 			//mPHPCall(dataurl,'swap',prot.oData,mCb);
-        prot.lastState='poke'
+      mPHPCall(dataurl,'swap','swapdata',prot.oData,mCb);	//Get previos data and write these
+    } else if (mode=='save')  {
         mPHPCall(dataurl,'save','swapdata',prot.oData);
-      } else{       //Load
+    } else if (mode=='load') {       //Load
         mPHPCall(dataurl,'load','swapdata',prot.oData,mCb);
-      }
+    }
       function mCb(oRetData){		//when returning from PHP PROCESS SAVED oWatch
         if (oRetData.data)			prot.oData=oRetData.data;
         if (prot.oData){
@@ -114,9 +103,9 @@ prot.state=function(setState){ //Returns the state of the protocol
     this._state=setState;
   }
   if (this._state==konst.kReady) return this._state
-  if (validate()) this._state=konst.kReady
   return this._state
-  function validate(){	//Check if protocol is received from device
+}
+prot.validate=function(){	//Check if protocol is received from device
   //						all elements have nVarId valid number in range 64--100 (iss201125)
   	var aNames=Object.keys(prot.oProtElemVar)
     if (!aNames.length) return false;
@@ -128,7 +117,6 @@ prot.state=function(setState){ //Returns the state of the protocol
   	}
   	return true;
   }
-}
 prot.CleanUp=function(){  //Remove unregistered variables from protocol
 //						all elements have nVarId valid number in range 64--100
   var aNames=Object.keys(prot.oProtElemVar)
@@ -173,9 +161,10 @@ prot.TXDispatch=function(){	//mTXDispnDataLengthatch - the response will be mRXD
       }else if (VarData.pokedata){
 				mTX_SetReq(VarData);
 				VarData.pokedata=false;	                          //Clear write request flag
-			} else if (VarData.peekdata)
-				mTX_GetReq(VarData);
-				VarData.peekdata=false;                           //Clear read request flag
+			} else if (VarData.peekdata){
+        mTX_GetReq(VarData);
+        VarData.peekdata=false;                           //Clear read request flag
+      }
 		}
 	} else if (prot.state()==prot.kError){
 		mDebugMsg1(1,"some action on protocol error");

@@ -147,9 +147,9 @@
             "Vector": [
                 0,
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "nMode.all_flags": {
             "VarName": "nMode.all_flags",
@@ -158,9 +158,9 @@
             "Size": 1,
             "Vector": [
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "xData": {
             "VarName": "xData",
@@ -278,9 +278,9 @@
                 -1,
                 -1,
                 -1
-            ],
-            "Peek": true,
-            "Poke": false
+            ]
+          
+            
         },
         "yData": {
             "VarName": "yData",
@@ -398,9 +398,9 @@
                 0,
                 0,
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "xData1": {
             "VarName": "xData1",
@@ -409,9 +409,9 @@
             "Size": 1,
             "Vector": [
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "yData1": {
             "VarName": "yData1",
@@ -420,9 +420,9 @@
             "Size": 1,
             "Vector": [
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "IMin": {
             "VarName": "IMin",
@@ -432,9 +432,9 @@
             "Vector": [
                 17000,
                 0
-            ],
-            "Peek": true,
-            "Poke": true
+            ]
+          
+            
         },
         "aIAmp": {
             "VarName": "aIAmp",
@@ -444,9 +444,9 @@
             "Vector": [
                 12000,
                 0
-            ],
-            "Peek": true,
-            "Poke": true
+            ]
+          
+            
         },
         "Offset": {
             "VarName": "Offset",
@@ -456,9 +456,9 @@
             "Vector": [
                 337000,
                 -1
-            ],
-            "Peek": true,
-            "Poke": true
+            ]
+          
+            
         },
         "Gain": {
             "VarName": "Gain",
@@ -468,9 +468,9 @@
             "Vector": [
                 0,
                 0
-            ],
-            "Peek": true,
-            "Poke": false
+            ]
+          
+            
         },
         "IMax": {
             "VarName": "IMax",
@@ -480,9 +480,9 @@
             "Vector": [
                 33000,
                 0
-            ],
-            "Peek": true,
-            "Poke": true
+            ]
+          
+            
         },
         "HVValue": {
             "VarName": "HVValue",
@@ -491,9 +491,9 @@
             "Size": 1,
             "Vector": [
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "nBlankInterval": {
             "VarName": "nBlankInterval",
@@ -505,9 +505,9 @@
                 0,
                 0,
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "bErrFlags.all_flags": {
             "VarName": "bErrFlags.all_flags",
@@ -516,9 +516,9 @@
             "Size": 1,
             "Vector": [
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "nTimerInMs": {
             "VarName": "nTimerInMs",
@@ -529,9 +529,9 @@
                 0,
                 0,
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "StimCountEx": {
             "VarName": "StimCountEx",
@@ -543,9 +543,9 @@
                 0,
                 0,
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "aMLev": {
             "VarName": "aMLev",
@@ -555,9 +555,9 @@
             "Vector": [
                 0,
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "IMaxLimit": {
             "VarName": "IMaxLimit",
@@ -566,9 +566,9 @@
             "Size": 1,
             "Vector": [
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         },
         "StimNegDur": {
             "VarName": "StimNegDur",
@@ -578,9 +578,9 @@
             "Vector": [
                 0,
                 0
-            ],
-            "Peek": false,
-            "Poke": false
+            ]
+            
+            
         }
     },
     "wx": {
@@ -640,7 +640,7 @@
         }
     },
     "cmd": null,
-    "Poke": true,
+    
     "status": {
         "SerialDeviceName": "LM-BT07",
         "ProtState": "kProtReady",
