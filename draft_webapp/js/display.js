@@ -66,10 +66,10 @@ display.refresh=	function(){			//Will refresh controls in the display
 			var el=window[oWX.id].querySelector('input')
 			if (!oWX){
 
-			}else if (el.bPokeValue)		{	//Request to write data to device
+			}else if (el.bUserInput)		{	//Request to write data to device
 				var v=slider.mValue(el);	//Get the sliders value
 				oWX.Value(v);
-				el.bPokeValue=false;
+				el.bUserInput=false;			//Clear the user input flag
 			}else if (oWX.Value){
 				var v=oWX.Value() ;
 				slider.mValue(el,v)	//Set the sliders value
@@ -165,7 +165,6 @@ function mVarName(ctrl,newname){
 		oWX.Range(r);
 		mWidgetSet(oWX);//Refresh the widget
 
-		prot.pokedata000();	debugger; mDebugMsg('Invalid call')
 	}
 
 var mToggleRFMode=function(){

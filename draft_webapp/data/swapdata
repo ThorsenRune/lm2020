@@ -330,7 +330,6 @@
             ],
             "pokedata": false,
             "peekdata": false,
-            "PokeRemotedata": true
         }
     },
     "wx": {
@@ -396,5 +395,5 @@
         "ProtState": "kProtReady",
         "PortState": "kBT_Connected1"
     },
-    "PokeRemote": true
+ 
 }

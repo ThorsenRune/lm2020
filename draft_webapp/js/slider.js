@@ -61,9 +61,9 @@ let slider = (() => {
       $thumb.style.bottom = `${pct}%`;  //Backticks   literals allowing embedded expressions. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
       $bar.style.height = `calc(${pct}% + ${$thumb.clientHeight / 2}px)`;
       $thumb.textContent = `${element.value}${element.unit}`;
-		if (bUserInput) {				//Set flag that this new value is to be written to device
-			element.bPokeValue=true;
-		}
+			if (bUserInput) {								//Set flag that this new value is to be written to device
+				element.bUserInput=true;			//The user has changed the value
+			}
     }
   }
   return {			//Export the variables
