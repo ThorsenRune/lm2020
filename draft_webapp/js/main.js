@@ -47,16 +47,19 @@ var guard=false
 var timing=[Date.now(), 0]
 var Main_Loop=function(interval) {
 		if (guard) debugger;
+		if (guard) return;
 		guard=true
 	//An alternative to Main_Loop
 	if (prot.refreshRate>30){
 			if (display.doRedraw) display.redraw();
 			display.refresh();      //Update screen widgets and get userinput
-			prot.DoTransmissions();//Exchange RX/TX of data from the protocol
- 			if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
+			if (mIsLMHost()) prot.DoTransmissions();//Exchange RX/TX of data from the protocol
+			if (prot.bPokeRemote) prot.mDataExchange('swap');
+			if(!mIsLMHost())prot.mDataExchange('load');
+ 			//if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
  		 	timing[1]=Date.now();
 			diff=timing[1]-timing[0];
-			idSignalLegend.innerText=timing[1]-timing[0];
+			idTimingCheck.value=timing[1]-timing[0];
 			timing[0]=timing[1]
 	}
 	setTimeout(function(){
@@ -65,6 +68,10 @@ var Main_Loop=function(interval) {
 	guard=false
 }
 
+
+function mIsLMHost(){			//Returns true if connected to Arduino LM
+			return serial.isReady();			//a wrapper for ws.readyState==ws.OPEN;
+}
 
 /*
 	Note on setInterval, if you see your call stack growing during debug, don't worry.

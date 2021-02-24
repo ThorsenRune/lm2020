@@ -16,6 +16,7 @@ display.init=function(){
 	display.idValue		=window.idValue
 	display.idIdx		=window.idIdx
 	display.ActiveWidget=document.activeElement;			//Active control
+	document.onkeydown=function(event){mKeyDown(event)}
 }
 
 
@@ -65,10 +66,10 @@ display.refresh=	function(){			//Will refresh controls in the display
 			var el=window[oWX.id].querySelector('input')
 			if (!oWX){
 
-			}else if (el.bPokeValue)		{	//Request to write data to device
+			}else if (el.bUserInput)		{	//Request to write data to device
 				var v=slider.mValue(el);	//Get the sliders value
 				oWX.Value(v);
-				el.bPokeValue=false;
+				el.bUserInput=false;			//Clear the user input flag
 			}else if (oWX.Value){
 				var v=oWX.Value() ;
 				slider.mValue(el,v)	//Set the sliders value
@@ -163,10 +164,17 @@ function mVarName(ctrl,newname){
 				,Number(display.idDispMax.value)]
 		oWX.Range(r);
 		mWidgetSet(oWX);//Refresh the widget
-		prot.pokedata();
+
 	}
 
-
+var mToggleRFMode=function(){
+	bUseBluetooth(!bUseBluetooth());		//Toggle the current state of RF
+	if (bUseBluetooth()) {
+		mMessage('Switching to BT mode');
+	} else {
+		mMessage('Switching to WiFi mode');
+	}
+}
 
 const popup={
 	 mMessage:function(str){
@@ -194,6 +202,7 @@ const popup={
 			display.idPopUp.hidden=true
 		}else if (display.idPopUp.hidden){
 			display.idSettingsCancel.onclick=function(){that.mShow(false)}
+			document.onkeydown=function(event){mKeyDown(event)}
 			display.idText.onblur=display.idSettingsCancel.onclick;
 			display.idText.hidden=true;
 			display.idSettings.hidden=true;
@@ -209,3 +218,8 @@ const popup={
 	}
 }
 var nSubCounter=10;
+var mKeyDown=function(evnt){			//Envent handler for keyboard strokes
+	if (mIsVisible(idTextClose)){	//Close settings winndow on cancel
+		if(evnt.keyCode==27)	idPopUp.hidden=true
+	}
+}

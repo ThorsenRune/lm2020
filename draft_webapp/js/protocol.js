@@ -66,35 +66,25 @@ const prot={		//Encapsulating communication protocol
     //mode=='swap' , will exchange data through the server
     //Sets the datafile and returns previous datafile on the server
     if (mode=='swap'){
-      if (oRetData)
-      if (oRetData.data)
-      if (oRetData.data.Poke){
-        prot.oData=oRetData.data;
-        prot.lastState='redraw'
-        prot.oData.PokeRemote=false;
-      }
-      //mAndExchange();	//Data exhange to Android App
-      mPHPCall(dataurl,'swap','swapdata',prot.oData);	//Get file and write new prot.oData
-    } else  {
-      if (prot.oData.PokeRemote){ 			//mPHPCall(dataurl,'swap',prot.oData,mCb);
-        prot.lastState='poke'
+      mPHPCall(dataurl,'swap','swapdata',prot.oData,mCb);	//Get previos data and write these
+    } else if (mode=='save')  {
         mPHPCall(dataurl,'save','swapdata',prot.oData);
-      } else{       //Load
+    } else if (mode=='load') {       //Load
         mPHPCall(dataurl,'load','swapdata',prot.oData,mCb);
-      }
+    }
       function mCb(oRetData){		//when returning from PHP PROCESS SAVED oWatch
         if (oRetData.data)			prot.oData=oRetData.data;
         if (prot.oData){
-          if (prot.oData.PokeRemote) {
+          if (prot.bPokeRemote) {
             prot.lastState='redraw'
-            prot.oData.PokeRemote=false;
+            prot.bPokeRemote=false;
             display.doRedraw=true;  //Request a redraw of the display
             prot.remotePeek=false;  //Clear flag getting data from remote
           }
         }
       }
     }
-    prot.oData.PokeRemote=false;	//Done poking in the exchange process
+    prot.bPokeRemote=false;	//Done poking in the exchange process
   }
 
 }
@@ -113,9 +103,9 @@ prot.state=function(setState){ //Returns the state of the protocol
     this._state=setState;
   }
   if (this._state==konst.kReady) return this._state
-  if (validate()) this._state=konst.kReady
   return this._state
-  function validate(){	//Check if protocol is received from device
+}
+prot.validate=function(){	//Check if protocol is received from device
   //						all elements have nVarId valid number in range 64--100 (iss201125)
   	var aNames=Object.keys(prot.oProtElemVar)
     if (!aNames.length) return false;
@@ -127,7 +117,6 @@ prot.state=function(setState){ //Returns the state of the protocol
   	}
   	return true;
   }
-}
 prot.CleanUp=function(){  //Remove unregistered variables from protocol
 //						all elements have nVarId valid number in range 64--100
   var aNames=Object.keys(prot.oProtElemVar)
@@ -166,15 +155,16 @@ prot.TXDispatch=function(){	//mTXDispnDataLengthatch - the response will be mRXD
 	} else if (prot.state()==konst.kReady){
 		var aNames=Object.keys(prot.oProtElemVar)
 		for (var i=0;i<aNames.length;i++){
-			var VarData=prot.oProtElemVar[aNames[i]];
+			var VarData=prot.oProtElemVar[aNames[i]];        //Todo: rename oProtElemVar->arrayOData
       if (!VarData.nVarId){//          mMessage("Unregistered variable "+aNames[i]);
 //          debugger
       }else if (VarData.pokedata){
 				mTX_SetReq(VarData);
-				VarData.pokedata=false;	//Clear write request flag
-			} else if (VarData.peekdata)
-				mTX_GetReq(VarData);
-				VarData.peekdata=false;//Clear read request flag
+				VarData.pokedata=false;	                          //Clear write request flag
+			} else if (VarData.peekdata){
+        mTX_GetReq(VarData);
+        VarData.peekdata=false;                           //Clear read request flag
+      }
 		}
 	} else if (prot.state()==prot.kError){
 		mDebugMsg1(1,"some action on protocol error");
@@ -408,9 +398,7 @@ prot.mWX=function(idWX){		//contains Index, min,max
 		}
 		function nValue(val){//191107
 			var oData=prot.oVarProt(oWX.varname)
-			//if (val!==undefined)				oData.Value(oWX.Index,val)
-			//Using prot.mVarValue(sVarName,idx,val)
-			return oData.Value(oWX.Index,val)  //Sets val if given
+ 			return oData.Value(oWX.Index,val)  //Sets val if given
 		}
 
 		function _VarName(sName){
@@ -428,24 +416,24 @@ prot.mWX=function(idWX){		//contains Index, min,max
 		}
 		return myVar;
 	}
-prot.mVarValue=function(sVarName,idx,val){		//
+prot.mVarValue=function(sVarName,idx,val){
 		//Get/Set value with digital conversion
 		//in: name of the element, idx= the index in the data array , val-if given will set the new value
 		if (!idx==undefined) debugger;
 		var oData=prot.oProtElemVar[sVarName];
 		if(!oData) return undefined;
 		var oDesc=prot.oVarDesc[sVarName]
-		if (val!=undefined){
+		if (val!=undefined){                            //User input has set a value
 			var raw=(val/oDesc.Factor)+Number(oDesc.Offset);
-		    if (oData.Vector)			oData.Vector[idx]=raw;    //RT210121  guard void
-			oData.PokeRemotedata=true;	//Request a write to device
-			oData.peekdata=true;	//Request a readback from device
-      this.oData.PokeRemote=true;   //This = protocol
+		  if (oData.Vector)	oData.Vector[idx]=raw;    //RT210121  guard for a void vector
+			oData.pokedata=true;	          //Request a write to device
+			oData.peekdata=true;	          //Request a readback from device
+      this.bPokeRemote=true;     //This = protocol
 		} else {
       if (undefined ===oData.Vector) return undefined
 			if (undefined ===oData.Vector[idx]) return undefined
 			var val=oData.Vector[idx]
-			if (typeof val==='undefined') mDebugMsg1(1,"Error you probably missed the index @prot.mVarValue");
+			if (typeof val==='undefined') mDebugMsg1(1,"Error you probably missed the index  ");
       if (typeof oDesc.Offset==='undefined') mDebugMsg1(1,'typeof oDesc.Offsetdebugger fix potential errors');
 			var u=(val-oDesc.Offset)*oDesc.Factor;
 			oData.peekdata=true;
@@ -462,7 +450,7 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
 				oProtElemVar .Vector[idx]=(vector[idx]/oDesc.Factor)+Number(oDesc.Offset);
 			}
       debugger; mDebugMsg('Invalid call')
-			prot.pokedata000(oProtElemVar );
+
 		} else {
 //			if (undefined ===oProtElemVar .Vector) return undefined
 			var vector=oProtElemVar.Vector       //The data array

@@ -19,8 +19,8 @@
 
 //  Parameters for the WiFiAccessPoint , will be get/set from SPIFFS
 
-String AP_SSID = "Rune";  // your router's SSID here
-String AP_PASS = "telefon1";     // your router's password here
+String AP_SSID = "Insert ROUTER SSID";  // your router's SSID here
+String AP_PASS = "router password";     // your router's password here
 String LM_URL = "url";
 String AP_StaticIP="192.168.1.238";
 
@@ -42,10 +42,6 @@ IPAddress getIP(){    //I think IPAddress is just an array
 
 
 
-//    Params from HTML pages
-const char* PARAM_INPUT_1 = "SSID";
-const char* PARAM_INPUT_2 = "Password";
-const char* PARAM_INPUT_3 = "LM_URL";
 //IP Address settings
 
 //      Flags of statemachine. set by async calls  (see flowchart)
@@ -54,7 +50,8 @@ bool isMyStaticIPSet=false;
 bool startAPP=false;    //Ready to launch main LM_program
 bool stopsoftAP=false;    //Ready to launch main LM_program
 bool isWiFiStationConnected=false;  //Is device connected to softAP?
-
+bool doGetFreeIP=false;
+bool doStopSoftAP=false;
 /*********        interface     ********/
 bool mWIFIConnect(){//Main entry point - a blocking call
   mDebugMsgcpp("Executing: mWIFIConnect1");
@@ -97,7 +94,6 @@ bool mWIFISetup(AsyncWebServer & gserver){//Setup SOFT AP FOR CONFIGURING WIFI
             //(Flowchart 2)
     bool ret=false;
     WiFi.disconnect();
-    mDebugMsgcpp("Calling InitSoftAP ");
     ret=InitSoftAP(gserver);//Sets AP_SSID, AP_PASS by Setup a soft accesspoint   and ask the user for credentials
       //The InitSoftAP will return the parameters
       //connect to network and get the IP
@@ -123,9 +119,9 @@ bool mGetMyStaticIP(){//Get a free  IP address and make it static
   WiFi.disconnect();delay(100);
   WiFi.mode(WIFI_STA);
   WiFi.config(0U, 0U, 0U);//rt210121 reset the configuration so a fresh IP can be obtained - https://stackoverflow.com/a/54470525/2582833
-  WiFi.begin(AP_SSID.c_str(), AP_PASS.c_str());delay(100);
-  DEBUG(2,"Connecting to internet WIFI to get IP");
-  DEBUG(2,("|"+AP_SSID +"| , |"+AP_PASS+"|").c_str());
+  WiFi.begin(getAP_SSID().c_str(), AP_PASS.c_str());delay(100);
+  DEBUG(2,"Connecting to internet WIFI to get IP\n");
+  DEBUG(2,("|"+getAP_SSID() +"| , |"+AP_PASS+"|").c_str());
   for (int i=0;i<20;i++){ //Loop until timeout
     if (WiFi.status() == WL_CONNECTED) { //Wifi connection good
       // get the IP
@@ -180,6 +176,7 @@ bool mGetCredentials(){//Blocking. Will return true if credentials are in FLASH
   if (nDbgLvl>4){ Serial.print("IP.txt (AP_StaticIP): ");  Serial.println(AP_StaticIP);}
   const String bEmptyString=String();
   if ((bEmptyString==AP_SSID)||(bEmptyString==AP_PASS)) {
+    AP_PASS="";
     mDebugMsgcpp("Missing credentals files");
     return false;   //Invalid file
   } else{           //We have credentials
@@ -202,8 +199,22 @@ void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info){
 
 //Page not found
 void notFound(AsyncWebServerRequest *request) {
-  request->send(SPIFFS, "/creds.html", "text/html");
-//  request->send(404, "text/plain", "Pagina non trovata");
+   request->send(SPIFFS, "/creds.html", "text/html");
+  /*
+  int paramsNr = request->params();
+//  if (paramsNr = request->params())
+  Serial.println(paramsNr);
+  for(int i=0;i<paramsNr;i++){
+      if (request->hasParam(i,true))      AsyncWebParameter* p = request->getParam(i,true);  //HTTP_POST
+      else       AsyncWebParameter* p = request->getParam(i);
+      Serial.print("Param name: ");
+      Serial.println(p->name());
+      Serial.print("Param value: ");
+      Serial.println(p->value());
+      Serial.println("------");
+  }*/
+  DEBUG(1,"invalid request notFound");
+  //request->send(404, "text/plain", "Pagina non trovata");
 }
 bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
   //Params are byref (will return new values)
@@ -211,6 +222,7 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
   //return true/false when parameters are obtained
   //WiFi.softAP(ssid, password, channel, hidden, max_connection); // Remove the password parameter, if you want the AP (Access Point) to be open
   InitSoftAPOk=false;     //Blocking flag to wait for user to accept settings
+  doStopSoftAP=false;     //This function will block/wait until this flag becomes true
   WiFi.softAP(SoftAP_SSID);
   delay(500);
   IPAddress SoftAP_IP(192,168,1,1);
@@ -229,16 +241,12 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
   DEBUG(2,"Waiting for user to open %s\n",WiFi.softAPIP().toString().c_str());
 
    // Send web page with input fields to client
-  gserver.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    mDebugMsgcpp("serving creds.html");
+  gserver.on("/setup", HTTP_GET, [](AsyncWebServerRequest *request){
+    DEBUG(2,"serving creds.html");
     request->send(SPIFFS, "/creds.html", "text/html");
   });
-/*  gserver.on("/get", HTTP_GET, [](AsyncWebServerRequest *request){
-    DEBUG(1,"serving getip.html  \n");
-    request->send(SPIFFS, "/getip.html", "text/html");
-  });*/
   // Serve style.css file
-    gserver.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+  gserver.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
     DEBUG(4,"serving style.css\n");
     request->send(SPIFFS, "/style.css", "text/css");
   });
@@ -247,21 +255,23 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
       String PARAM1="value";
       DEBUG(1,"serving ssid\n");TRACE();
       if (request->hasParam(PARAM1)) {
-        String s=request->getParam(PARAM1)->value();
-        AP_SSID=s;
-        DEBUG(3,"Getting GET data :%s\n",s)
+        AP_SSID=request->getParam(PARAM1)->value();
+        DEBUG(1,"AP_SSID=|%s|\\n",getAP_SSID().c_str());
       }
       DEBUG(4,"Sending AP_SSID to client\n");
-      request->send(200, "text/plain", AP_SSID.c_str());
+      request->send(200, "text/plain", getAP_SSID().c_str());
     });
     gserver.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request){
       DEBUG(2,"Sending sMyStaticIP %s to client\n",AP_StaticIP.c_str());
       String PARAM1="value";
-      if (request->hasParam(PARAM1)) {
+      if (request->hasParam(PARAM1)) {    //Getting value from client
         AP_StaticIP=request->getParam(PARAM1)->value();
+          mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
+          DEBUG(1,"Starting a request for free IP");
+      } else {
+        DEBUG(1,"Sending current IP");
       }
       request->send(200, "text/plain",AP_StaticIP.c_str());
-
     });
     gserver.on("/url", HTTP_GET, [](AsyncWebServerRequest *request){
        mDebugMsgcpp("Sending url to client\n");
@@ -275,39 +285,41 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
       String PARAM1="value";
       if (request->hasParam(PARAM1)) {
         AP_PASS=request->getParam(PARAM1)->value();
+        DEBUG(2,"New password  %s \n",AP_PASS.c_str());
+        mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP);
       }
       request->send(200, "text/plain",AP_PASS.c_str());
     });
     gserver.on("/startapp", HTTP_GET, [](AsyncWebServerRequest *request){
            //Ready to goto server page
-          request->send(200, "text/plain", LM_URL.c_str());
-          InitSoftAPOk=true;    //Flag to exit INIT softAP
-          startAPP=true;      //Flag to start application and close softAP
+          request->send(200, "text/plain", "Starting websocket, please change network" );
+          doStopSoftAP=true;
     });
     //User accepted values
-    gserver.on("/get", HTTP_POST, [] (AsyncWebServerRequest *request) {
-      if (request->hasParam(PARAM_INPUT_1,true)) {
-        AP_SSID = request->getParam(PARAM_INPUT_1,true)->value();
-        AP_PASS = request->getParam(PARAM_INPUT_2,true)->value();
-        LM_URL = request->getParam(PARAM_INPUT_3,true)->value();
-        AP_SSID.trim();   //Remove spaces
-        AP_PASS.trim();
-        LM_URL.trim();
-        DEBUG(1,"Credentials received: |%s|%s|%s|\n",AP_SSID.c_str() , AP_PASS.c_str(),LM_URL.c_str());
-        InitSoftAPOk=true;
-        request->send(SPIFFS, "/creds.html", "text/html");
-        //request->send(SPIFFS, "/getip.html", "text/html");
-      }    request->send(SPIFFS, "/creds.html", "text/html");
-    });
+    gserver.on("/getIP", HTTP_GET, [] (AsyncWebServerRequest *request) {
+      startAPP=true;      //Flag to start application and close softAP
+      doStopSoftAP=true;  //Flag to stop the softAP
+        //mSetCredentials();
+        DEBUG(1,"Get IP for credentials: |%s|%s|%s|\n",getAP_SSID().c_str() , AP_PASS.c_str(),LM_URL.c_str());
+        request->send(200, "text/plain", "INITIALIZING" );
+  });
   gserver.onNotFound(notFound);
   gserver.begin();
   DEBUG(1,"Waiting for user to insert credentials\n");
   //"Continue if good. else if Failed to get credentials, abort");
-  ret= mWaitUntilTrueOrTimeout(InitSoftAPOk);
+  ret= mWaitUntilTrueOrTimeout(doStopSoftAP);
   DEBUG(2,"InitSoftAP, Disconnecting Soft AP\n");
   delay(2000);  //Wait for transactions to finish before closing?
   WiFi.disconnect();
   WiFi.softAPdisconnect (true);
+  if (doGetFreeIP) {
+    ret=mGetMyStaticIP();
+    if (ret) DEBUG(1,"Got IP");
+    if (ret)   mSetCredentials();//AP_SSID, AP_PASS,MyStaticIP); //Save the data
+    ret=InitSoftAP(gserver);
+    DEBUG(1,"Finished InitSoftAP");
+  }
+  DEBUG(1,"Starting Main program");
   return ret;
 }
 
@@ -317,17 +329,17 @@ bool InitSoftAP(AsyncWebServer & gserver) {  //Get credentials from user
 String readFile(fs::FS &fs, const char * path){
   if (nDbgLvl==6) Serial.printf("Reading file: %s\r\n", path);
   File file = fs.open(path, "r");
-    if(!file || file.isDirectory()){
-            Serial.println("- empty file or failed to open file");
-            return String();
-  }
-if (nDbgLvl==6)  Serial.println("- read from file:");
-  String fileContent;
-  while(file.available()){
-    fileContent+=String((char)file.read());
-  }
-if (nDbgLvl==6)  Serial.println(fileContent);
-  return fileContent;
+  if(!file || file.isDirectory()){
+              Serial.println("- empty file or failed to open file");
+              return String();
+    }
+  if (nDbgLvl==6)  Serial.println("- read from file:");
+    String fileContent;
+    while(file.available()){
+      fileContent+=String((char)file.read());
+    }
+  if (nDbgLvl==6)  Serial.println(fileContent);
+    return fileContent;
 }
 
 //Write credentials from files (SSID.txt,Password.txt and IP.txt)
