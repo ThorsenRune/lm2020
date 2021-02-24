@@ -50,6 +50,7 @@ function mSetAppLink(){
   document.getElementById("idURL1").setAttribute('href',url);
 }
 function mAppStart(){
+      mSetAppLink();
       getStartWS();     //RESTART LM
       alert('Connect to your wifi internet '+ WiFiSSID);
       var url="http://"+LM_ServerUrl+"?ws="+LM_Ip;
@@ -160,6 +161,7 @@ function Main_Init(){
   getDataURL();
   getDataPWD();
   viewPassword();
+  mSetAppLink();
 }
 </script>
 </body>
