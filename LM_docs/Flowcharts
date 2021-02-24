@@ -120,3 +120,35 @@ Notes: Tabsize 4
 
 
             TRY LM_docs\Prova_bidirectional_connection TO UNDERSTAND HOW THE MODEL works
+
+
+
+            ********Master-Remote communication Swimlane********
+
+----ESP----------------MASTER----------------Swapdata----------------nth-REMOTE----
+              |                      |                       |
+           <----> DoTransmissions()  |                       |
+TXDispatch()  |                      |                       |
+mRXDispatch() |                      |                       |
+              |                      |                       |
+              | mDataExchange('swap')| ----> Save            |
+              |                      | <---Load previous data|
+              |                      |                       |
+              | mDataExchange('save')| ----> Save            |
+              |                      |                       |
+              |                      |             load--->  | mDataExchange('load')
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |                   
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
+              |                      |                       |
