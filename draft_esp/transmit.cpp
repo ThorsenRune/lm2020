@@ -100,7 +100,7 @@ bool mWaitForWSClient(int TimeOutClient){
   //  Checking if the device is alive and on the network address
   _server->on("/hello", HTTP_GET, [](AsyncWebServerRequest *request){  //Send the empty loginsite but we can change this to something more intelligent
     DEBUG(2,"html served");
-    request->send(SPIFFS, "/creds.html", "text/html");
+    request->send(SPIFFS, "/hello.html", "text/html");
   });
 
   _server->begin();
