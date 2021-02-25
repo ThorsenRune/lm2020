@@ -29,26 +29,6 @@ AsyncWebSocket *_ws;
 
 
 //*************************** interface*****************************
-
-bool mSetRFMethod(bool bBlueTooth){
-/*  Calling this will change the RF transmission method to BlueTooth or WiFi
-    @author:RT210128
-*/
-/*  if (bBlueTooth){
-    //Todo:@FC29 - call the methods for setting up BT
-    //useBT=true; //isBTClientConnected returns true if BT is connected set by onBTConnectDisconnect
-    DEBUG(1,"Starting Bluetooth");
-    return InitBLE();
-  }*/
-//  else {
-    return mWifiSetupMain();
-    //isBTClientConnected returns false if BT is disconnected set by onBTDisconnect
-//  }
-
-}
-
-
-
 bool mWifiSetupMain(){      //Setup wifi
     bool ret;
     if (_server==NULL)_server = new AsyncWebServer(80);
@@ -56,15 +36,12 @@ bool mWifiSetupMain(){      //Setup wifi
 
     if (ret) ret=mStartWebSocket3(); //Use credentials to attempt connection
     if (ret){ //Connection good wait for client to activate WS
-      DEBUG(1,("\nConnected to WiFi |"+getAP_SSID() +"|"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
-      DEBUG(0,"\n----------WiFi.localIP() %s\n",WiFi.localIP().toString().c_str());
+      DEBUG(1,("\nConnected to WiFi |"+getAP_SSID() +"|"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|"+WiFi.localIP().toString()+"|").c_str());
       ret=mWaitForWSClient(TimeOutClient);
     }
     if (!ret){
-      ret=mWIFISetup(*_server);
-      TimeOutClient=200;
-      DEBUG(1,"WIFI SETUP AND READY\n\n");
-      return ret;
+        ret=mWIFISetup(*_server);     //Setting up the wifi connection for the ESP
+        mWifiSetupMain();
     }
 }
 //-----------------------PRIVATE STUFF --------------------

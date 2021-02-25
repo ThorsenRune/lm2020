@@ -51,18 +51,15 @@ IPAddress getIP();
 extern int TimeoutWifi;
 extern int TimeOutClient;
 /***************PROTOTYPES ***sigh*********************/
-void mDebugMsgcpp(char msg[]);        //Debugging messages
-void mDebugHaltcpp(char msg[]);
-void mPrintcpp(String msg);
 
 bool mWIFISetup(AsyncWebServer &gserver);             //Main entry point will return true when connected
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS);
 //  -------- private functions
 bool mGetCredentials();
-
-bool InitSoftAP(AsyncWebServer &gserver);
+bool mGetFreeIP();
+bool mSoftAPStart(AsyncWebServer &gserver);
 bool mGetMyStaticIP();
-bool mUserFeedbackViaSoftAP();
+
 void mSetCredentials();
 String readFile(fs::FS &fs, const char * path);
 void writeFile(fs::FS &fs, const char * path, const char * message);

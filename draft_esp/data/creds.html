@@ -9,33 +9,37 @@
 <body>
   <h2>Configurazione WiFi</h2>
   <p>Inserisci per favore i credenziali della rete WiFi che si desirera utilizzare</p>
+    <button   onclick='Main_Init();'>Get Current Settings</button>
   <fieldset id="idAcceptIP">
     <label>SSID rete Wifi: </label>
     <input type="text" name="SSID" id="idSSID"   style=" width: 50%;">
     <button   onclick='getDataSSID(idSSID.value);'>Set</button>
   </fieldset>
   <fieldset>
+    <!--
     <label>Password: </label>
+    <input type="checkbox" onclick="viewPassword()" id="idpasswordcheck" name="passwordcheck">
+    An eye element to toggle between password visibility -->
+    <label    onclick="viewPassword()" style="text-decoration: underline;">Password:   &#128065 </label>
+
     <input type="password" name="Password" id="myPass">
     <button   onclick='getDataPWD(myPass.value);'>Set</button><br>
-    <!-- An eye element to toggle between password visibility -->
-    <input type="checkbox" onclick="viewPassword()" id="idpasswordcheck" name="passwordcheck">
-    &#128065
   </fieldset>
   <fieldset>
     <label >Server : </label >
     <input type="text" name="LM_URL" id="idLM_URL" value="URL OF THE SERVER">
     <button   onclick='getDataURL(idLM_URL.value);'>Set</button>
   </fieldset>
-  <button   onclick='Main_Init();'>Get Current Settings</button>
-  <button id='idgetDataIP' onclick='mAJAX("getIP");'  >Get free IP</button>
+  <button   onclick='mSettingsAccept();'>Accept Settings</button>
+  <button id='idgetDataIP' onclick='mAJAX("getIP");'  >Request an IP</button>
+    <button   onclick='Main_Init();'>Get IP</button>
   <fieldset id="idAcceptIP">
     <label>IP : </label>
     <input type="text" name="IPname" id="idIP" value="196.168.1.100" style=" width: 50%;">
     <button id='idgetDataIP' onclick='getDataIP(idIP.value);'>Set</button>
   </fieldset>
   <hr>
-  <p><button id='idAppStartBtn' onclick='mAppStart();' style="align:center;">Switch network & Restart device</button></p>
+  <p><button id='idAppStartBtn' onclick='mAppStart();' style="align:center;">Switch network</button></p>
   <H2>Visita il <a href=LM_ServerUrl+"#" id="idURL1">sito</a> dedicato a MeCFES.</h2>
 <script>
     var LM_ServerUrl;
@@ -51,6 +55,7 @@ function mSetAppLink(){
   return url;
 }
 function mAppStart(){
+    alert('Reset the device');
       var url=mSetAppLink();
       getStartWS();     //RESTART LM
       alert('Connect to your wifi internet '+ WiFiSSID);
@@ -135,7 +140,6 @@ function getDataPWD(value) {
     xhttp.open("GET", param, true);
   xhttp.send();
 }
-
 function mAJAX(cmd,value) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -152,7 +156,12 @@ function mAJAX(cmd,value) {
 }
 
 document.addEventListener("DOMContentLoaded", Main_Init);
-
+function mSettingsAccept(){
+  getDataSSID(idSSID.value);
+  getDataPWD(myPass.value);
+  getDataURL(idLM_URL.value);
+  getDataIP(idIP.value);
+}
 function Main_Init(){
   getDataIP();
   getDataSSID();
