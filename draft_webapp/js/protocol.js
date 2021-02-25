@@ -72,15 +72,14 @@ const prot={		//Encapsulating communication protocol
     } else if (mode=='load') {       //Load
         mPHPCall(dataurl,'load','swapdata',prot.oData,mCb);
     }
-      function mCb(oRetData){		//when returning from PHP PROCESS SAVED oWatch
-        if (oRetData.data)			prot.oData=oRetData.data;
-        if (prot.oData){
-          if (prot.bPokeRemote) {
-            prot.lastState='redraw'
-            prot.bPokeRemote=false;
-            display.doRedraw=true;  //Request a redraw of the display
-            prot.remotePeek=false;  //Clear flag getting data from remote
-          }
+    function mCb(oRetData){		//when returning from PHP PROCESS SAVED oWatch
+      if (oRetData.data)			prot.oData=oRetData.data;
+      if (prot.oData){
+        if (prot.bPokeRemote) {
+          prot.lastState='redraw'
+          prot.bPokeRemote=false;
+          display.doRedraw=true;  //Request a redraw of the display
+          prot.remotePeek=false;  //Clear flag getting data from remote
         }
       }
     }
