@@ -1,1 +1,1 @@
-localhost/public/lm2020/lm_webapp
+http://thorsen.it/public/lm2020/draft_webapp

@@ -14,9 +14,7 @@
 //  * the line number
 //  * the current function
 //  * the template parameters (if any)
-
 #pragma once
-
 #include <Arduino.h>
 
 #ifndef ARDUINOTRACE_ENABLE
