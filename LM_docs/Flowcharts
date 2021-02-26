@@ -188,6 +188,8 @@ mRXDispatch() |       (t=n)          |                       |
  |           |   'load'       |                 | 'swap'/   |              |
  +-----------+                +-----------------+ 'save'    +--------------+
 
+----------------------------------------------------------------------------------------------------------------------------------
+
     TRIGGER ACTION TO PASS FROM STATE 1 TO STATE 2: Remote change some values in the sliders.
 
      State 1 -> Remote change values -> State 2 ------> State 1 +
