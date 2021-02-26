@@ -45,25 +45,32 @@ var mode='';
 var diff;					//see flowchart above
 var guard=false
 var timing=[Date.now(), 0]
+var decimate=3;
+var loopcount=0;
+var doRelay=false;
 var Main_Loop=function(interval) {
 		if (guard) debugger;
 		if (guard) return;
-		guard=true
+		guard=true;
+		doRelay=!(loopcount%decimate);
 	//An alternative to Main_Loop
-	if (prot.refreshRate>30){
+	if (prot.refreshRate>30)
+	if ((Date.now()-timing[0])>=prot.refreshRate)	//Don't execute stacked calls
+	{
+			loopcount=loopcount+1;
 			if (display.doRedraw) display.redraw();
 			display.refresh();      //Update screen widgets and get userinput
 			if (mIsLMHost()) {		//Master swimlane
 					prot.DoTransmissions();//Exchange RX/TX of data from the protocol
 					//todo: make conditional if has some remote clients
-					prot.mDataExchange('swap');
+					if (doRelay) 	prot.mDataExchange('swap');
 					prot.oData.bPokeData=false;
 			} else {
 					if (prot.oData.bPokeData) {
 						prot.mDataExchange('save');
 						prot.oData.bPokeData=false;
 					} else {
-						prot.mDataExchange('load');
+					  if (doRelay)	 		prot.mDataExchange('load');
 						display.doRedraw=true;
 						prot.oData.bPokeData=false;
 					}
