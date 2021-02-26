@@ -53,10 +53,23 @@ var Main_Loop=function(interval) {
 	if (prot.refreshRate>30){
 			if (display.doRedraw) display.redraw();
 			display.refresh();      //Update screen widgets and get userinput
-			if (mIsLMHost()) prot.DoTransmissions();//Exchange RX/TX of data from the protocol
-			if (prot.bPokeRemote) prot.mDataExchange('swap');
-			if(!mIsLMHost())prot.mDataExchange('load');
- 			//if (bRelay2Server) prot.mDataExchange(mode); //mode=swap,load,save
+			if (mIsLMHost()) {		//Master swimlane
+					prot.DoTransmissions();//Exchange RX/TX of data from the protocol
+					//todo: make conditional if has some remote clients
+					prot.mDataExchange('swap');
+					prot.oData.bPokeData=false;
+			} else {
+					if (prot.oData.bPokeData) {
+						prot.mDataExchange('save');
+						prot.oData.bPokeData=false;
+					} else {
+						prot.mDataExchange('load');
+						display.doRedraw=true;
+						prot.oData.bPokeData=false;
+					}
+			}
+
+
  		 	timing[1]=Date.now();
 			diff=timing[1]-timing[0];
 			idTimingCheck.value=timing[1]-timing[0];
