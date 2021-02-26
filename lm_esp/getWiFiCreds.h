@@ -1,6 +1,6 @@
 /*file: getWiFiCreds.h
    This module will get the WiFi credentials stored in the FLASH memory
-   If the credentals are not valid, it will setup a direct wifi at (todo8: always same address?)
+   If the credentals are not valid, it will setup a direct wifi 'SoftAP_IP(192,168,1,1)'
    The client can connect to the local wifi network and insert the credentials of the internetwifi
 
 */
@@ -51,18 +51,15 @@ IPAddress getIP();
 extern int TimeoutWifi;
 extern int TimeOutClient;
 /***************PROTOTYPES ***sigh*********************/
-void mDebugMsgcpp(char msg[]);        //Debugging messages
-void mDebugHaltcpp(char msg[]);
-void mPrintcpp(String msg);
 
 bool mWIFISetup(AsyncWebServer &gserver);             //Main entry point will return true when connected
 bool mStartWebSocket(IPAddress MyStaticIP,String AP_SSID,String AP_PASS);
 //  -------- private functions
 bool mGetCredentials();
-
-bool InitSoftAP(AsyncWebServer &gserver);
+bool mGetFreeIP();
+bool mSoftAPStart(AsyncWebServer &gserver);
 bool mGetMyStaticIP();
-bool mUserFeedbackViaSoftAP();
+
 void mSetCredentials();
 String readFile(fs::FS &fs, const char * path);
 void writeFile(fs::FS &fs, const char * path, const char * message);

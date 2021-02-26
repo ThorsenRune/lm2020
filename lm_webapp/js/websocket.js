@@ -1,18 +1,5 @@
  // This is a module of prototype.html used for websocket.ino to interface with LM from browser (client)
  // todo: rename globally to webserial.js
-/*
-		FLOW: todo210201
-		(event)*--->	BTReceiveEvent (data on BT)
-										|-->read data -> serial.onReceive(data)
-
-
-
-
-
-
-*/
-
-
 var oWS={			//The websocket interface class
 	EditIP:function(){	//Let user insert IP manually
 			var wsip=mGetIpFromLocationbar();
@@ -22,6 +9,29 @@ var oWS={			//The websocket interface class
 	}
 }
 
+var bWiFi_BT_State=true;	//todo:refactor name temporary
+var bUseBluetooth=function(newstate){
+	/*
+		args: true=>use BT, false=>use WiFI, null=> return current state
+		returns true if BT is used flase if WiFi
+		@author:RT210128 toggle bluetoot/WiFi
+	*/
+	if (typeof newstate==='undefined') return bWiFi_BT_State;
+	bWiFi_BT_State=newstate;
+	if (bWiFi_BT_State){		//Use bluetooth
+		connectviaBT()	//Start a connection todo: refactor to InitiazeBT
+		//TODO:startBTnotifications should be in a callback of connectviaBT
+		setTimeout(function(){
+			mMessage('Waiting for pairing');
+			startBTnotifications();//Start the communication
+			mMessage('BT transmission started');
+		},15000);
+	} else {
+		mWebSocket_InitAsync();			//Setup the websocket
+	}
+	//Todo business logic to enable disable wifi/bluetooth
+
+};
 var ws=null;	//The websocket - a serial RX/TX channel to LM
 
 var mGetIpFromLocationbar=function(){		//This will get a WS ip from local storage or from search query
@@ -42,7 +52,6 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 	document.getElementById( "idStatus").innerHTML="Calling device";
 	aRXData=[]
 	ws.binaryType="arraybuffer"
-	mMessage('Connecting to:'+staticIP);
 	ws.onopen = function() {
 		document.getElementById( "idStatus").innerHTML="CONNECTED";
 		if (callbackonconnect)callbackonconnect();
@@ -54,20 +63,23 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 	};
 	ws.onerror = function (error) {
 		document.getElementById( "idStatus").innerHTML="Failed to connect";
-		alert('Cant connect to '+staticIP);
+		mMessage('Cant connect to '+staticIP);
 	};
 }
 
 
+//	BT_InitBluetoot - setup addEventListener BTReceiveEvent
+//	*--->	BTReceiveEvent (data on BT) ->read data -> serial.onReceive(data)
 
 
-
-// initialize bluetooth and  setup an event listener
-//todo: refactor name mWebSocket_InitAsync
-function read() {	//returns data from BT as Uint8Array [1..20]
+function connectviaBT() {
+	// initialize bluetooth and  setup an event listener
+	//todo: refactor name mWebSocket_InitAsync
+	document.getElementById( "idStatus").innerHTML="Connecting via BT";
+	//returns data from BT as Uint8Array [1..20]
 	//Todo: write what this does in a comment is this the Ternary Operator? (variable = (condition) ? expressionTrue : expressionFalse)
 	return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo() && isWebBluetoothEnabled())
-	.then(connectGATT)
+	.then(connectGATT)  //todo:@FC please explain what is happening here
 	.then(_ => {
 		console.log('Evaluating signal of interest...')
 		return gattCharacteristic.readValue()	//receiving data from BT - Uint8Array [1..20]
@@ -76,8 +88,10 @@ function read() {	//returns data from BT as Uint8Array [1..20]
 		console.log('Waiting to start reading: ' + error)
 	})
 }
-// CONNECT TO A GENERIC ATTRIBUTE
- function connectGATT() {  // ws.onmessage
+
+function connectGATT() {  // works like ws.onmessage
+	 //When the user has paired the bluetooth this will set the isBTConnected flag
+	 // CONNECT TO A GENERIC ATTRIBUTE
 	 if (bluetoothDeviceDetected.gatt.connected && gattCharacteristic) {
 		 return Promise.resolve()
 	 }
@@ -94,7 +108,9 @@ function read() {	//returns data from BT as Uint8Array [1..20]
 		 gattCharacteristic = characteristic
 		 gattCharacteristic.addEventListener('characteristicvaluechanged',
 				 handleChangedValue) //Like serial.onReceive
-		 isConnected = true;
+		 document.getElementById( "idStatus").innerHTML="CONNECTED";
+		 alert('Bluetooth connected');
+		 isBTConnected = true;
 	 })
 
  }
@@ -105,10 +121,13 @@ function read() {	//returns data from BT as Uint8Array [1..20]
  	 let decoder = new TextDecoder('utf-8');
  	 let value = event.target.value
  	 var now = new Date()
- 	 console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) )
- 	 receivedValue=decoder.decode(value);
+ 	 console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) );
+	  mDebugMsg1(1,'> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Received message is: ' + decoder.decode(value) );
+ 	 receivedValue=value;
+	 serial.onReceive(receivedValue);
  //	 MessageReceived = receivedValue;
- 	 isConnected = true;
+   mDebugMsg1(1,"CONNECTED, Acquiring data");
+ 	 isBTConnected = true;
   }
 
 /////////////////// WEB BT
@@ -120,14 +139,15 @@ var bleCharacteristicWrite = 'bb99a060-6fa8-4bba-9ef0-731634e96e88' //UUID for t
 var bluetoothDeviceDetected //Characteristics of the connected BT device
 var gattCharacteristic //Generic ATTribute (GATT) characteristic
 let receivedValue = "";
-let isConnected = false;
+let isBTConnected = false;
 var MessageReceived = "";
 
 //VERIFY WEB BT COMPATIBILITY FOR THE BROWSER
 //Todo: call somewhere when selecting bluetooth if (isWebBluetoothEnabled() {...}
  function isWebBluetoothEnabled() {
 	 if (!navigator.bluetooth) {
-		 console.log('Web Bluetooth API is not available in this browser!')
+		 mDebugMsg1(1,'Web Bluetooth API is not available in this browser!')
+		 //
 		 return false
 	 }
 
@@ -141,12 +161,12 @@ var MessageReceived = "";
 		 optionalServices: [bleService],
 		 filters: [ { "name": deviceName } ]
 	 }
-	 console.log('Requesting any Bluetooth Device...')
+	 mMessage('Requesting any Bluetooth Device...')
 	 return navigator.bluetooth.requestDevice(options).then(device => {
 		 bluetoothDeviceDetected = device
 	 }).catch(error => {
 		 //Todo:
-		 mAlert('Cannot connect to bluetooth'+ error.message);
+		 mMessage('Cannot connect to bluetooth'+ error.message);
 		 //Todo : add type of error. handleChangedValue
 	 })
  }
@@ -154,18 +174,17 @@ var MessageReceived = "";
 
 
  //SEND A MESSAGE TO THE ESP32
- //Todo: pass data as parameter writeBT(data)
-  function writeBT() {
-  const name = input.value();
-  let encoder = new TextEncoder('utf-8');
-  log('Setting Characteristic User Description...');
-  gattCharacteristic.writeValue(encoder.encode(name))
+ //Todo: pass data as parameter send2LMviaBT(data)
+  function send2LMviaBT(value) {   //value is an arry of bytes
+  //let encoder = new TextEncoder('utf-8');
+  mDebugMsg1(1,'Setting Characteristic User Description...');
+  gattCharacteristic.writeValue(value)
   .then(_ => {
- 	 log('> Characteristic User Description changed ttodo1o: ' + name);
+ 	 mDebugMsg1(1,'> Characteristic User Description changed to: ' + value);
   })
   .catch(error => {
 		//todo9: userfriendly message
- 	 log('Argh! ' + error);
+ 	 mDebugMsg1(1,'Argh! ' + error);
   });
 
 
@@ -176,23 +195,28 @@ var MessageReceived = "";
 
 //??NOW TO UPDATE DATA??//
 //START NOTIFICATIONS
- function start() {
+ function startBTnotifications() {
 	 gattCharacteristic.startNotifications()
 	 .then(_ => {
-		 console.log('Start reading...')
+		 console.log('Start reading...');
+		 mDebugMsg1(1,'Start reading...');
 	 })
 	 .catch(error => {
-		 console.log('[ERROR] Start: ' + error)
+		 console.log('[ERROR] Start: ' + error);
+		  mDebugMsg1(1,'[ERROR] Start: ' + error);
+
 	 })
  }
 //STOP NOTIFICATIONS
- function stop() {
+ function stopBTnotifications() {
 	 gattCharacteristic.stopNotifications()
 	 .then(_ => {
-		 console.log('Stop reading...')
+		 console.log('Stop reading...');
+		  mDebugMsg1(1,'Stop reading...');
 	 })
 	 .catch(error => {
-		 console.log('[ERROR] Stop: ' + error)
+		 console.log('[ERROR] Stop: ' + error);
+		mDebugMsg1(1,'[ERROR] Start: ' + error);
 	 })
  }
 
@@ -200,15 +224,20 @@ var MessageReceived = "";
 //////////////////	SERIAL COMMUNIATONS
 var serial={}		//Lowlevel serial communication
 serial.isReady=function (){
-		//todo0: add bluetooth connection check if we are using bluetooth
+		if (isBTConnected) return true;		//return true on BT open
 		return (ws.readyState==ws.OPEN);
 	}
 serial.RXFiFo=[];	//Consume data by data= serial.RXFiFo.shift
-serial.send=function(nByte){		//Calling the websocket
+serial.send=function(nByte){		//Calling the websocket nByte =[1,2,3,4,] di dati
 	var buffer=new ArrayBuffer(1)
 	var view=new Int8Array(buffer)
 	view[0]=nByte
-	ws.send(buffer)
+	//if(isBTConnected){
+		//send2LMviaBT(buffer)			//todo : if buffer.length > 20 loop split
+	//} else {
+		ws.send(buffer)
+
+//	}
 }
 serial.onReceive=function(data){		//Called from the websockt
 	for (var i=0;i<data.length;i++){

@@ -1,14 +1,9 @@
 // ArduinoTrace - github.com/bblanchon/ArduinoTrace
-// Copyright Benoit Blanchon 2018-2020
+// Copyright Benoit Blanchon 2018-2021
 // MIT License
 //
 // A simple tracing macro to debug you program.
-/*  For example:
-  int someValue = 42;
-  DUMP(someValue);
-  TRACE();
-
-*/
+//
 // Recipe to find where the code crashes:
 //  1. sprinkle your code with TRACE()
 //  2. run the program
@@ -19,9 +14,7 @@
 //  * the line number
 //  * the current function
 //  * the template parameters (if any)
-
 #pragma once
-
 #include <Arduino.h>
 
 #ifndef ARDUINOTRACE_ENABLE
@@ -44,8 +37,6 @@
 
 #ifndef ARDUINOTRACE_ENABLE_FULLPATH
 #define ARDUINOTRACE_ENABLE_FULLPATH 0
-#else
-#define ARDUINOTRACE_ENABLE_FULLPATH 1
 #endif
 
 #ifndef ARDUINOTRACE_FUNCTION_NAME_IN_FLASH
@@ -126,6 +117,11 @@ struct Printer {
     serial.flush();
   }
 };
+
+template <typename TSerial>
+inline void pause(TSerial &serial) {
+  while (serial.read() != '\n') delay(10);
+}
 }  // namespace ArduinoTrace
 
 #define ARDUINOTRACE_STRINGIFY(X) #X
@@ -190,10 +186,19 @@ struct Printer {
   ARDUINOTRACE_PRINT(__COUNTER__, __FILE__, \
                      ARDUINOTRACE_DUMP_PREFIX(__LINE__, variable), variable)
 
+#define BREAK()                                               \
+  do {                                                        \
+    ARDUINOTRACE_PRINT(__COUNTER__, __FILE__,                 \
+                       ARDUINOTRACE_TRACE_PREFIX(__LINE__),   \
+                       "BREAK! (press [enter] to continue)"); \
+    ArduinoTrace::pause(ARDUINOTRACE_SERIAL);                 \
+  } while (false)
+
 #else  // ie ARDUINOTRACE_ENABLE == 0
 
 #define ARDUINOTRACE_INIT(bauds)
 #define TRACE()
 #define DUMP(variable)
+#define BREAK()
 
 #endif

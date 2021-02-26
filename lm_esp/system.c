@@ -10,12 +10,18 @@
 #include "system.h"
 #include "publishvars.h"
 
+/*				SYSTEM CONTROL 				*/
+int nShutDownTimer=0;				//Timer for shutting down
+const int kPowerWatchDogTimeOut=100000;//todo9:define value
+const kCommunicationTimeOut=100000;		//todo9:define value
+int nPowerWatchDog=2000;
 EX_FLAGS bErrFlags;									// Allocation for the Flags
 
 void mPowerWatchDogReset(void){			//Reset the power off (idle) watchdog
-  mDebugHalt("Implement watchdog");
-//  todo3: enable following line
-//	nPowerWatchDog=kPowerWatchDogTimeOut+kCommunicationTimeOut;
+//  todo9: this resets a timeout when communication is active
+/*    When the nPowerWatchDog we can put RF communication
+			and maybe other circuits   to sleep*/
+	nPowerWatchDog=kPowerWatchDogTimeOut+kCommunicationTimeOut;
 }
 
 void MainSetup(){
@@ -26,5 +32,5 @@ void MainSetup(){
   mCommInitialize();//Initialize the protocol communication with HOST
   if (nMode.bits.DEBUGGING) mDebugMsg("Done mCommInitialize");
 //+todo8	mStartTimer0(t0count);														// Start timer0
-//+todo8: mPowerWatchDogReset();  //Reset the watchdog
+  mPowerWatchDogReset();  //Reset the watchdog
 }
