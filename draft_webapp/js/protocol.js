@@ -53,11 +53,11 @@ const prot={		//Encapsulating communication protocol
 		return lst;
 	}
   ,setVector(el,vector){    //Sets the dataarray of the element
-    el.pokedata=true;       //Sets the flag requesting to set data on device
+    el.bPokeElem=true;       //Sets the flag requesting to set data on device
     el.Vector=vector;
   }
   ,getVector(el){    //Sets the dataarray of the element
-    oData.peekdata=true;	//Request a readback from device
+    oData.bPeekElem=true;	//Request a readback from device
     return vector
   }
   ,get refreshRate(){return this.oData.nPeriod;}
@@ -74,19 +74,17 @@ const prot={		//Encapsulating communication protocol
     }
       function mCb(oRetData){		//when returning from PHP PROCESS SAVED oWatch
         if (oRetData.data)			prot.oData=oRetData.data;
-        if (prot.oData){
+/*        if (prot.oData){    //Maybe its clearer in main
           if (prot.bPokeRemote) {
             prot.lastState='redraw'
             prot.bPokeRemote=false;
             display.doRedraw=true;  //Request a redraw of the display
             prot.remotePeek=false;  //Clear flag getting data from remote
           }
-        }
+        }*/
       }
-    }
-    prot.bPokeRemote=false;	//Done poking in the exchange process
+    //  prot.bPokeRemote=false;	//Done poking in the exchange process
   }
-
 }
 /* pattern example
 prot.oProtElemVar.__proto__.setVector=function() {
@@ -158,12 +156,12 @@ prot.TXDispatch=function(){	//mTXDispnDataLengthatch - the response will be mRXD
 			var VarData=prot.oProtElemVar[aNames[i]];        //Todo: rename oProtElemVar->arrayOData
       if (!VarData.nVarId){//          mMessage("Unregistered variable "+aNames[i]);
 //          debugger
-      }else if (VarData.pokedata){
+      }else if (VarData.bPokeElem){
 				mTX_SetReq(VarData);
-				VarData.pokedata=false;	                          //Clear write request flag
-			} else if (VarData.peekdata){
+				VarData.bPokeElem=false;	                          //Clear write request flag
+			} else if (VarData.bPeekElem){
         mTX_GetReq(VarData);
-        VarData.peekdata=false;                           //Clear read request flag
+        VarData.bPeekElem=false;                           //Clear read request flag
       }
 		}
 	} else if (prot.state()==prot.kError){
@@ -256,8 +254,8 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
     if (!el.Vector) el.Vector=Array(el.nDataLength).fill(0);      //Create vector it not preinitialized in setup sFileName
     //Otherwise use default values
     else if (el.Vector.length!=el.nDataLength) el.Vector=Array(el.nDataLength).fill(0); //Be sure the length is correct
-    if (typeof el.pokedata=='undefined') el.pokedata=false;   //Initialize pokedata flag
-    if (typeof el.peekdata=='undefined') el.peekdata=false;   //Initialize peekdata flag
+    if (typeof el.bPokeElem=='undefined') el.bPokeElem=false;   //Initialize pokedata flag
+    if (typeof el.bPeekElem=='undefined') el.bPeekElem=false;   //Initialize bPeekElem flag
     if (prot.ListVarNames().indexOf(el.VarName)>(prot.ListVarNames().length-2)) {
       //iss210128
       //Assume the protocol is ready when last var has been received
@@ -288,7 +286,7 @@ prot.mRXDispatch=function(RXFiFo){//201112   from java mRXDispatch
 		serial.RXFiFo=serial.RXFiFo.slice(idx);	//Remove cmd & payload
 		var el=prot.ElementByVarId(nId)
     if (!el) return;
-		if (el.pokedata) {
+		if (el.bPokeElem) {
       debug //Don't read if you are writing
     }else{
       el.Vector=data
@@ -420,23 +418,23 @@ prot.mVarValue=function(sVarName,idx,val){
 		//Get/Set value with digital conversion
 		//in: name of the element, idx= the index in the data array , val-if given will set the new value
 		if (!idx==undefined) debugger;
-		var oData=prot.oProtElemVar[sVarName];
-		if(!oData) return undefined;
+		var oElem=prot.oProtElemVar[sVarName];
+		if(!oElem) return undefined;
 		var oDesc=prot.oVarDesc[sVarName]
 		if (val!=undefined){                            //User input has set a value
 			var raw=(val/oDesc.Factor)+Number(oDesc.Offset);
-		  if (oData.Vector)	oData.Vector[idx]=raw;    //RT210121  guard for a void vector
-			oData.pokedata=true;	          //Request a write to device
-			oData.peekdata=true;	          //Request a readback from device
-      this.bPokeRemote=true;     //This = protocol
+		  if (oElem.Vector)	oElem.Vector[idx]=raw;    //RT210121  guard for a void vector
+			oElem.bPokeElem=true;	          //Request a write to device
+			oElem.bPeekElem=true;	          //Request a readback from device
+      prot.oData.bPokeData=true;     //this = prot
 		} else {
-      if (undefined ===oData.Vector) return undefined
-			if (undefined ===oData.Vector[idx]) return undefined
-			var val=oData.Vector[idx]
+      if (undefined ===oElem.Vector) return undefined
+			if (undefined ===oElem.Vector[idx]) return undefined
+			var val=oElem.Vector[idx]
 			if (typeof val==='undefined') mDebugMsg1(1,"Error you probably missed the index  ");
       if (typeof oDesc.Offset==='undefined') mDebugMsg1(1,'typeof oDesc.Offsetdebugger fix potential errors');
 			var u=(val-oDesc.Offset)*oDesc.Factor;
-			oData.peekdata=true;
+			oElem.bPeekElem=true;
 			return u;
 		}
 	}
@@ -460,7 +458,7 @@ prot.mVectorUnits=function(sVarName,vector){		//Rev 191108
   				 vY[idx]=(vector[idx]-oDesc.Offset)*oDesc.Factor;
   			}
       }
-			oProtElemVar.peekdata=true;           //Request a new read from LM device
+			oProtElemVar.bPeekElem=true;           //Request a new read from LM device
 			return vY;
 		}
 	}

@@ -76,6 +76,7 @@ bool mGetFreeIP(){//Get a free  IP address and make it static
     if (WiFi.status() == WL_CONNECTED) { //Wifi connection good get the IP
       AP_StaticIP=IpAddress2String(WiFi.localIP()).c_str();
       DEBUG(1,"\nIP address obtained: %s \n ===============================\n", ("|"+getAP_SSID() +"|"+getAP_PASS()+"|"+AP_StaticIP+"|").c_str());
+      mSetCredentials();
       WiFi.disconnect();
       return true;
     }

@@ -123,33 +123,25 @@ Notes: Tabsize 4
 
 
 
-            ********Master-Remote communication Swimlane********
+            ********Master-Remote communication Swimlane******** rev 210226
 
 ----ESP----------------MASTER----------------Swapdata----------------nth-REMOTE----
+TXDispatch()  |       mIsLMHost?     |                       |
+           <----> DoTransmissions    |                       |
+mRXDispatch() |       (t=n)          |                       |
+              |                      |                       |   mDataExchange('load')
+              | mDataExchange('swap')| ----> oData (t=n-0) (---->)
+              |     bPokeData=false  |       oData (t=n-1)   |
+              |                      |                       |   if (bPokeData)
+              | mDataExchange('swap')| ----> oData (t=n+1)   |      mDataExchange('Save')
+              |     bPokeData=false  |       oData (t=n-0)   |
               |                      |                       |
-           <----> DoTransmissions()  |                       |
-TXDispatch()  |                      |                       |
-mRXDispatch() |                      |                       |
+              |                      |                    (<----)
               |                      |                       |
-              | mDataExchange('swap')| ----> Save            |
-              |                      | <---Load previous data|
+              |                      |                       |   bPokeData=false
               |                      |                       |
-              | mDataExchange('save')| ----> Save            |
-              |                      |                       |
-              |                      |             load--->  | mDataExchange('load')
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
-              |                      |                       |
+              |                      |                       |   if (NOT bPokeData)
+              |                      |                       |      mDataExchange('load')
               |                      |                       |
               |                      |                       |
 
