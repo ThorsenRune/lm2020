@@ -20,13 +20,21 @@ display.init=function(){
 }
 
 
+display.status=function(stat){
+			var el=document.getElementById( "idStatus");
+			if (stat=='con'){
+				 el.innerHTML="CONNECTED";
+					el.style.background='green';
+		 }	else if (stat=='rem'){
+				 el.innerHTML="REMOTE";
+				 el.style.background=''
+		 }else{
+			 if (stat) el.innerHTML=stat;
+			 else el.innerHTML="NO CONNECTION";
+			 el.style.background='red';
+		 }
+}
 display.redraw=function(){	//Redraw the display
-	var e=display.idStatus;
-	if (serial.isReady()){
-		e.style.background=''
-	} else {
-		e.style.background='red'
-	}
 	for (var i = 0; i < slider.inputs.length; i++) {		//Set widgets
 		var sId=slider.id(i)
 		var oWX=prot.oWX(sId)

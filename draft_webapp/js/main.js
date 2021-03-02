@@ -45,7 +45,7 @@ var mode='';
 var diff;					//see flowchart above
 var guard=false
 var timing=[Date.now(), 0]
-var decimate=3;
+var decimate=5;
 var loopcount=0;
 var doRelay=false;
 var Main_Loop=function(){ //210302   After some experimental work with setTimeout,requestAnimationFrame and setInterval the latter seems most stable
@@ -70,6 +70,7 @@ function mProcessing() 	{
 		loopcount=loopcount+1;
 		if (display.doRedraw) display.redraw();
 		display.refresh();      //Update screen widgets and get userinput
+		doRelay=!(loopcount%decimate);
 		if (mIsLMHost()) {		//Master swimlane
 				prot.DoTransmissions();//Exchange RX/TX of data from the protocol
 				//todo: make conditional if has some remote clients
@@ -81,6 +82,7 @@ function mProcessing() 	{
 					prot.oData.bPokeData=false;
 				} else {
 				  if (doRelay)	 		prot.mDataExchange('load');
+					display.status('rem');
 					display.doRedraw=true;
 					prot.oData.bPokeData=false;
 				}
