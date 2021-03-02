@@ -45,7 +45,6 @@ void setup(){
   //int ret= mSetRFMethod(true);    Uncomment  to enable bluetooth
   mWifiSetupMain(); //Will wait until user connects or setup wifi network
   DEBUG(1,"---------------Websocket running executing main loop --------------------------------\n");
-  mTesting1();
 }// This returns to an intrinsic call to loop()
 
 /*******************ARDUINO MAIN WHILE LOOP *******************************/

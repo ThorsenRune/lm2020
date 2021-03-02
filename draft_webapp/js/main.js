@@ -48,7 +48,10 @@ var timing=[Date.now(), 0]
 var decimate=3;
 var loopcount=0;
 var doRelay=false;
-var Main_Loop=function(interval) {
+var Main_Loop=function(){ //210302   After some experimental work with setTimeout,requestAnimationFrame and setInterval the latter seems most stable
+	var handle=setInterval(function(){mProcessing() },prot.refreshRate);
+}
+var Main_Loop00=function(interval) {
 		if (guard) debugger;
 		if (guard) return;
 		guard=true;
@@ -56,36 +59,36 @@ var Main_Loop=function(interval) {
 	//An alternative to Main_Loop
 	if (prot.refreshRate>30)
 	if ((Date.now()-timing[0])>=prot.refreshRate)	//Don't execute stacked calls
-	{
-			loopcount=loopcount+1;
-			if (display.doRedraw) display.redraw();
-			display.refresh();      //Update screen widgets and get userinput
-			if (mIsLMHost()) {		//Master swimlane
-					prot.DoTransmissions();//Exchange RX/TX of data from the protocol
-					//todo: make conditional if has some remote clients
-					if (doRelay) 	prot.mDataExchange('swap');
-					prot.oData.bPokeData=false;
-			} else {
-					if (prot.oData.bPokeData) {
-						prot.mDataExchange('save');
-						prot.oData.bPokeData=false;
-					} else {
-					  if (doRelay)	 		prot.mDataExchange('load');
-						display.doRedraw=true;
-						prot.oData.bPokeData=false;
-					}
-			}
-
-
- 		 	timing[1]=Date.now();
-			diff=timing[1]-timing[0];
-			idTimingCheck.value=timing[1]-timing[0];
-			timing[0]=timing[1]
-	}
+	mProcessing();
 	setTimeout(function(){
 		requestAnimationFrame(Main_Loop)
 	},prot.refreshRate);
 	guard=false
+}
+
+function mProcessing() 	{
+		loopcount=loopcount+1;
+		if (display.doRedraw) display.redraw();
+		display.refresh();      //Update screen widgets and get userinput
+		if (mIsLMHost()) {		//Master swimlane
+				prot.DoTransmissions();//Exchange RX/TX of data from the protocol
+				//todo: make conditional if has some remote clients
+				if (doRelay) 	prot.mDataExchange('swap');
+				prot.oData.bPokeData=false;
+		} else {
+				if (prot.oData.bPokeData) {
+					prot.mDataExchange('save');
+					prot.oData.bPokeData=false;
+				} else {
+				  if (doRelay)	 		prot.mDataExchange('load');
+					display.doRedraw=true;
+					prot.oData.bPokeData=false;
+				}
+		}
+		 	timing[1]=Date.now();
+		diff=timing[1]-timing[0];
+		idTimingCheck.value=timing[1]-timing[0];
+		timing[0]=timing[1];
 }
 
 

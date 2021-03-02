@@ -4,8 +4,11 @@ var oWS={			//The websocket interface class
 	EditIP:function(){	//Let user insert IP manually
 			var wsip=mGetIpFromLocationbar();
 			wsip=prompt("Websocket IP:",wsip);
-			if (wsip) location.search='ws='+wsip;
+		  oWS.IP_Set(wsip);
 			Main_Init();
+	}
+	,IP_Set:function(wsip){
+		if (wsip) location.search='ws='+wsip;
 	}
 }
 

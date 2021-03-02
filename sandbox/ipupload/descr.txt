@@ -1,0 +1,3 @@
+The idea is to upload the ip to the server. then the client can get the IP from server
+The IP is send to server.php which stores it to a file.
+Then the main programme get that IP for connecting to the ESP32

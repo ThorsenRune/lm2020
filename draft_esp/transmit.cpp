@@ -33,7 +33,7 @@ bool mWifiSetupMain(){      //Setup wifi
     bool ret;
     if (_server==NULL)_server = new AsyncWebServer(80);
     ret=mGetCredentials(); //now use getAP_SSID,getAP_PASS,getIP
-
+    if (ret) mTesting1(); //Send IP to server
     if (ret) ret=mStartWebSocket3(); //Use credentials to attempt connection
     if (ret){ //Connection good wait for client to activate WS
       DEBUG(1,("\nConnected to WiFi |"+getAP_SSID() +"|"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|"+WiFi.localIP().toString()+"|").c_str());
@@ -47,14 +47,6 @@ bool mWifiSetupMain(){      //Setup wifi
 //-----------------------PRIVATE STUFF --------------------
 bool mStartWebSocket3(){  //Returns true when connection is established
 	DEBUG(1,("Starting Websocket \n|"+getAP_SSID() +"| , |"+getAP_PASS()+"|"+IpAddress2String(getIP())+"|").c_str());
-  IPAddress staticIP=getIP();
-  IPAddress gateway(192, 168, 1, 254);
-  IPAddress subnet(255, 255, 255, 0);
-  IPAddress ip(192, 168, 1, 177);
-  if (!WiFi.config(staticIP,staticIP,subnet)) {
-   BRK(2,"STA Failed to configure");
- }
-//  WiFi.config(staticIP,staticIP,subnet);  // if using static IP, enter parameters at the top
   WiFi.begin(getAP_SSID().c_str(),getAP_PASS().c_str());
   for (int i=0;i<TimeoutWifi;i++){ //Loop until timeout
     if (WiFi.status() == WL_CONNECTED) return true;   //Happily connected to wifi
