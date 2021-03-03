@@ -21,5 +21,6 @@ void mReceive2(uint8_t *data, size_t len);
 bool mWifiSetupMain();
 void _WsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len);
 bool mStartWebSocket3();
+bool mSetRFMethod(bool bBlueTooth);
 
 #endif  //____TRANSMIT____
