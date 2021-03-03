@@ -1,5 +1,6 @@
 # Ignore the password file for the wifi
 credentials.h
+.\data\swapdata
 # Ignoring the following files
 # Compiled source #
 ###################

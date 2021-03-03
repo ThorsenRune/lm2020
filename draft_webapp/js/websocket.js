@@ -4,8 +4,11 @@ var oWS={			//The websocket interface class
 	EditIP:function(){	//Let user insert IP manually
 			var wsip=mGetIpFromLocationbar();
 			wsip=prompt("Websocket IP:",wsip);
-			if (wsip) location.search='ws='+wsip;
+		  oWS.IP_Set(wsip);
 			Main_Init();
+	}
+	,IP_Set:function(wsip){
+		if (wsip) location.search='ws='+wsip;
 	}
 }
 
@@ -49,11 +52,11 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 	var gateway="ws://"+staticIP+"/ws";
 	mMessage("Connecting to:"+gateway);
 	ws = new WebSocket(gateway);
-	document.getElementById( "idStatus").innerHTML="Calling device";
+	display.status("Calling device");
 	aRXData=[]
 	ws.binaryType="arraybuffer"
 	ws.onopen = function() {
-		document.getElementById( "idStatus").innerHTML="CONNECTED";
+		display.status('con');
 		if (callbackonconnect)callbackonconnect();
 	 };
 	  ws.onmessage = function(evt) { //Receiving data from serial
@@ -62,7 +65,7 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 		//ws.send('hello, server');
 	};
 	ws.onerror = function (error) {
-		document.getElementById( "idStatus").innerHTML="Failed to connect";
+		display.status('error');
 		mMessage('Cant connect to '+staticIP);
 	};
 }
@@ -75,7 +78,7 @@ var mWebSocket_InitAsync=function(callbackonconnect){		//Async
 function connectviaBT() {
 	// initialize bluetooth and  setup an event listener
 	//todo: refactor name mWebSocket_InitAsync
-	document.getElementById( "idStatus").innerHTML="Connecting via BT";
+
 	//returns data from BT as Uint8Array [1..20]
 	//Todo: write what this does in a comment is this the Ternary Operator? (variable = (condition) ? expressionTrue : expressionFalse)
 	return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo() && isWebBluetoothEnabled())
@@ -108,7 +111,7 @@ function connectGATT() {  // works like ws.onmessage
 		 gattCharacteristic = characteristic
 		 gattCharacteristic.addEventListener('characteristicvaluechanged',
 				 handleChangedValue) //Like serial.onReceive
-		 document.getElementById( "idStatus").innerHTML="CONNECTED";
+ 
 		 alert('Bluetooth connected');
 		 isBTConnected = true;
 	 })

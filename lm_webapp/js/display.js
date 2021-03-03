@@ -60,7 +60,7 @@ display.refresh=	function(){			//Will refresh controls in the display
 				var X=oWX.VectorUnits()
 				var r=oWX.Range()
 				signal.mPlotVector(X,r[0],r[1],oWX.Unit())
-				oWX.oProtElemVar.peekdata=true;			//Read value from device
+				oWX.oProtElemVar.bPeekElem=true;			//Read value from device
 			}
 		} else {  //Slider
 			var el=window[oWX.id].querySelector('input')

@@ -107,6 +107,7 @@ small {
   cursor: pointer; /* Pointer/hand icon */
   width: 50%; /* Set a width if needed */
   display: block; /* Make the buttons appear below each other */
+  white-space: normal;
 }
 
 /*

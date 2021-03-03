@@ -4,11 +4,15 @@
 	<summary> Device mode/setup </summary>
 <div class='item-a btn-group'>	<!-- Command buttons    -->
 	<label>Change to a device with different IP</label>
+	<input type="button"    value="Get current device IP address" onclick="mGetIP()" >
 	<input type="button"    value="Set IP address" onclick="oWS.EditIP()" >
+	<input type="button"    value="Test Connection" onclick='location.href="http://"+localStorage.WS_IP+"/hello";' >
 	<label>Setup the WiFi connection for your router</label>
 	<input type="button"   value="WiFi Setup" onclick="location.href='devicesetup.html'" >
 	<label>Reset the protocol</label>
 	<input type="button"    value="Reset" onClick="Main_Init()"  />
+ 	<input type="text" id="idVarName1"  placeholder="VarName"  onclick='this.focus();this.select()'>
+	<input type="button"  value="Edit Variable" onClick="popup.mSettings()" />
 
 
 	<label>Save protocol settings</label>

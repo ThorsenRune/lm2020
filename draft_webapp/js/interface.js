@@ -54,3 +54,19 @@ var mPHPCall = function(url,cmd,filename,data,callback) {
 		xhr.send("data=" + sending);
 		})
 }
+function mGetIP(){
+	var sIPFile='http://thorsen.it/public/lm2020/draft_webapp/getsetip.php';
+	fetch(sIPFile).then(function (response) {
+		// The API call was successful!
+		return response.text();
+	}).then(function (text) {
+		// This is the JSON from our response
+		debugger;
+		oWS.IP_Set(text);
+	}).catch(function (err) {
+		// There was an error
+
+		mMessage('Something went wrong.'+ err.message);
+	});
+
+}

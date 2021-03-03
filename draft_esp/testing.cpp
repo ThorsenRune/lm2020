@@ -8,6 +8,7 @@
 */
 #include "inoProtocol.h"
 #include "publishvars.h"
+#include "getWiFiCreds.h"
 #include <Arduino.h>
 #include <stdint.h>           //Define standard types uint32_t etc
 #include <stdbool.h>				//Boolan types rt210107
@@ -20,8 +21,19 @@ void testB(){
     i=i+testA(i);
 }
 void mTesting1(){
-  mDebugMsg("mTesting1");
-
+  String URL = "http://thorsen.it/public/lm2020/getsetip.php";
+  String MyIpIs=IpAddress2String(WiFi.localIP()).c_str();
+  DEBUG(1,"Calling  %s\n",URL.c_str() );
+  DEBUG(1,"WiFi.localIP() %s\n" ,MyIpIs.c_str() );
+  bool http_begin = http.begin(URL);
+  String message_name = "message_sent";
+  String message_value =  MyIpIs;
+  String payload_request = message_name + "=" + message_value;  //Combine the name and value
+   Serial.printf("Sending %s\n",payload_request.c_str() );
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  int httpResponseCode = http.sendRequest("POST", payload_request);
+  String payload_response = http.getString();
+  Serial.printf("Received %s\n",payload_response.c_str() );
 }
 void mTesting2(){
   nTestVar[1]=nTestVar[0];

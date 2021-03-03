@@ -43,10 +43,8 @@ void setup(){
   DEBUG(1,"-------------running Android setup ------------");
   MainSetup();		//Setup the system, protocol & pointers.. (rt210107)
   //int ret= mSetRFMethod(true);    Uncomment  to enable bluetooth
-  int ret=mWifiSetupMain(); //Will wait until user connects or setup wifi network
-  if (!ret) {DEBUG(1,"REBOOT");delay(2000);ReBoot();}
-  //Websocket running okmProtocolProcess
-  mDebugMsg("calling main loop in LM_ESP.ino");
+  mWifiSetupMain(); //Will wait until user connects or setup wifi network
+  DEBUG(1,"---------------Websocket running executing main loop --------------------------------\n");
   mTesting1();
 }// This returns to an intrinsic call to loop()
 

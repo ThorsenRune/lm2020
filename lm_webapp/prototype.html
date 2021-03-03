@@ -17,20 +17,21 @@
 		<script src="./js/watches.js"></script>
 		<script src="./js/index.js"></script>
 		<script src="./js/debug.js">/* debugging only*/</script>
-		<link rel="stylesheet" href="/css/dark.css">
     <link rel="stylesheet" href="./css/style.css">
 		<link rel="stylesheet" href="./css/slider.css">
 		<link rel="stylesheet" href="./css/popup.css">
+    <link rel="stylesheet" href="./css/colordark.css">  <!-- Selection of color theme -->
+    <!--<link rel="stylesheet" href="./css/colorskyblue.css">  Selection of color theme -->
+
    </head>
    <body>
 
 	<div>
 		<label id='idStatus' >Unconnected</label>
 		<input type="text" id="idVarName1"  placeholder="VarName"  onclick='this.focus();this.select()'>
-    <input type="button"  class='cRight' value="Settings" onclick="idPopUp.hidden=!idPopUp.hidden;"			>
-
-		<input type="button" class='cRight' value="Reset" onClick="Main_Init();" />
-		<input type="button" class='cRight' value="Edit" onClick="popup.mSettings();" />
+    <input type="button"  class='cRight' value="Settings" onclick="idPopUp.hidden=!idPopUp.hidden"/> &nbsp;
+		<input type="button" class='cRight' value="Reset" onClick="Main_Init()" /> &nbsp;
+		<input type="button" class='cRight' value="Edit" onClick="popup.mSettings()" /> &nbsp;
     <br>
 
 	</div>
@@ -39,18 +40,18 @@
 	<div id='idPopUp' 	class='cOverlay' hidden>  <!--Popup window for messages -->
 		<div id='idSettings'>
 			<?PHP include 'settings.html' ?>
-		</div>
-		<textarea id="idText" title="idText"  >	</textarea>
-		<button id="idTextClose" >OK </button>
-		<button id="idSettingsCancel" onclick="idPopUp.hidden=true" >CANCEL </button>
+    	<!--<textarea id="idText" title="idText" class="item-b"></textarea>-->
+    	<button id="idTextClose" onclick="idPopUp.hidden=true">CLOSE </button>
+<!--    	<button id="idSettingsCancel" onclick="idPopUp.hidden=true" >CANCEL </button> -->
+  </div>
 	</div>
-	<details  <!-- Sliders -->
-		<summary> Slider controls </summary>
+	<details open>  <!-- Sliders -->
+		<summary> Slider controls open</summary>
 		<?PHP include 'sliders_vert.html' ?>
 	</details>
 	<hr>
 	<!-- todo: refactor to a separate view or pane ?-->
-	<details  > <!-- Signal panel -->
+	<details  open> <!-- Signal panel -->
 		<summary> Signals  </summary>
 		<?PHP include 'signal.html' ?>
 	</details>

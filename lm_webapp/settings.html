@@ -1,13 +1,33 @@
 <!-- Prototype of a FORM FOR EDITING VARIABLE INFORMATION  -->
+<label>Firmware:</label><p id='idFirmware'>Device not connected</p>
+<details>  <!-- Sliders -->
+	<summary> Device mode/setup </summary>
+<div class='item-a btn-group'>	<!-- Command buttons    -->
+	<label>Change to a device with different IP</label>
+	<input type="button"    value="Set IP address" onclick="oWS.EditIP()" >
+	<input type="button"    value="Test Connection" onclick='location.href="http://"+localStorage.WS_IP+"/hello";' >
+	<label>Setup the WiFi connection for your router</label>
+	<input type="button"   value="WiFi Setup" onclick="location.href='devicesetup.html'" >
+	<label>Reset the protocol</label>
+	<input type="button"    value="Reset" onClick="Main_Init()"  />
 
-<div class='cLeft'>	<!-- Command buttons   -->
-	<input type="button" class='cLeft'   value="Set IP address" onclick="oWS.EditIP()"			><br>
-	<input type="button"  class='cLeft' value="WiFi Setup" onclick="location.href='devicesetup.html'"			>
-	<input type="button"  class='cLeft' value="Reset" onClick="Main_Init();" /><br>
-	<br>
+
+	<label>Save protocol settings</label>
+	<input type="button"    value="Save" onClick="mPHPCall(dataurl,'save',prot.sFileName,prot.oData)"  />
+
+
+	<!-- <input type="button"  class='cLeft' value="BlueTooth" onClick="connectviaBT()"   />
+	<input type="button"  class='cLeft' value="BT Start" onClick="startBTnotifications()"   />
+ 			(A button that toggles between bluetoot and WiFi connection)<br></br><br></br>
+	<p>The browser must be bluetooth enabled
+	<p>For Chrome goto locationbar and insert:  chrome://flags/#enable-experimental-web-platform-features
+	<br> -->
 </div>
+</details>
+<details>
+		<summary>Assign and define variable </summary>
 <div  class="form1" action="">
-	<label>Firmware name</label>
+
 	<pre id='idVarName'>Title</pre><br>
 	<label >
 	Descriptive name</label>
@@ -42,6 +62,5 @@
 	<input id="idDispMax" type="number" type="number">
 	<label >	Display min			</label>
 	<input id="idDispMin" type="number" type="number">
-
-
 </div>
+</details>
