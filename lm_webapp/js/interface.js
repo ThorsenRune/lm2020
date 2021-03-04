@@ -14,13 +14,14 @@ var dataurl='data.php'	;
 var oRetData={};	//Create a permanent copy
 
 //	****************************	SERVER INTERFACE	***************
-var mPHPCall = function(url,cmd,data,callback) {
+var mPHPCall = function(url,cmd,filename,data,callback) {
+	//cmd ={save,load,swap}
 	return   new Promise((resolve, reject) => {
 		var xhr = new XMLHttpRequest();			//Stuff using the str
 		var sending={}
-		if (prot.sFileName) data.sFileName=prot.sFileName;	//Override default filename
-		sending.cmd=cmd;
+		sending.cmd=cmd;			//
 		sending.data=data;
+		sending.data.sFileName=filename		//Rev 210209 Set filename
 		var sending=JSON.stringify(sending);
 	//	s=encodeURIComponent(s);
 		xhr.open('POST', url, true);

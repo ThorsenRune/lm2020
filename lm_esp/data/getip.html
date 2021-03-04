@@ -29,7 +29,7 @@ Index     user can configure the preferred WIFI sending the AP_SSID, AP_PASS
       <br>
     Server : <input type="text" name="LM_URL" id="idLM_URL" value="URL OF THE SERVER">
     <br>
-
+   
   </form>
     <hr>
   <div id="idAcceptIP">
@@ -115,14 +115,10 @@ function getDataPWD() {
   xhttp.open("GET", "pass", true);
   xhttp.send();
 }
-document.addEventListener("DOMContentLoaded", Main_Init);
-function Main_Init(){
-  getDataIP();
-  getDataSSID();
-  getDataURL();
-  getDataPWD();
-  viewPassword();
-}
+getDataIP();
+getDataSSID();
+getDataURL();
+getDataPWD();
 </script>
 </body>
 </html>

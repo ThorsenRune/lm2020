@@ -1,5 +1,86 @@
+html, body {
+  height: 100%;
+}
 
- 
+h2  {
+  padding: 10px;
+  text-align: center;
+  }
+
+h1  {
+
+  padding: 10px;
+  text-align: center;
+  }
+
+h3  {
+
+  padding: 10px;
+  text-align: center;
+  }
+p, label    {
+  padding: 10px;
+  text-align: center;
+  margin: 0px 0px;
+}
+
+form
+{
+  text-align: center;
+}
+input[type=submit] {
+  text-align: center;
+  border: none;
+  text-decoration: none;
+  margin: 4px 2px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+/*
+input[type=text], input[type=password] {
+  width: 15%;
+  padding: 12px 20px;
+  margin: 2px 2px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+*/
+input[type=number] {
+  width: 6em;       //Width needed for 6 characters (approx)
+//  padding: 12px 20px;
+//  margin: 2px 2px;
+//  box-sizing: border-box;
+//  border-radius: 4px;
+}
+input[type=checkbox] {
+
+  padding: 12px 20px;
+  margin: 2px 2px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+input [type=button]{
+  text-align: center;
+  border: none;
+  text-decoration: none;
+  margin: 4px 2px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button {
+  align: center;
+  border: none;
+  //color: black;   //defer coloring  to a color.css
+  padding: 12px 22px;
+  text-decoration: none;
+  margin: 0px 0px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+details { /*see:RT210201*/
+  clear: both;
+}
 svg {
     position: relative;
 	text-align: center;
@@ -25,11 +106,23 @@ path {
 .container {
 	height: 45%;
 	text-align: center;
-	    background: blue;
-   border: 1px solid black;
-    border-style: solid;
+  border-style: solid;
 }
+.cLeft  {
+  float:left;
+  text-align: center;
+  border: none;
+  text-decoration: none;
+  margin: 4px 2px;
 
-
-.cLeft  {	float:left	}	/*https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_ref_utilities_right*/
-.cRight{float:right}
+  border-radius: 4px;
+  cursor: pointer;	}	/*https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_ref_utilities_right*/
+.cRight{
+  float:right;
+  text-align: center;
+  margin: 4px 2px;
+  border-radius: 4px;
+}
+.fullwidth {
+  width:100%;
+}

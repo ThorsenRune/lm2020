@@ -2,10 +2,40 @@
 /* Serial communication protocol
  Descrizione: vedi Documentation of Communication protocol LM
  gdoc:https://docs.google.com/document/d/1Y0uAmDxrib83ERQXSZ3OCNFLCmVO6x9wy5fkIZfH31E/edit
+ RT210128 - refactoring names and organization
 */
 
 #include "inoProtocol.h"
 #include "publishvars.h"
+
+/****************INTERFACE ***********************/
+void mProtocolProcess(void){
+  /*  INTERFACE
+    process the serial buffers for exchanging data elements according to Protocol
+    over a serial interface (Bluetooth/WiFi/Uart etc)
+  */
+   mSerialize4TX(&oTXProt);
+   mDeSerializeRX( );
+}
+void mPushRX2FIFO(int var){   //Push data from client to the FIFO
+  /*    The interface for method receiving data on the serial communication
+  */
+   mFIFO_push(oRX,var);
+     if (mFIFO_isFull(oRX)) {
+       bErrFlags.errbits.bRXOverflow =1;	//Receive overflow
+     }
+}
+int mPopTXFIFO(){
+  /*    The interface for method sending data on the serial communication
+  */
+  return mFIFO_pop(oTX);
+}
+
+
+
+/*********************************************************************/
+
+
 
 uint8_t aTX[kTXBufferSize];		// Transmit array
 uint8_t aRX[kTXBufferSize];		//Receive array
@@ -148,8 +178,11 @@ void mSendVersionInfo(){//Send information about the firmware
 
 //todo7: refactor mSerialize4TX /mDeSerializeRX to mEncodeRFTX /mDecodeRFRX
 void mSerialize4TX(tTXProt*  obj){   //Run though object and send data witch have TXCount>0
-/* 	@obj: 		the protocol object
-using:void Ucom_Send32bit(tFIFO oTX,int VarId, int *  Data2Send, int Count)
+/*  run through the elements in the protocol and serialize them so they can be
+    transmitted via RF or UART
+	@obj: 		the protocol object
+  using:void Ucom_Send32bit(tFIFO oTX,int VarId, int *  Data2Send, int Count)
+    rev:RT210128 refactoring mDispatchTX as mSerialize4TX
 */
    char i;
    for (i=0; i<obj->VarCount ; i++ )
@@ -166,16 +199,13 @@ using:void Ucom_Send32bit(tFIFO oTX,int VarId, int *  Data2Send, int Count)
          obj->TXCount[i]=obj->TXCount[i]-1;			//Decrease counter
        }
      }
- /*		if (bErrFlags.all_flags[0]) {
-       Ucom_Send32bit(oTX,kUartErrMsg,bErrFlags.all_flags ,1);
-     }	*/
 }
 
 void mDeSerializeRX( ){   //Receiving data and dispatch commands
+  /*  Inverse of mSerialize4TX. Takes bytes from serial buffer (input from RF or UART)
+        and modifies the protocol elements accordingly
 /* 	@obj: 		the protocol object
-  //Processing the serial receive data and
-   // puts them in the protocol buffer
-Revisions:
+    Rev:RT210128 refactoring mDispatch RX as mDeSerializeRX
 */
   static uint8_t rcv1,idx;			//Data received
   static tUartCmd rxCmd=kReady;     // Current cmd state
@@ -243,7 +273,7 @@ Revisions:
        zState=0;				//End  statemachine
        rxCmd=kReady;
         if (nDbgLvl&(2<<6))  mDebugInt("kGetReq for ",idx);
-       //todo: enable mPowerWatchDogReset();		//R180920 Reset the watchdog for power timeout
+       mPowerWatchDogReset();		// Reset the watchdog for power timeout
      }
      else {
        //This would be a reveive error because rxCmd was not recognized
@@ -261,23 +291,6 @@ void mProtocol_Init(tTXProt*  obj)						//Initialize protocol object
  obj->VarCount=0;
 }
 
-
-
-/****************MAIN ENTRY***********************/
-
-void mPushRX2FIFO(int var){   //Push data from client to the FIFO
-   mFIFO_push(oRX,var);
-     if (mFIFO_isFull(oRX)) {
-       bErrFlags.errbits.bRXOverflow =1;	//Receive overflow
-     }
-}
-int mPopTXFIFO(){
-  return mFIFO_pop(oTX);
-}
-void mProtocolProcess(void){
-   mSerialize4TX(&oTXProt);
-   mDeSerializeRX( );
-}
 
 
 
